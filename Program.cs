@@ -13,7 +13,7 @@ if (args.Length == 0)
 
 switch (args[0])
 {
-    case "cheep": 
+    case "cheep":
         cheep(args[1]);
         break;
     case "read":
@@ -28,7 +28,7 @@ void cheep(string cheep)
 {
     var username = Environment.UserName;
     var timeOfCheep = new DateTimeOffset(DateTime.UtcNow, TimeSpan.Zero);
-    
+
     using (var file = new StreamWriter(filename, true))
     {
         file.WriteLine(username + ",\"" + cheep + "\"," + timeOfCheep.ToUnixTimeSeconds());
@@ -40,7 +40,7 @@ void read()
 {
     var reader = new StreamReader(filename);
     reader.ReadLine(); // to not read the header
-    
+
     while (!reader.EndOfStream)
     {
         var line = reader.ReadLine();
