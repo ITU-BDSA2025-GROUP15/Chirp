@@ -1,7 +1,10 @@
 // See https://aka.ms/new-console-template for more information
 
 using System.ComponentModel;
+using System.Globalization;
 using System.Reflection.Metadata;
+
+using CsvHelper;
 
 var filename = "./chirp_cli_db.csv";
 
@@ -39,23 +42,15 @@ void cheep(string cheep)
 void read()
 {
     var reader = new StreamReader(filename);
-    reader.ReadLine(); // to not read the header
+    var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
-    while (!reader.EndOfStream)
+    var records = csv.GetRecords<Cheep>();
+
+    foreach (var cheep in records)
     {
-        var line = reader.ReadLine();
-        if (line == null) continue;
-
-        var firstComma = line.IndexOf(",");
-        var lastComma = line.LastIndexOf(",");
-
-        var author = line.Substring(0, firstComma);
-        var message = line.Substring(firstComma + 2, lastComma - firstComma - 3);
-        var tempTimestamp = line.Substring(lastComma + 1);
-        var timestamp = DateTimeOffset.FromUnixTimeSeconds(long.Parse(tempTimestamp));
-
+        var timestamp = DateTimeOffset.FromUnixTimeSeconds(cheep.Timestamp);
         timestamp = TimeZoneInfo.ConvertTime(timestamp, TimeZoneInfo.Local);
 
-        Console.WriteLine(author + " @ " + timestamp.ToString("MM/dd/yy HH:mm:ss") + ": " + message);
+        Console.WriteLine(cheep.Author + " @ " + timestamp.ToString("MM/dd/yy HH:mm:ss") + ": " + cheep.Message);   
     }
 }
