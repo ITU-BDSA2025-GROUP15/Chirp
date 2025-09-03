@@ -33,8 +33,16 @@ void cheep(string cheep)
     var timeOfCheep = new DateTimeOffset(DateTime.UtcNow, TimeSpan.Zero);
 
     using (var file = new StreamWriter(filename, true))
+    using (var csv = new CsvWriter(file, CultureInfo.InvariantCulture))
     {
-        file.WriteLine(username + ",\"" + cheep + "\"," + timeOfCheep.ToUnixTimeSeconds());
+        var cheeep = new Cheep(
+            username,
+            cheep,
+            timeOfCheep.ToUnixTimeSeconds()
+        );
+
+        csv.WriteRecord(cheeep);
+        csv.NextRecord();
     }
 }
 
