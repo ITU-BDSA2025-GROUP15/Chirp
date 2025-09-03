@@ -54,8 +54,7 @@ void read()
         var tempTimestamp = line.Substring(lastComma + 1);
         var timestamp = DateTimeOffset.FromUnixTimeSeconds(long.Parse(tempTimestamp));
 
-        var timezone = DateTime.Now - DateTime.UtcNow;
-        timestamp += timezone;
+        timestamp = TimeZoneInfo.ConvertTime(timestamp, TimeZoneInfo.Local);
 
         Console.WriteLine(author + " @ " + timestamp.ToString("MM/dd/yy HH:mm:ss") + ": " + message);
     }
