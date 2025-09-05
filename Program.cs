@@ -44,10 +44,5 @@ void cheep(string message)
 // Reads all posts from database file. 
 void read(int? limit)
 {
-    foreach (var cheep in database.Read(limit))
-    {
-        var timestamp = DateTimeOffset.FromUnixTimeSeconds(cheep.Timestamp);
-        timestamp = TimeZoneInfo.ConvertTime(timestamp, TimeZoneInfo.Local);
-        Console.WriteLine(cheep.Author + " @ " + timestamp.ToString("MM/dd/yy HH:mm:ss") + ": " + cheep.Message);
-    }
+    UserInterface.PrintCheeps(database.Read(limit));
 }
