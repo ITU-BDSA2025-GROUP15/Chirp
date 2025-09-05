@@ -5,31 +5,9 @@ using System.Globalization;
 using System.Reflection.Metadata;
 using CsvHelper;
 using SimpleDB;
-
-if (args.Length == 0)
-{
-    System.Console.WriteLine("No args given!");
-    return;
-}
+using DocoptNet;
 
 IDatabaseRepository<Cheep> database = new CSVDatabase<Cheep>();
-
-switch (args[0])
-{
-    case "cheep":
-        cheep(args[1]);
-        break;
-    case "read":
-        if (args.Length == 1) read(null);
-        else {
-            int arg;
-            bool check = int.TryParse(args[1], out arg);
-            read(check ? arg : null);
-        };
-        break;
-    default:
-        break;
-}
 
 // Adds cheep to database file.
 void cheep(string message)
@@ -46,3 +24,40 @@ void read(int? limit)
 {
     UserInterface.PrintCheeps(database.Read(limit));
 }
+
+
+const string usage = @"Chirp CLI.
+
+Usage:
+    Chirp cheep <message>
+    Chirp read <limit>
+
+Options:
+";
+
+static int ShowHelp(string help) { Console.WriteLine(help); return 0; }
+static int ShowVersion(string version) { Console.WriteLine(version); return 0; }
+static int OnError(string usage) { Console.Error.WriteLine(usage); return 1; }
+
+int Run(IDictionary<string, ArgValue> arguments)
+{
+    foreach (var (key, value) in arguments) {
+        if (key == "cheep" && (bool)value) {
+            cheep((string)arguments["<message>"]);
+        };
+
+        if (key == "read" && (bool)value) {
+            bool check = int.TryParse((string)arguments["<limit>"], out int arg);
+            read(check ? arg : null);
+        };
+    }
+    return 0;
+}
+
+return Docopt.CreateParser(usage)
+             .WithVersion("1.0")
+             .Parse(args)
+             .Match(Run,
+                    result => ShowHelp(result.Help),
+                    result => ShowVersion(result.Version),
+                    result => OnError(result.Usage));
