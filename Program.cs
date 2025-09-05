@@ -1,12 +1,10 @@
-// See https://aka.ms/new-console-template for more information
+﻿// See https://aka.ms/new-console-template for more information
 
 using System.ComponentModel;
 using System.Globalization;
 using System.Reflection.Metadata;
-
 using CsvHelper;
-
-var filename = "./chirp_cli_db.csv";
+using SimpleDB;
 
 if (args.Length == 0)
 {
@@ -14,51 +12,42 @@ if (args.Length == 0)
     return;
 }
 
+IDatabaseRepository<Cheep> database = new CSVDatabase<Cheep>();
+
 switch (args[0])
 {
     case "cheep":
         cheep(args[1]);
         break;
     case "read":
-        read();
+        if (args.Length == 1) read(null);
+        else {
+            int arg;
+            bool check = int.TryParse(args[1], out arg);
+            read(check ? arg : null);
+        };
         break;
     default:
         break;
 }
 
 // Adds cheep to database file.
-void cheep(string cheep)
+void cheep(string message)
 {
     var username = Environment.UserName;
     var timeOfCheep = new DateTimeOffset(DateTime.UtcNow, TimeSpan.Zero);
 
-    using (var file = new StreamWriter(filename, true))
-    using (var csv = new CsvWriter(file, CultureInfo.InvariantCulture))
-    {
-        var cheeep = new Cheep(
-            username,
-            cheep,
-            timeOfCheep.ToUnixTimeSeconds()
-        );
-
-        csv.WriteRecord(cheeep);
-        csv.NextRecord();
-    }
+    var cheep = new Cheep(username, message, timeOfCheep.ToUnixTimeSeconds());
+    database.Store(cheep);
 }
 
 // Reads all posts from database file. 
-void read()
+void read(int? limit)
 {
-    var reader = new StreamReader(filename);
-    var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-
-    var records = csv.GetRecords<Cheep>();
-
-    foreach (var cheep in records)
+    foreach (var cheep in database.Read(limit))
     {
         var timestamp = DateTimeOffset.FromUnixTimeSeconds(cheep.Timestamp);
         timestamp = TimeZoneInfo.ConvertTime(timestamp, TimeZoneInfo.Local);
-
-        Console.WriteLine(cheep.Author + " @ " + timestamp.ToString("MM/dd/yy HH:mm:ss") + ": " + cheep.Message);   
+        Console.WriteLine(cheep.Author + " @ " + timestamp.ToString("MM/dd/yy HH:mm:ss") + ": " + cheep.Message);
     }
 }
