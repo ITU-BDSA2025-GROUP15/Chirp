@@ -30,7 +30,7 @@ const string usage = @"Chirp CLI.
 
 Usage:
     Chirp cheep <message>
-    Chirp read <limit>
+    Chirp read [<limit>]
 
 Options:
 ";
@@ -41,15 +41,23 @@ static int OnError(string usage) { Console.Error.WriteLine(usage); return 1; }
 
 int Run(IDictionary<string, ArgValue> arguments)
 {
-    foreach (var (key, value) in arguments) {
-        if (key == "cheep" && (bool)value) {
+    foreach (var (key, value) in arguments)
+    {
+        if (key == "cheep" && (bool)value)
+        {
             cheep((string)arguments["<message>"]);
-        };
+        }
 
-        if (key == "read" && (bool)value) {
-            bool check = int.TryParse((string)arguments["<limit>"], out int arg);
-            read(check ? arg : null);
-        };
+        if (key == "read" && (bool)value)
+        {
+            var limit = arguments["<limit>"];
+            if (limit.IsString)
+            {
+                bool check = int.TryParse((string)limit, out int arg);
+                read(check ? arg : null);
+            }
+            else read(null);
+        }
     }
     return 0;
 }
