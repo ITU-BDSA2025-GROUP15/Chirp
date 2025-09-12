@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Chirp": {
-      "commandName": "Project",
-      "commandLineArgs": "read"
-    }
-  }
-}
