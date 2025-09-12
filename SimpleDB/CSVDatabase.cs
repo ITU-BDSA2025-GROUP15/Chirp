@@ -26,17 +26,16 @@ sealed class CSVDatabase<T> : IDatabaseRepository<T>
         var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
         
         var records = csv.GetRecords<T>();
+        records.Reverse();
         if (limit == null) return records;
 
         List<T> records_new = new List<T>();
-
         int i = 0;
         foreach (var record in records) {
             if (i++ >= limit) break;
         
             records_new.Add(record);
         }
-
         return records_new;
     }
 }
