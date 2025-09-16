@@ -2,8 +2,6 @@
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp", "Chirp.csproj", "{C921D053-D66C-72DB-0ABE-BD53FAB2EB6F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp", "src\Chirp.csproj", "{F79E6CBF-2FCC-4F7E-A0AC-EEDF5A287553}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{9F88F4DA-55E3-46B8-95F5-2586FE1357DA}"
