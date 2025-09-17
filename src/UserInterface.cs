@@ -1,11 +1,19 @@
-static public class UserInterface{
-    public static void PrintCheeps(IEnumerable<Cheep> cheeps){
+static public class UserInterface
+{
+    public static void PrintCheeps(IEnumerable<Cheep> cheeps)
+    {
         foreach (var cheep in cheeps)
         {
-            var timestamp = DateTimeOffset.FromUnixTimeSeconds(cheep.Timestamp);
-            timestamp = TimeZoneInfo.ConvertTime(timestamp, TimeZoneInfo.Local);
-            Console.WriteLine(cheep.Author + " @ " + timestamp.ToString("MM/dd/yy HH:mm:ss") + ": " + cheep.Message);
+            var localTime = ToLocalTimeString(cheep.Timestamp);
+            Console.WriteLine(cheep.Author + " @ " + localTime + ": " + cheep.Message);
         }
+    }
+
+    public static string ToLocalTimeString(long timestamp)
+    {
+        var t = DateTimeOffset.FromUnixTimeSeconds(timestamp);
+            t = TimeZoneInfo.ConvertTime(t, TimeZoneInfo.Local);
+        return t.ToString("MM/dd/yy HH:mm:ss");
     }
 }
     
