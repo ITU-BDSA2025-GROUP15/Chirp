@@ -12,4 +12,9 @@
     <PackageReference Include="docopt.net" Version="0.8.1" />
   </ItemGroup>
 
+  <!-- To fix duplicate errors CS0579. -->
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+  </PropertyGroup>
 </Project>
