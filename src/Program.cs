@@ -7,7 +7,7 @@ using CsvHelper;
 using SimpleDB;
 using DocoptNet;
 
-IDatabaseRepository<Cheep> database = new CSVDatabase<Cheep>();
+IDatabaseRepository<Cheep> database = CSVDatabase<Cheep>.Instance;
 
 // Adds cheep to database file.
 void cheep(string message)
