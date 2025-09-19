@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\SimpleDB\SimpleDB.csproj" />
+    <ProjectReference Include="..\..\src\Chirp.CSVDBService\SimpleDB\SimpleDB.csproj" />
   </ItemGroup>
   
 </Project>
