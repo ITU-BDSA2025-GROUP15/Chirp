@@ -3,25 +3,38 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Reflection.Metadata;
-using SimpleDB;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using DocoptNet;
 
-IDatabaseRepository<Cheep> database = CSVDatabase<Cheep>.Instance;
+// Create an HTTP client object
+var baseURL = "http://localhost:5086";
+using HttpClient client = new();
+client.DefaultRequestHeaders.Accept.Clear();
+client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+client.BaseAddress = new Uri(baseURL);
 
 // Adds cheep to database file.
-void cheep(string message)
+async Task cheep(string message)
 {
     var username = Environment.UserName;
     var timeOfCheep = new DateTimeOffset(DateTime.UtcNow, TimeSpan.Zero);
 
     var cheep = new Cheep(username, message, timeOfCheep.ToUnixTimeSeconds());
-    database.Store(cheep);
+    await client.PostAsJsonAsync<Cheep>(baseURL + "/cheep", cheep);
 }
 
 // Reads all posts from database file. 
-void read(int? limit)
+async Task read(int? limit)
 {
-    UserInterface.PrintCheeps(database.Read(limit));
+    // Send an asynchronous HTTP GET request and automatically construct a Cheep object from the
+    // JSON object in the body of the response
+    var cheep = await client.GetFromJsonAsync<IEnumerable<Cheep>>("cheeps");
+
+    if (cheep == null) throw new Exception("No cheep!");
+
+    UserInterface.PrintCheeps(cheep);
 }
 
 
@@ -38,13 +51,13 @@ static int ShowHelp(string help) { Console.WriteLine(help); return 0; }
 static int ShowVersion(string version) { Console.WriteLine(version); return 0; }
 static int OnError(string usage) { Console.Error.WriteLine(usage); return 1; }
 
-int Run(IDictionary<string, ArgValue> arguments)
+async Task<int> Run(IDictionary<string, ArgValue> arguments)
 {
     foreach (var (key, value) in arguments)
     {
         if (key == "cheep" && (bool)value)
         {
-            cheep((string)arguments["<message>"]);
+            await cheep((string)arguments["<message>"]);
         }
 
         if (key == "read" && (bool)value)
@@ -53,18 +66,18 @@ int Run(IDictionary<string, ArgValue> arguments)
             if (limit.IsString)
             {
                 bool check = int.TryParse((string)limit, out int arg);
-                read(check ? arg : null);
+                await read(check ? arg : null);
             }
-            else read(null);
+            else await read(null);
         }
     }
     return 0;
 }
 
-return Docopt.CreateParser(usage)
+return await Docopt.CreateParser(usage)
              .WithVersion("1.0")
              .Parse(args)
              .Match(Run,
-                    result => ShowHelp(result.Help),
-                    result => ShowVersion(result.Version),
-                    result => OnError(result.Usage));
+                    result => Task.FromResult(ShowHelp(result.Help)),
+                    result => Task.FromResult(ShowVersion(result.Version)),
+                    result => Task.FromResult(OnError(result.Usage)));
