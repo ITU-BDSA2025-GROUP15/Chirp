@@ -5,7 +5,7 @@ public class CSVDatabaseTest
     [Fact]
     public void IntegrationTest()
     {
-        IDatabaseRepository<TestRecord> db = new CSVDatabase<TestRecord>();
+        IDatabaseRepository<TestRecord> db = CSVDatabase<TestRecord>;
         
         TestRecord test = new TestRecord("Test!!!!");
            
