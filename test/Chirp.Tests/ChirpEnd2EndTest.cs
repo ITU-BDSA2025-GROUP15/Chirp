@@ -15,11 +15,22 @@ adho,""I hope you had a good summer."",1690979858
 ropf,""Cheeping cheeps on Chirp :)"",1690981487
 ");
     }
-    
+    Process startWebService()
+    {
+        Process process = new Process();
+        process.StartInfo.FileName = "dotnet";
+        process.StartInfo.Arguments = $"run --project ../../../../../src/Chirp.CSVDBService/Chirp.CSVDBService.csproj";
+        process.StartInfo.UseShellExecute = false;
+        process.StartInfo.RedirectStandardOutput = true;
+        process.Start();
+        return process;
+    }
+
     [Fact]
     public void ReadCommand_ReturnsLatestCheep()
     {
         CreateTestFile();
+        Process WebProcess = startWebService();
 
         using (Process process = new Process())
         {
@@ -29,25 +40,28 @@ ropf,""Cheeping cheeps on Chirp :)"",1690981487
             process.StartInfo.RedirectStandardOutput = true;
             process.Start();
             string output = process.StandardOutput.ReadToEnd();
-
             // Assert: Output should contain the latest cheep
-
             Assert.Contains("ropf", output);
             Assert.Contains("Cheeping cheeps on Chirp :)", output);
 
             //
             var t = DateTimeOffset.FromUnixTimeSeconds(1690981487);
-                t = TimeZoneInfo.ConvertTime(t, TimeZoneInfo.Local);
+            t = TimeZoneInfo.ConvertTime(t, TimeZoneInfo.Local);
             var tString = t.ToString("MM/dd/yy HH:mm:ss");
 
             Assert.Contains(tString, output);
             process.WaitForExit();
+
+            WebProcess.Kill(true);
+            WebProcess.WaitForExit();
+            WebProcess.Dispose();
         }
     }
     [Fact]
     public void CheepCommand_CheepsCheep()
     {
         CreateTestFile();
+        Process WebProcess = startWebService();
 
         using (Process process = new Process())
         {
@@ -71,6 +85,10 @@ ropf,""Cheeping cheeps on Chirp :)"",1690981487
             // Assert: Output should contain the latest cheep
             Assert.Contains("LOL", output);
             process2.WaitForExit();
+
+            WebProcess.Kill(true);
+            WebProcess.WaitForExit();
+            WebProcess.Dispose();
         }
     }
 }
