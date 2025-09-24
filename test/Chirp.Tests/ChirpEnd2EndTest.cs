@@ -34,7 +34,13 @@ ropf,""Cheeping cheeps on Chirp :)"",1690981487
 
             Assert.Contains("ropf", output);
             Assert.Contains("Cheeping cheeps on Chirp :)", output);
-            Assert.True(output.Contains("08/02/23 15:04:47") || output.Contains("08/02/23 15.04.47"));
+
+            //
+            var t = DateTimeOffset.FromUnixTimeSeconds(1690981487);
+                t = TimeZoneInfo.ConvertTime(t, TimeZoneInfo.Local);
+            var tString = t.ToString("MM/dd/yy HH:mm:ss");
+
+            Assert.Contains(tString, output);
             process.WaitForExit();
         }
     }
