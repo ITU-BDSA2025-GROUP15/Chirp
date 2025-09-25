@@ -22,8 +22,8 @@ public class HttpIntegrationTest
             Console.WriteLine(HTTPResponse);
             Assert.Equal(200, (int)HTTPResponse.StatusCode);
 
-            var text = HTTPResponse.Content; //todo does the content contain the right things 
-            Console.Write(text);
+            var cheep = await client.GetFromJsonAsync<IEnumerable<Cheep>>("cheeps");
+            Assert.NotNull(cheep);
         }
         finally
         {
