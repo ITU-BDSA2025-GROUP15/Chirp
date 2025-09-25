@@ -1,5 +1,8 @@
 namespace Chirp.Tests;
-
+using System.Diagnostics;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+[Collection("Sequential")]
 public class ChirpTest
 {
     [Fact]
@@ -15,9 +18,9 @@ public class ChirpTest
     [Theory]
     [InlineData("user", "Dolp", 0)]
     [InlineData("test", "whatever", 5)]
-    public void TimeTest(string a,string b, int c)
+    public void TimeTest(string a, string b, int c)
     {
-        var newcheep = new Cheep(a,b,c);
+        var newcheep = new Cheep(a, b, c);
 
         var ConversionTest = UserInterface.ToLocalTimeString(newcheep.Timestamp);
         var Answer = DateTimeOffset.FromUnixTimeSeconds(c)
