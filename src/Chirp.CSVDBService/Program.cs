@@ -1,7 +1,6 @@
 namespace Chirp.CSVDBService;
 
 class CSVDBService {
-    readonly static string baseURL = "http://localhost:5086";
     static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +9,7 @@ class CSVDBService {
         app.MapGet("/cheeps", GetCheeps);
         app.MapPost("/cheep", StoreCheep);
 
-        app.Run(baseURL);
+        app.Run();
     }
 
     static IEnumerable<Cheep> GetCheeps(int? n) {
