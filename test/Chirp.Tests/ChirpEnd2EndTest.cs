@@ -8,7 +8,7 @@ public class ChirpEnd2EndTest
     readonly string web_service_path = "src/Chirp.CSVDBService/Chirp.CSVDBService.csproj";
     readonly string csv_db_path = "../../../../../src/Chirp.CSVDBService/chirp_cli_db.csv";
 
-    Process startWebService()
+    async Task<Process> startWebService()
     {
         Process process = new Process();
         process.StartInfo.FileName = "dotnet";
@@ -16,14 +16,32 @@ public class ChirpEnd2EndTest
         process.StartInfo.UseShellExecute = false;
         process.StartInfo.RedirectStandardOutput = true;
         process.Start();
+        
+        // Wait for HTTP to start
+        var baseURL = "http://localhost:5086";
+        using HttpClient client = new();
+        client.BaseAddress = new Uri(baseURL);
+        
+        int max_retries = 10;
+        for (int i = 0; i < max_retries; i++)
+        {
+            try {
+                var HTTPResponse = await client.GetAsync("");
+                break;
+            } catch (Exception) {
+                System.Console.WriteLine("L");
+                i++;
+            }   
+        }
+
         return process;
     }
 
     [Fact]
-    public void ReadCommand_ReturnsLatestCheep()
+    public async void ReadCommand_ReturnsLatestCheep()
     {
         var original_file = File.ReadAllBytes(csv_db_path);
-        Process WebProcess = startWebService();
+        Process WebProcess = await startWebService();
 
         using (Process process = new Process())
         {
@@ -54,10 +72,10 @@ public class ChirpEnd2EndTest
         }
     }
     [Fact]
-    public void CheepCommand_CheepsCheep()
+    public async void CheepCommand_CheepsCheep()
     {
         var original_file = File.ReadAllBytes(csv_db_path);
-        Process WebProcess = startWebService();
+        Process WebProcess = await startWebService();
 
         using (Process process = new Process())
         {
