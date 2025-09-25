@@ -9,7 +9,11 @@ using System.Net.Http.Json;
 using DocoptNet;
 
 // Create an HTTP client object
+#if DEBUG
 var baseURL = "http://localhost:5086";
+#else
+var baseURL = "https://bdsagroup15chirpremotedb.azurewebsites.net";
+#endif
 using HttpClient client = new();
 client.DefaultRequestHeaders.Accept.Clear();
 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
