@@ -5,21 +5,14 @@ using System.Diagnostics;
 public class ChirpEnd2EndTest
 {
     readonly string project_path = "src/Chirp.CLI.Client/Chirp.CLI.Client.csproj";
+    readonly string web_service_path = "src/Chirp.CSVDBService/Chirp.CSVDBService.csproj";
+    readonly string csv_db_path = "../../../../../src/Chirp.CSVDBService/chirp_cli_db.csv";
 
-    void CreateTestFile()
-    {
-        File.WriteAllText("chirp_cli_db.csv", @"Author,Message,Timestamp
-ropf,""Hello, BDSA students!"",1690891760
-adho,""Welcome to the course!"",1690978778
-adho,""I hope you had a good summer."",1690979858
-ropf,""Cheeping cheeps on Chirp :)"",1690981487
-");
-    }
     Process startWebService()
     {
         Process process = new Process();
         process.StartInfo.FileName = "dotnet";
-        process.StartInfo.Arguments = $"run --project ../../../../../src/Chirp.CSVDBService/Chirp.CSVDBService.csproj";
+        process.StartInfo.Arguments = $"run --project ../../../../../{web_service_path}";
         process.StartInfo.UseShellExecute = false;
         process.StartInfo.RedirectStandardOutput = true;
         process.Start();
@@ -29,7 +22,7 @@ ropf,""Cheeping cheeps on Chirp :)"",1690981487
     [Fact]
     public void ReadCommand_ReturnsLatestCheep()
     {
-        CreateTestFile();
+        var original_file = File.ReadAllBytes(csv_db_path);
         Process WebProcess = startWebService();
 
         using (Process process = new Process())
@@ -55,12 +48,15 @@ ropf,""Cheeping cheeps on Chirp :)"",1690981487
             WebProcess.Kill(true);
             WebProcess.WaitForExit();
             WebProcess.Dispose();
+
+            // restore original file
+            File.WriteAllBytes(csv_db_path, original_file);
         }
     }
     [Fact]
     public void CheepCommand_CheepsCheep()
     {
-        CreateTestFile();
+        var original_file = File.ReadAllBytes(csv_db_path);
         Process WebProcess = startWebService();
 
         using (Process process = new Process())
@@ -89,6 +85,9 @@ ropf,""Cheeping cheeps on Chirp :)"",1690981487
             WebProcess.Kill(true);
             WebProcess.WaitForExit();
             WebProcess.Dispose();
+
+            // restore original file
+            File.WriteAllBytes(csv_db_path, original_file);
         }
     }
 }
