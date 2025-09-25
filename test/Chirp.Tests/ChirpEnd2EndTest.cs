@@ -1,7 +1,7 @@
 namespace Chirp.Tests;
 
 using System.Diagnostics;
-
+[Collection("Sequential")]
 public class ChirpEnd2EndTest
 {
     [Fact]
@@ -19,6 +19,8 @@ public class ChirpEnd2EndTest
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.Start();
+                process.WaitForExit();
+
                 string output = process.StandardOutput.ReadToEnd();
                 // Assert: Output should contain the latest cheep
                 Assert.Contains("ropf", output);
@@ -30,7 +32,6 @@ public class ChirpEnd2EndTest
                 var tString = t.ToString("MM/dd/yy HH:mm:ss");
 
                 Assert.Contains(tString, output);
-                process.WaitForExit();
             }
 
             finally
@@ -70,11 +71,11 @@ public class ChirpEnd2EndTest
                 process2.StartInfo.UseShellExecute = false;
                 process2.StartInfo.RedirectStandardOutput = true;
                 process2.Start();
+                process2.WaitForExit();
                 string output = process2.StandardOutput.ReadToEnd();
 
                 // Assert: Output should contain the latest cheep
                 Assert.Contains("LOL", output);
-                process2.WaitForExit();
             }
         }
         finally
@@ -86,6 +87,5 @@ public class ChirpEnd2EndTest
             // restore original file
             File.WriteAllBytes(TestUtils.csv_db_path, original_file);
         }
-        Thread.Sleep(1000);
     }
 }

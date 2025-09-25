@@ -2,6 +2,7 @@ namespace Chirp.Tests;
 using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+[Collection("Sequential")]
 public class ChirpTest
 {
     [Fact]

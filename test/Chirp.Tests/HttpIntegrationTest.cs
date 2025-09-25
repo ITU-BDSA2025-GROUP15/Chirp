@@ -2,7 +2,9 @@ using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
-public class HttpIntegrationTest {
+[Collection("Sequential")]
+public class HttpIntegrationTest
+{
     [Fact]
     public async void HTTPGET()
     {

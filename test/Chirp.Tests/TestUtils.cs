@@ -1,4 +1,4 @@
-﻿
+﻿    
 using System.Diagnostics;
 public static class TestUtils {
     public static readonly string project_path = "src/Chirp.CLI.Client/Chirp.CLI.Client.csproj";
@@ -27,7 +27,7 @@ public static class TestUtils {
                 break;
             } catch (Exception) {
                 System.Console.WriteLine("L");
-                i++;
+                Thread.Sleep(1000);
             }   
         }
 
