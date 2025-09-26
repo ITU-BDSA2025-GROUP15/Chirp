@@ -5,12 +5,15 @@ public class CSVDatabaseIntegrationTest
     [Fact]
     public void ReadWriteTest()
     {
-        IDatabaseRepository<TestRecord> db = CSVDatabase<TestRecord>.Instance;
-
+        // Arrange
         TestRecord test = new TestRecord("Test!!!!");
 
+        // Act
+        IDatabaseRepository<TestRecord> db = CSVDatabase<TestRecord>.Instance;
         db.Store(test);
-        Assert.Equal(test, db.Read(1).ElementAt(0));
+        TestRecord result = db.Read(1).ElementAt(0);
 
+        // Assert
+        Assert.Equal(test, result);
     }
 }
