@@ -38,5 +38,5 @@ jobs:
       - uses: actions/add-to-project@v1.0.2
         with:
           project-url: https://github.com/orgs/ITU-BDSA2025-GROUP15/projects/1
-          github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           content-id: ${{ needs.create-issue.outputs.issue-id }}
