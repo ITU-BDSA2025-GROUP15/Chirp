@@ -32,3 +32,5 @@ jobs:
       with:
           project-url: https://github.com/orgs/ITU-BDSA2025-GROUP15/projects/1
           github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
+          labeled: feature, bug
+          label-operator: OR
