@@ -1,0 +1,1 @@
+public record TestRecord(string name);

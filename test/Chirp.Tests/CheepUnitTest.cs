@@ -73,25 +73,24 @@ public class ChirpUnitTest
         return strB.ToString();
     }
 
-    [Fact]
-    public void Cheep_InstanceTest()
+    [Theory]
+    [InlineData("user", "swag", 1000)]
+    public void Cheep_InstanceTest(string author, string message, int timestamp)
     {
-        var c = new Cheep("user", "swag", 1000);
+        // Act
+        var c = new Cheep(author, message, timestamp);
 
-        Assert.Equal("user", c.Author);
-        Assert.Equal("swag", c.Message);
-        Assert.Equal(1000, c.Timestamp);
+        // Assert
+        Assert.Equal(author, c.Author);
+        Assert.Equal(message, c.Message);
+        Assert.Equal(timestamp, c.Timestamp);
     }
 
     [Theory]
     [MemberData(nameof(CheepLists))]
     public void PrintCheepsTest(IEnumerable<Cheep> cheepList)
     {
-        var sw = new StringWriter();
-        Console.SetOut(sw);
-
-        UserInterface.PrintCheeps(cheepList);
-        var result = sw.ToString();
+        // Arrange
         StringBuilder strB = new StringBuilder();
         StringBuilder strC = new StringBuilder();
         foreach (var cheep in cheepList)
@@ -99,20 +98,32 @@ public class ChirpUnitTest
             strB.Append(cheep.Author + " @ " + UserInterface.ToLocalTimeString(cheep.Timestamp) + ": " + cheep.Message + "\r\n");
             strC.Append(cheep.Author + " @ " + UserInterface.ToLocalTimeString(cheep.Timestamp) + ": " + cheep.Message + "\n");
         }
+
+        // Act
+        var sw = new StringWriter();
+        Console.SetOut(sw);
+
+        UserInterface.PrintCheeps(cheepList);
+        var result = sw.ToString();
+
+        // Assert
         Assert.True(strB.ToString()==result || strC.ToString()==result);
     }
 
     [Theory]
     [MemberData(nameof(Cheeps))]
-    public void TimeTest(Cheep c)
+    public void TimeConversionTest(Cheep c)
     {
-
-        var ConversionTest = UserInterface.ToLocalTimeString(c.Timestamp);
-        var Answer = DateTimeOffset.FromUnixTimeSeconds(c.Timestamp)
+        // Arrange
+        var answer = DateTimeOffset.FromUnixTimeSeconds(c.Timestamp)
                                 .ToLocalTime()
                                 .ToString("MM/dd/yy HH:mm:ss");
 
-        Assert.Equal(Answer, ConversionTest);
+        // Act
+        var result = UserInterface.ToLocalTimeString(c.Timestamp);
+
+        // Assert
+        Assert.Equal(answer, result);
     }
 }
 // Add unit tests for suitable functionality. 

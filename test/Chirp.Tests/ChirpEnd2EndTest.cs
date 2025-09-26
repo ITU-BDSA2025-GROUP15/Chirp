@@ -14,6 +14,15 @@ public class ChirpEnd2EndTest
         {
             try
             {
+                // Arrange
+                var author = "ropf";
+                var message = "Cheeping cheeps on Chirp :)";
+                var t = DateTimeOffset.FromUnixTimeSeconds(1690981487);
+
+                t = TimeZoneInfo.ConvertTime(t, TimeZoneInfo.Local);
+                var timeString = t.ToString("MM/dd/yy HH:mm:ss");
+
+                // Act
                 process.StartInfo.FileName = "dotnet";
                 process.StartInfo.Arguments = $"run --project ../../../../../{TestUtils.project_path} read 1";
                 process.StartInfo.UseShellExecute = false;
@@ -22,21 +31,18 @@ public class ChirpEnd2EndTest
                 process.WaitForExit();
 
                 string output = process.StandardOutput.ReadToEnd();
-                var split = output.Split("\n");
+                var outputLines = output.Split("\n", StringSplitOptions.RemoveEmptyEntries);
 
-                // Assert: Output should contain the latest cheep
-                Assert.Contains("ropf", output);
-                Assert.Contains("Cheeping cheeps on Chirp :)", output);
+                // Assert
+                // Output should contain the latest cheep
+                Assert.Contains(author, output);
+                Assert.Contains(message, output);
 
-                // Only one cheep returned (one string + blank string after newline)
-                Assert.Equal(2, split.Length);
+                // Should contain correct time format
+                Assert.Contains(timeString, output);
 
-                //
-                var t = DateTimeOffset.FromUnixTimeSeconds(1690981487);
-                t = TimeZoneInfo.ConvertTime(t, TimeZoneInfo.Local);
-                var tString = t.ToString("MM/dd/yy HH:mm:ss");
-
-                Assert.Contains(tString, output);
+                // Only one cheep returned
+                Assert.Single(outputLines);
             }
 
             finally
@@ -58,11 +64,15 @@ public class ChirpEnd2EndTest
         Process WebProcess = await TestUtils.startWebService();
         try
         {
+            // Arrange
+            var inputMessage = "LOL";
+            string output;
+
+            // Act
             using (Process process = new Process())
             {
-
                 process.StartInfo.FileName = "dotnet";
-                process.StartInfo.Arguments = $"run --project ../../../../../{TestUtils.project_path} cheep LOL";
+                process.StartInfo.Arguments = $"run --project ../../../../../{TestUtils.project_path} cheep {inputMessage}";
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
 
@@ -77,11 +87,12 @@ public class ChirpEnd2EndTest
                 process2.StartInfo.RedirectStandardOutput = true;
                 process2.Start();
                 process2.WaitForExit();
-                string output = process2.StandardOutput.ReadToEnd();
 
-                // Assert: Output should contain the latest cheep
-                Assert.Contains("LOL", output);
+                output = process2.StandardOutput.ReadToEnd();
             }
+
+            // Assert: Output should contain the latest cheep
+            Assert.Contains(inputMessage, output);
         }
         finally
         {

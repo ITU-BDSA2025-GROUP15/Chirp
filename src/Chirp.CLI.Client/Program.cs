@@ -38,9 +38,8 @@ async Task read(int? limit)
 
     var query = "cheeps";
     if (limit != null) query += $"?limit={limit}";
-    
-    var cheep = await client.GetFromJsonAsync<IEnumerable<Cheep>>(query);
 
+    var cheep = await client.GetFromJsonAsync<IEnumerable<Cheep>>(query);
     if (cheep == null) throw new Exception("No cheep!");
 
     UserInterface.PrintCheeps(cheep);
