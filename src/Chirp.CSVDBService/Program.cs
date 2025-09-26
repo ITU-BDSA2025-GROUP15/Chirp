@@ -12,8 +12,8 @@ class CSVDBService {
         app.Run();
     }
 
-    static IEnumerable<Cheep> GetCheeps(int? n) {
-        return CSVDatabase<Cheep>.Instance.Read(n);
+    static IEnumerable<Cheep> GetCheeps(int? limit) {
+        return CSVDatabase<Cheep>.Instance.Read(limit);
     }
 
     static void StoreCheep(Cheep cheep) {
