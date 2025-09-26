@@ -12,8 +12,8 @@ jobs:
       - name: Create issue for new branch
         uses: peter-evans/create-issue-from-file@v5
         with:
-          title: "Work on branch: ${{ github.ref_name }}"
+          title: "Issue: ${{ github.ref_name }}"
           content-filepath: .github/ISSUE_TEMPLATE/branch-issue.md
-          labels: new-branch
+          labels: Feature
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
