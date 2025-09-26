@@ -22,9 +22,14 @@ public class ChirpEnd2EndTest
                 process.WaitForExit();
 
                 string output = process.StandardOutput.ReadToEnd();
+                var split = output.Split("\n");
+
                 // Assert: Output should contain the latest cheep
                 Assert.Contains("ropf", output);
                 Assert.Contains("Cheeping cheeps on Chirp :)", output);
+
+                // Only one cheep returned (one string + blank string after newline)
+                Assert.Equal(2, split.Length);
 
                 //
                 var t = DateTimeOffset.FromUnixTimeSeconds(1690981487);

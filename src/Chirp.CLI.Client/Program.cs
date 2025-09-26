@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using DocoptNet;
+using System.Text.Json.Serialization;
 
 // Create an HTTP client object
 #if DEBUG
@@ -34,7 +35,11 @@ async Task read(int? limit)
 {
     // Send an asynchronous HTTP GET request and automatically construct a Cheep object from the
     // JSON object in the body of the response
-    var cheep = await client.GetFromJsonAsync<IEnumerable<Cheep>>("cheeps");
+
+    var query = "cheeps";
+    if (limit != null) query += $"?limit={limit}";
+    
+    var cheep = await client.GetFromJsonAsync<IEnumerable<Cheep>>(query);
 
     if (cheep == null) throw new Exception("No cheep!");
 
