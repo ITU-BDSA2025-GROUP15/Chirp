@@ -1,4 +1,5 @@
-using System.Diagnostics;
+namespace Chirp.Tests;
+
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 

@@ -1,10 +1,9 @@
 namespace SimpleDB.Tests;
 
-
-public class CSVDatabaseTest
+public class CSVDatabaseIntegrationTest
 {
     [Fact]
-    public void IntegrationTest()
+    public void ReadWriteTest()
     {
         IDatabaseRepository<TestRecord> db = CSVDatabase<TestRecord>.Instance;
 
@@ -15,5 +14,3 @@ public class CSVDatabaseTest
 
     }
 }
-
-public record TestRecord(string name);
