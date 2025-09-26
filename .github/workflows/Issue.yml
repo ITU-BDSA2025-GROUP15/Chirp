@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       issue-url: ${{ steps.create.outputs.issue-url }}
+      issue-id: ${{ steps.create.outputs.issue-id }}
     steps:
       - name: Create issue with label
         id: create
@@ -27,6 +28,7 @@ jobs:
               labels: ['Feature']
             });
             core.setOutput("issue-url", issue.data.html_url);
+            core.setOutput("issue-id", issue.data.id);
 
   add-to-project:
     name: Add issue to project
@@ -37,4 +39,4 @@ jobs:
         with:
           project-url: https://github.com/orgs/ITU-BDSA2025-GROUP15/projects/1
           github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
-          content-id: ${{ needs.create-issue.outputs.issue-url }}
+          content-id: ${{ needs.create-issue.outputs.issue-id }}
