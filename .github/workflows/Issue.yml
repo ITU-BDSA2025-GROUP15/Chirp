@@ -9,12 +9,8 @@ jobs:
   create-issue:
     if: github.event.created == true
     runs-on: ubuntu-latest
-    outputs:
-      issue-url: ${{ steps.create.outputs.issue-url }}
-      issue-id: ${{ steps.create.outputs.issue-id }}
     steps:
       - name: Create issue with label
-        id: create
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -27,16 +23,3 @@ jobs:
               body: `An issue was automatically created for branch **${branch}**.`,
               labels: ['Feature']
             });
-            core.setOutput("issue-url", issue.data.html_url);
-            core.setOutput("issue-id", issue.data.node_id);
-
-  add-to-project:
-    name: Add issue to project
-    runs-on: ubuntu-latest
-    needs: create-issue
-    steps:
-      - uses: actions/add-to-project@v1.0.2
-        with:
-          project-url: https://github.com/orgs/ITU-BDSA2025-GROUP15/projects/1
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          content-id: ${{ needs.create-issue.outputs.issue-id }}
