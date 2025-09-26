@@ -28,7 +28,7 @@ jobs:
               labels: ['Feature']
             });
             core.setOutput("issue-url", issue.data.html_url);
-            core.setOutput("issue-id", issue.data.id);
+            core.setOutput("issue-id", issue.data.node_id);
 
   add-to-project:
     name: Add issue to project
