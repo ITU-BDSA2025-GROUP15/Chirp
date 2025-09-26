@@ -24,3 +24,11 @@ jobs:
             });
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  add-to-project:
+    name: Add issue to project
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/add-to-project@RELEASE_VERSION
+      with:
+          project-url: https://github.com/orgs/ITU-BDSA2025-GROUP15/projects/1
+          github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
