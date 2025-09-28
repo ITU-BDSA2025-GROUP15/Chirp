@@ -1,11 +1,13 @@
 namespace SimpleDB.Tests;
 
+[Collection("CSVDatabase")]
 public class CSVDatabaseIntegrationTest
 {
     [Fact]
     public void ReadWriteTest()
     {
         // Arrange
+        File.Delete("chirp_cli_db.csv");
         TestRecord test = new TestRecord("Test!!!!");
 
         // Act
