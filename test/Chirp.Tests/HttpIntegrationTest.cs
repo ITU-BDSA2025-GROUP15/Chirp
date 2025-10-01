@@ -1,10 +1,22 @@
-using System.Diagnostics;
+namespace Chirp.Tests;
+
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
 [Collection("Sequential")]
 public class HttpIntegrationTest
 {
+    public HttpClient GetClient()
+    {
+        var baseURL = "http://localhost:5086";
+        HttpClient client = new();
+        client.DefaultRequestHeaders.Accept.Clear();
+        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        client.BaseAddress = new Uri(baseURL);
+
+        return client;
+    }
+
     [Fact]
     public async void HTTPGET()
     {
@@ -12,17 +24,15 @@ public class HttpIntegrationTest
         var process = await TestUtils.startWebService();
         try
         {
-            var baseURL = "http://localhost:5086";
-            using HttpClient client = new();
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.BaseAddress = new Uri(baseURL);
+            // Act
+            var client = GetClient();
             var HTTPResponse = await client.GetAsync("cheeps");
 
-            Console.WriteLine(HTTPResponse);
-            Assert.Equal(200, (int)HTTPResponse.StatusCode);
-
+            int statusCode = (int)HTTPResponse.StatusCode;
             var cheep = await client.GetFromJsonAsync<IEnumerable<Cheep>>("cheeps");
+
+            // Assert
+            Assert.Equal(200, statusCode);
             Assert.NotNull(cheep);
         }
         finally
@@ -43,16 +53,14 @@ public class HttpIntegrationTest
         var process = await TestUtils.startWebService();
         try
         {
-            var baseURL = "http://localhost:5086";
-            using HttpClient client = new();
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.BaseAddress = new Uri(baseURL);
-
+            // Arrange
             var cheepjson = new Cheep("mig", "gyaatt", 0);
 
-            var cheep = await client.PostAsJsonAsync<Cheep>(baseURL + "/cheep", cheepjson);
-            Console.WriteLine("The cheep: " + cheep);
+            // Act
+            var client = GetClient();
+            var cheep = await client.PostAsJsonAsync<Cheep>("cheep", cheepjson);
+            
+            // Assert
             Assert.Equal(200, (int)cheep.StatusCode);
         }
         finally
