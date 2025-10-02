@@ -19,13 +19,31 @@ public class CheepService : ICheepService
 
     public List<CheepViewModel> GetCheeps()
     {
-        return DBFacade.ReadMessages();
+        var messages = DBFacade.ReadMessages();
+        return CheepListToCheepViewModelList(messages);
     }
 
     public List<CheepViewModel> GetCheepsFromAuthor(string author)
     {
-        // filter by the provided author name
-        return _cheeps.Where(x => x.Author == author).ToList();
+        var messages = DBFacade.ReadMessages(author);
+        return CheepListToCheepViewModelList(messages);
+    }
+
+    private static List<CheepViewModel> CheepListToCheepViewModelList(List<Cheep> cheeps)
+    {
+        var modelMessages = new List<CheepViewModel>();
+    
+        foreach (var cheep in cheeps)
+        {
+            var modelCheep = new CheepViewModel(
+                cheep.author,
+                cheep.message,
+                UnixTimeStampToDateTimeString(cheep.timestamp)
+            );
+            modelMessages.Add(modelCheep);
+        }
+
+        return modelMessages;
     }
 
     private static string UnixTimeStampToDateTimeString(double unixTimeStamp)
@@ -35,5 +53,4 @@ public class CheepService : ICheepService
         dateTime = dateTime.AddSeconds(unixTimeStamp);
         return dateTime.ToString("MM/dd/yy H:mm:ss");
     }
-
 }
