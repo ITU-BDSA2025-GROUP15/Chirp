@@ -4,7 +4,7 @@ namespace Chirp.Razor;
 
 public class DBFacade
 {
-    readonly static string sqlDBFilePath = "/tmp/chirp.db";
+    private readonly static string sqlDBFilePath = Path.Combine(Path.GetTempPath(), "chirp.db");
 
     private static SqliteConnection GetConnection()
     {
@@ -38,7 +38,6 @@ public class DBFacade
             WHERE us.username = '{author}'
             ORDER by me.pub_date desc";
         }
-
         using (var connection = GetConnection())
         {
             connection.Open();
