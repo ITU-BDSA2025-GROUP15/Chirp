@@ -18,6 +18,11 @@ public class DBFacade
         return ReadMessages(null, null);
     }
 
+    public static List<Cheep> ReadMessages(int? pages)
+    {
+        return ReadMessages(null, pages);
+    }
+
     public static List<Cheep> ReadMessages(string? author)
     {
         return ReadMessages(author, null);
@@ -25,7 +30,7 @@ public class DBFacade
 
     public static List<Cheep> ReadMessages(string? author, int? pages)
     {
-        int postsPerPage = 5;
+        int postsPerPage = 32;
 
         string sqlQuery = $@"
         SELECT us.username, me.text, me.pub_date 
