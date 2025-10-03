@@ -92,7 +92,7 @@ public class CheepServiceTest
 
         // Assert
         Assert.NotNull(messagesUser);
-        Assert.Equal(32,messagesUser.Count());
+        Assert.Equal(32, messagesUser.Count());
         Assert.NotEqual(messagesUser, messages);
         foreach (CheepViewModel cheep in messagesUser)
         {
@@ -114,7 +114,7 @@ public class CheepServiceTest
 
         // Assert
         Assert.NotNull(messagesUserPage2); // 
-        Assert.Equal(32,messagesUserPage2.Count());
+        Assert.Equal(32, messagesUserPage2.Count());
         Assert.NotEqual(messagesUserPage2, messagesUser);
 
         foreach (CheepViewModel cheep in messagesUserPage2)
@@ -122,8 +122,9 @@ public class CheepServiceTest
             Assert.Equal("Jacqualine Gilcoine", cheep.Author);
         }
     }
+
     [Fact]
-    public void ReadMessages_NonexistingUser()
+    public void ReadMessages_NonExistingUser()
     {
         // Arrange
         SetupTestDb();
@@ -133,13 +134,21 @@ public class CheepServiceTest
         var messagesUser = service.GetCheepsFromAuthor("This user does not exist");
 
         // Assert
-        Assert.NotNull(messagesUser); // 
         Assert.Empty(messagesUser);
-        Assert.NotEqual(messagesUser, messagesUser);
-
-        foreach (CheepViewModel cheep in messagesUser)
-        {
-            Assert.Equal("Jacqualine Gilcoine", cheep.Author);
-        }
     }
+
+    [Fact]
+    public void ReadMessages_NonExistingPage()
+    {
+        // Arrange
+        SetupTestDb();
+        CheepService service = new CheepService();
+
+        // Act
+        var messagesUser = service.GetCheeps(1000000000);
+
+        // Assert
+        Assert.Empty(messagesUser);
+    }
+
 }
