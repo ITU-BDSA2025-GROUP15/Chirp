@@ -15,29 +15,33 @@ public class DBFacade
 
     public static List<Cheep> ReadMessages()
     {
-        return ReadMessages(null);
+        return ReadMessages(null, null);
+    }
+
+    public static List<Cheep> ReadMessages(int? pages)
+    {
+        return ReadMessages(null, pages);
     }
 
     public static List<Cheep> ReadMessages(string? author)
     {
-        string sqlQuery;
-        if (author == null)
-        {
-            sqlQuery = @"
-            SELECT us.username, me.text, me.pub_date 
-            FROM message me 
-            JOIN user us ON me.author_id = us.user_id 
-            ORDER by me.pub_date desc";
-        }
-        else
-        {
-            sqlQuery = $@"
-            SELECT us.username, me.text, me.pub_date 
-            FROM message me 
-            JOIN user us ON me.author_id = us.user_id 
-            WHERE us.username = '{author}'
-            ORDER by me.pub_date desc";
-        }
+        return ReadMessages(author, null);
+    }
+
+    public static List<Cheep> ReadMessages(string? author, int? pages)
+    {
+        int postsPerPage = 32;
+
+        string sqlQuery = $@"
+        SELECT us.username, me.text, me.pub_date 
+        FROM message me 
+        JOIN user us ON me.author_id = us.user_id 
+        {(author != null ? $"WHERE us.username = '{author}'" : "")}
+        ORDER by me.pub_date desc
+        LIMIT {postsPerPage} 
+        {(pages != null ? $"OFFSET {(pages - 1) * postsPerPage}" : "")}";
+
+
         using (var connection = GetConnection())
         {
             connection.Open();
