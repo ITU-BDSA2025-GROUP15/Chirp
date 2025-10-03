@@ -5,8 +5,9 @@ namespace Chirp.Razor;
 public class DBFacade
 {
     private readonly static string sqlDBFilePath = Path.Combine(Path.GetTempPath(), "chirp.db");
+    private readonly static int defaultLimit = 32;
 
-    private static SqliteConnection GetConnection()
+    public static SqliteConnection GetConnection()
     {
         var path = Environment.GetEnvironmentVariable("CHIRPDBPATH") ?? sqlDBFilePath;
 
@@ -15,31 +16,38 @@ public class DBFacade
 
     public static List<Cheep> ReadMessages()
     {
-        return ReadMessages(null, null);
+        return ReadMessages(null, null, defaultLimit);
     }
 
     public static List<Cheep> ReadMessages(int? pages)
     {
-        return ReadMessages(null, pages);
+        return ReadMessages(null, pages, defaultLimit);
+    }
+    public static List<Cheep> ReadMessages(int? pages, int? limit)
+    {
+        return ReadMessages(null, pages, limit);
     }
 
     public static List<Cheep> ReadMessages(string? author)
     {
-        return ReadMessages(author, null);
+        return ReadMessages(author, null, defaultLimit);
     }
 
     public static List<Cheep> ReadMessages(string? author, int? pages)
     {
-        int postsPerPage = 32;
+        return ReadMessages(author, pages, defaultLimit);
+    }
 
+    public static List<Cheep> ReadMessages(string? author, int? pages, int? limit)
+    {
         string sqlQuery = $@"
         SELECT us.username, me.text, me.pub_date 
         FROM message me 
         JOIN user us ON me.author_id = us.user_id 
         {(author != null ? $"WHERE us.username = '{author}'" : "")}
         ORDER by me.pub_date desc
-        LIMIT {postsPerPage} 
-        {(pages != null ? $"OFFSET {(pages - 1) * postsPerPage}" : "")}";
+        {(limit != null ? $"LIMIT {limit}" : "")} 
+        {(pages != null && limit != null ? $"OFFSET {(pages - 1) * limit}" : "")}";
 
 
         using (var connection = GetConnection())

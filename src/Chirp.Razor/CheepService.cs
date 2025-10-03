@@ -43,7 +43,7 @@ public class CheepService : ICheepService
         return CheepListToCheepViewModelList(messages);
     }
 
-    private static List<CheepViewModel> CheepListToCheepViewModelList(List<Cheep> cheeps)
+    public static List<CheepViewModel> CheepListToCheepViewModelList(List<Cheep> cheeps)
     {
         var modelMessages = new List<CheepViewModel>();
 
@@ -60,7 +60,7 @@ public class CheepService : ICheepService
         return modelMessages;
     }
 
-    private static string UnixTimeStampToDateTimeString(double unixTimeStamp)
+    public static string UnixTimeStampToDateTimeString(double unixTimeStamp)
     {
         // Unix timestamp is seconds past epoch
         DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
