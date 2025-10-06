@@ -18,8 +18,8 @@ public class DBFacade
 
     private static void CreateDb()
     {
-        ExecuteSqlFromEmbeddedResource("Chirp.Razor.schema.sql");
-        ExecuteSqlFromEmbeddedResource("Chirp.Razor.dump.sql");
+        ExecuteSqlFromEmbeddedResource("Chirp.Razor.data.schema.sql");
+        ExecuteSqlFromEmbeddedResource("Chirp.Razor.data.dump.sql");
     }
 
     private static void ExecuteSqlFromEmbeddedResource(string path)
