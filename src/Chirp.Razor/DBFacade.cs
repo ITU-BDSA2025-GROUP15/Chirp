@@ -1,3 +1,5 @@
+using System.Reflection;
+
 using Microsoft.Data.Sqlite;
 
 namespace Chirp.Razor;
@@ -12,6 +14,33 @@ public class DBFacade
         var path = Environment.GetEnvironmentVariable("CHIRPDBPATH") ?? sqlDBFilePath;
 
         return new SqliteConnection($"Data Source={path}");
+    }
+
+    private static void CreateDb()
+    {
+        ExecuteSqlFromEmbeddedResource("Chirp.Razor.schema.sql");
+        ExecuteSqlFromEmbeddedResource("Chirp.Razor.dump.sql");
+    }
+
+    private static void ExecuteSqlFromEmbeddedResource(string path)
+    {
+        // get the commands
+        var assembly = Assembly.GetEntryAssembly()!;
+        var stream = assembly.GetManifestResourceStream(path)!;
+        var reader = new StreamReader(stream);
+
+        var cmds = reader.ReadToEnd();
+
+
+        using (var connection = GetConnection())
+        {
+            connection.Open();
+
+            var command = connection.CreateCommand();
+            command.CommandText = cmds;
+
+            command.ExecuteNonQuery();
+        }
     }
 
     public static List<Cheep> ReadMessages()
@@ -40,6 +69,9 @@ public class DBFacade
 
     public static List<Cheep> ReadMessages(string? author, int? pages, int? limit)
     {
+        var path = Environment.GetEnvironmentVariable("CHIRPDBPATH") ?? sqlDBFilePath;
+        if (!File.Exists(path)) CreateDb();
+
         string sqlQuery = $@"
         SELECT us.username, me.text, me.pub_date 
         FROM message me 
