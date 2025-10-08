@@ -1,18 +1,15 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.CLI.Client", "src\Chirp.CLI.Client\Chirp.CLI.Client.csproj", "{F79E6CBF-2FCC-4F7E-A0AC-EEDF5A287553}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{9F88F4DA-55E3-46B8-95F5-2586FE1357DA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleDB.Tests", "test\SimpleDB.Tests\SimpleDB.Tests.csproj", "{E288F087-6C76-4972-9810-7FD88530875F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.Tests", "test\Chirp.Tests\Chirp.Tests.csproj", "{60E35E5E-6FC1-4535-91AC-03408FE2817E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{304C7E5C-B6B5-41CF-83AA-D68A27BB83D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.CSVDBService", "src\Chirp.CSVDBService\Chirp.CSVDBService.csproj", "{02911A2E-97CC-4D65-B979-A24DC445F8BE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chirp.Razor", "src\Chirp.Razor\Chirp.Razor.csproj", "{2B2A0A94-3954-4B9F-9E46-654D38769986}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Razor.Tests", "test\Razor.Tests\Razor.Tests.csproj", "{4A7C92A6-E98D-40BE-A28A-C74BEEED4CCE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,33 +17,23 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F79E6CBF-2FCC-4F7E-A0AC-EEDF5A287553}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F79E6CBF-2FCC-4F7E-A0AC-EEDF5A287553}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F79E6CBF-2FCC-4F7E-A0AC-EEDF5A287553}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F79E6CBF-2FCC-4F7E-A0AC-EEDF5A287553}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E288F087-6C76-4972-9810-7FD88530875F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E288F087-6C76-4972-9810-7FD88530875F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E288F087-6C76-4972-9810-7FD88530875F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E288F087-6C76-4972-9810-7FD88530875F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{60E35E5E-6FC1-4535-91AC-03408FE2817E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{60E35E5E-6FC1-4535-91AC-03408FE2817E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{60E35E5E-6FC1-4535-91AC-03408FE2817E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{60E35E5E-6FC1-4535-91AC-03408FE2817E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{02911A2E-97CC-4D65-B979-A24DC445F8BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{02911A2E-97CC-4D65-B979-A24DC445F8BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{02911A2E-97CC-4D65-B979-A24DC445F8BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{02911A2E-97CC-4D65-B979-A24DC445F8BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B2A0A94-3954-4B9F-9E46-654D38769986}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B2A0A94-3954-4B9F-9E46-654D38769986}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B2A0A94-3954-4B9F-9E46-654D38769986}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B2A0A94-3954-4B9F-9E46-654D38769986}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A7C92A6-E98D-40BE-A28A-C74BEEED4CCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A7C92A6-E98D-40BE-A28A-C74BEEED4CCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A7C92A6-E98D-40BE-A28A-C74BEEED4CCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A7C92A6-E98D-40BE-A28A-C74BEEED4CCE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2B2A0A94-3954-4B9F-9E46-654D38769986} = {304C7E5C-B6B5-41CF-83AA-D68A27BB83D6}
+		{4A7C92A6-E98D-40BE-A28A-C74BEEED4CCE} = {9F88F4DA-55E3-46B8-95F5-2586FE1357DA}
+	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0597C00A-75D2-4585-87BB-8CEB989D4245}
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{E288F087-6C76-4972-9810-7FD88530875F} = {9F88F4DA-55E3-46B8-95F5-2586FE1357DA}
-		{60E35E5E-6FC1-4535-91AC-03408FE2817E} = {9F88F4DA-55E3-46B8-95F5-2586FE1357DA}
-		{02911A2E-97CC-4D65-B979-A24DC445F8BE} = {304C7E5C-B6B5-41CF-83AA-D68A27BB83D6}
-		{F79E6CBF-2FCC-4F7E-A0AC-EEDF5A287553} = {304C7E5C-B6B5-41CF-83AA-D68A27BB83D6}
 	EndGlobalSection
 EndGlobal

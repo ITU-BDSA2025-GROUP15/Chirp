@@ -7,11 +7,9 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <IsPublishable>false</IsPublishable>
   </PropertyGroup>
 
   <ItemGroup>
-  <PackageReference Include="CsvHelper" Version="33.1.0" />
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="xunit" Version="2.5.3" />
@@ -23,8 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Chirp.CLI.Client\Chirp.CLI.Client.csproj" />
-    <ProjectReference Include="..\..\src\Chirp.CSVDBService\Chirp.CSVDBService.csproj" />
+    <ProjectReference Include="..\..\src\Chirp.Razor\Chirp.Razor.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,154 @@
+using Chirp.Razor;
+
+namespace Razor.Tests;
+
+public class CheepServiceTest
+{
+
+    private void SetupTestDb() //this is also in DBFacadeTest. Make test utils
+    {
+        var tempFilePath = Path.GetTempFileName();
+        var testDb = File.ReadAllBytes("../../../chirp-test.db");
+        File.WriteAllBytes(tempFilePath, testDb);
+        Environment.SetEnvironmentVariable("CHIRPDBPATH", tempFilePath);
+    }
+
+    [Theory]
+    [InlineData(100)]
+    public void TimeConversionTest(int a)
+    {
+        // Arrange
+        var answer = DateTimeOffset.FromUnixTimeSeconds(a)
+                                .ToString("MM/dd/yy H:mm:ss");
+
+        // Act
+        var result = CheepService.UnixTimeStampToDateTimeString(a);
+
+        // Assert
+        Assert.Equal(answer, result);
+    }
+
+    [Theory]
+    [InlineData("test", "testing", 100)]
+    public void CheepListToCheepViewModelListTest(string a, string b, int c)
+    {
+        //Arrange
+        List<Cheep> cheeps = [new Cheep(a, b, c), new Cheep(b, a, c)];
+        List<CheepViewModel> expectedViewModel = [new CheepViewModel(a, b, CheepService.UnixTimeStampToDateTimeString(c)), new CheepViewModel(b, a, CheepService.UnixTimeStampToDateTimeString(c))];
+
+        // Act
+        List<CheepViewModel> viewModel = CheepService.CheepListToCheepViewModelList(cheeps);
+
+        //Assert
+        Assert.Equal(expectedViewModel, viewModel);
+    }
+
+    [Fact]
+    public void ReadMessages_ReturnsFirstPage()
+    {
+        // Arrange
+        SetupTestDb();
+        CheepService service = new CheepService();
+
+
+        // Act
+        var messages = service.GetCheeps();
+        var messagesPage1 = service.GetCheeps(1);
+
+        // Assert
+        Assert.NotNull(messages);
+        Assert.Equal(32, messages.Count());
+        Assert.Equal(messagesPage1, messages);
+    }
+
+    [Fact]
+    public void ReadMessages_SpecificPage()
+    {
+        // Arrange
+        SetupTestDb();
+        CheepService service = new CheepService();
+
+
+        // Act
+        var messagePage1 = service.GetCheeps(1);
+        var messagesPage2 = service.GetCheeps(2);
+
+        // Assert
+        Assert.NotNull(messagePage1);
+        Assert.Equal(32, messagesPage2.Count());
+        Assert.NotEqual(messagePage1, messagesPage2);
+    }
+
+    [Fact]
+    public void ReadMessages_SpecificUser()
+    {
+        // Arrange
+        SetupTestDb();
+        CheepService service = new CheepService();
+
+        // Act
+        var messagesUser = service.GetCheepsFromAuthor("Jacqualine Gilcoine");
+        var messages = service.GetCheeps();
+
+        // Assert
+        Assert.NotNull(messagesUser);
+        Assert.Equal(32, messagesUser.Count());
+        Assert.NotEqual(messagesUser, messages);
+        foreach (CheepViewModel cheep in messagesUser)
+        {
+            Assert.Equal("Jacqualine Gilcoine", cheep.Author);
+        }
+
+    }
+
+    [Fact]
+    public void ReadMessages_SpecificUserAndPage()
+    {
+        // Arrange
+        SetupTestDb();
+        CheepService service = new CheepService();
+
+        // Act
+        var messagesUser = service.GetCheepsFromAuthor("Jacqualine Gilcoine");
+        var messagesUserPage2 = service.GetCheepsFromAuthor("Jacqualine Gilcoine", 2);
+
+        // Assert
+        Assert.NotNull(messagesUserPage2); // 
+        Assert.Equal(32, messagesUserPage2.Count());
+        Assert.NotEqual(messagesUserPage2, messagesUser);
+
+        foreach (CheepViewModel cheep in messagesUserPage2)
+        {
+            Assert.Equal("Jacqualine Gilcoine", cheep.Author);
+        }
+    }
+
+    [Fact]
+    public void ReadMessages_NonExistingUser()
+    {
+        // Arrange
+        SetupTestDb();
+        CheepService service = new CheepService();
+
+        // Act
+        var messagesUser = service.GetCheepsFromAuthor("This user does not exist");
+
+        // Assert
+        Assert.Empty(messagesUser);
+    }
+
+    [Fact]
+    public void ReadMessages_NonExistingPage()
+    {
+        // Arrange
+        SetupTestDb();
+        CheepService service = new CheepService();
+
+        // Act
+        var messagesUser = service.GetCheeps(1000000000);
+
+        // Assert
+        Assert.Empty(messagesUser);
+    }
+
+}
