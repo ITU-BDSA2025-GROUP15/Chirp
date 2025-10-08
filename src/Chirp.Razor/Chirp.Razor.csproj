@@ -10,4 +10,9 @@
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.8" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="data/schema.sql" />
+    <EmbeddedResource Include="data/dump.sql" />
+  </ItemGroup>
+
 </Project>
