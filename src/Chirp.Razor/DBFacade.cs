@@ -95,16 +95,16 @@ public class DBFacade
             {
                 // See https://learn.microsoft.com/en-us/dotnet/api/system.data.sqlclient.sqldatareader.getvalues?view=dotnet-plat-ext-8.0
                 // for documentation on how to retrieve complete columns from query results
-                var cheep = new Cheep(
-                    reader.GetString(0),
-                    reader.GetString(1),
-                    reader.GetInt64(2)
-                );
+                var cheep = new Cheep()
+                {
+                    author = new Author() { name = reader.GetString(0) },
+                    text = reader.GetString(1),
+                    timestamp = Convert.ToDateTime(CheepService.UnixTimeStampToDateTimeString(reader.GetInt64(2)))
+                };
                 result.Add(cheep);
             }
             return result;
         }
     }
 }
-
-public record Cheep(string author, string message, long timestamp);
+//public record Cheep(string author, string message, long timestamp);

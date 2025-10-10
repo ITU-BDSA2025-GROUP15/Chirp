@@ -1,7 +1,10 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 
-class Cheep
+public class Cheep
 {
-    string Text;
-    DateTime Timestamp;
+    public string text { get; set; }
+    public DateTime timestamp { get; set; }
+    [Required]
+    public required Author author { get; set; }
 }

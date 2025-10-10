@@ -1,5 +1,6 @@
 public class Author
 {
-    string Name;
-    string Email;
+    public string name { get; set; }
+    public string? email { get; set; }
+    public List<Cheep>? cheeps { get; set; }
 }
