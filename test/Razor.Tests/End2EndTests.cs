@@ -1,41 +1,18 @@
 using System.Diagnostics;
 
+using Xunit.Abstractions;
+
 
 public class End2EndTests
 {
     public readonly string Razor_path = "src/Chirp.Razor/Chirp.Razor.csproj";
 
-    // public async Task<Process> startRazorPage()
-    // {
-    //     Process process = new Process();
-    //     process.StartInfo.FileName = "dotnet";
-    //     process.StartInfo.Arguments = $"run --project ../../../../../{Razor_path}";
-    //     process.StartInfo.UseShellExecute = false;
-    //     process.StartInfo.RedirectStandardOutput = true;
-    //     process.Start();
+    private readonly ITestOutputHelper _output;
 
-    //     var baseURL = "http://localhost:5273";
-    //     using HttpClient client = new();
-    //     client.BaseAddress = new Uri(baseURL);
-
-    //     int max_retries = 10;
-    //     for (int i = 0; i < max_retries; i++)
-    //     {
-    //         try
-    //         {
-    //             var HTTPResponse = await client.GetAsync("");
-    //             break;
-    //         }
-    //         catch (Exception)
-    //         {
-    //             Thread.Sleep(10000);
-    //         }
-    //     }
-
-    //     return process;
-    // }
-
-
+    public End2EndTests(ITestOutputHelper output)
+    {
+        _output = output;
+    }
 
     [Fact]
     public async void End2End()
@@ -79,6 +56,8 @@ public class End2EndTests
                 Assert.Contains("It is asking much of it in the world.", responseBodyPage2); //cheep on page 2
                 Assert.Contains("Jacqualine Gilcoine", responseBodyPage2);
                 Assert.NotEqual(responseBodyPageDefault, responseBodyPage2); //page 1 and 2 not equal
+
+                _output.WriteLine(responseBodyUser);
 
                 Assert.Contains(@"<strong>
                             <a href=""/Adrian"">Adrian</a>
