@@ -50,9 +50,9 @@ public class CheepService : ICheepService
         foreach (var cheep in cheeps)
         {
             var modelCheep = new CheepViewModel(
-                cheep.author.name,
-                cheep.text,
-                cheep.timestamp.ToString()
+                cheep.Author.Name,
+                cheep.Text,
+                cheep.TimeStamp.ToString()
             );
             modelMessages.Add(modelCheep);
         }

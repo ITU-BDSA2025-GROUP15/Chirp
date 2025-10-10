@@ -97,9 +97,9 @@ public class DBFacade
                 // for documentation on how to retrieve complete columns from query results
                 var cheep = new Cheep()
                 {
-                    author = new Author() { name = reader.GetString(0) },
-                    text = reader.GetString(1),
-                    timestamp = Convert.ToDateTime(CheepService.UnixTimeStampToDateTimeString(reader.GetInt64(2)))
+                    Author = new Author() { Name = reader.GetString(0) },
+                    Text = reader.GetString(1),
+                    TimeStamp = Convert.ToDateTime(CheepService.UnixTimeStampToDateTimeString(reader.GetInt64(2)))
                 };
                 result.Add(cheep);
             }

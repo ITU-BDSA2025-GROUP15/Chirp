@@ -3,8 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 public class Cheep
 {
-    public string text { get; set; }
-    public DateTime timestamp { get; set; }
+    public int CheepId;
+    public string Text { get; set; }
+    public DateTime TimeStamp { get; set; }
     [Required]
-    public required Author author { get; set; }
+    public required Author Author { get; set; }
 }
