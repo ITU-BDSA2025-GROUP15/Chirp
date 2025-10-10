@@ -22,13 +22,13 @@ public class DBFacadeUnitTest
         }
     }
 
-    private void SetupTestDb()
-    {
-        var tempFilePath = Path.GetTempFileName();
-        var testDb = File.ReadAllBytes("../../../chirp-test.db");
-        File.WriteAllBytes(tempFilePath, testDb);
-        Environment.SetEnvironmentVariable("CHIRPDBPATH", tempFilePath);
-    }
+    // private void SetupTestDb()
+    // {
+    //     var tempFilePath = Path.GetTempFileName();
+    //     var testDb = File.ReadAllBytes("../../../chirp-test.db");
+    //     File.WriteAllBytes(tempFilePath, testDb);
+    //     Environment.SetEnvironmentVariable("CHIRPDBPATH", tempFilePath);
+    // }
     
     [Fact]
     public void GetConnection_UsesDefaultDataSource()
@@ -66,7 +66,7 @@ public class DBFacadeUnitTest
     public void ReadMessages_ReturnsFirstPage()
     {
         // Arrange
-        SetupTestDb();
+        TestUtils.SetupTestDb();
 
         // Act
         var messages = DBFacade.ReadMessages();
@@ -80,7 +80,7 @@ public class DBFacadeUnitTest
     public void ReadMessages_WithPageArgument_ReturnsFirstPage()
     {
         // Arrange
-        SetupTestDb();
+        TestUtils.SetupTestDb();
 
         // Act
         var messages = DBFacade.ReadMessages();
@@ -96,7 +96,7 @@ public class DBFacadeUnitTest
     [MemberData(nameof(RandomNumber))]
     private void ReadMessages_ReturnsPage(int pageNumber) {
         // Arrange
-        SetupTestDb();
+        TestUtils.SetupTestDb();
 
         // Act
         var messages = DBFacade.ReadMessages(1,null);
