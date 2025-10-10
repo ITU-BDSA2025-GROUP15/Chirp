@@ -7,13 +7,6 @@ public class End2EndTests
 {
     public readonly string Razor_path = "src/Chirp.Razor/Chirp.Razor.csproj";
 
-    private readonly ITestOutputHelper _output;
-
-    public End2EndTests(ITestOutputHelper output)
-    {
-        _output = output;
-    }
-
     [Fact]
     public async void End2End()
     {
@@ -56,8 +49,6 @@ public class End2EndTests
                 Assert.Contains("It is asking much of it in the world.", responseBodyPage2); //cheep on page 2
                 Assert.Contains("Jacqualine Gilcoine", responseBodyPage2);
                 Assert.NotEqual(responseBodyPageDefault, responseBodyPage2); //page 1 and 2 not equal
-
-                _output.WriteLine(responseBodyUser);
 
                 Assert.Contains(@"<strong>
                             <a href=""/Adrian"">Adrian</a>
