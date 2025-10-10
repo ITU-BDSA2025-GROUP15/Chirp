@@ -63,7 +63,7 @@ public class End2EndTests
                             <a href=""/Adrian"">Adrian</a>
                         </strong>
                         Hej, velkommen til kurset.
-                        <small>&mdash; 08/01/23 13:08:28</small>"
+                        <small>&mdash; 08/01/23"
                         , responseBodyUser);
                 Assert.DoesNotContain("Jacqualine Gilcoine", responseBodyUser);
 
