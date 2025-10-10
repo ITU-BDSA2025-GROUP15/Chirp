@@ -5,14 +5,6 @@ namespace Razor.Tests;
 public class CheepServiceTest
 {
 
-    // private void SetupTestDb() //this is also in DBFacadeTest. Make test utils
-    // {
-    //     var tempFilePath = Path.GetTempFileName();
-    //     var testDb = File.ReadAllBytes("../../../chirp-test.db");
-    //     File.WriteAllBytes(tempFilePath, testDb);
-    //     Environment.SetEnvironmentVariable("CHIRPDBPATH", tempFilePath);
-    // }
-
     [Theory]
     [InlineData(100)]
     public void TimeConversionTest(int a)
