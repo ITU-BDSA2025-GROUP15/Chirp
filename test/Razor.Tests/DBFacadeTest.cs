@@ -83,12 +83,7 @@ public class DBFacadeUnitTest
         // Assert
         Assert.NotNull(messages);
         Assert.NotNull(messages_arg);
-        for (int i = 0; i < messages.Count; i++)
-        {
-            Assert.Equal(messages[i].Author.Name, messages_arg[i].Author.Name);
-            Assert.Equal(messages[i].Text, messages_arg[i].Text);
-            Assert.Equal(messages[i].TimeStamp.ToString(), messages_arg[i].TimeStamp.ToString());
-        }
+        TestUtils.AssertCheepListsEqual(messages, messages_arg);
     }
 
     [Theory]
@@ -109,6 +104,6 @@ public class DBFacadeUnitTest
         }
 
         // Assert
-        Assert.Equal(messages_slice,messages_pages);
+        TestUtils.AssertCheepListsEqual(messages_slice,messages_pages);
     }
 }
