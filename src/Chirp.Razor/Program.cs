@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Use environment variable or fallback path for SQLite DB
-var sqlDBFilePath = "data/chirp.sqlite"; // Default fallback path
+var sqlDBFilePath = Path.Combine(Path.GetTempPath(), "chirp.db"); // Default fallback path
 var path = Environment.GetEnvironmentVariable("CHIRPDBPATH") ?? sqlDBFilePath;
 var connectionString = $"Data Source={path}";
 builder.Services.AddDbContext<ChirpDBContext>(options => options.UseSqlite(connectionString));
@@ -19,6 +19,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ChirpDBContext>();
+    db.Database.Migrate();
     DbInitializer.SeedDatabase(db);
 }
 

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 public class Cheep
 {
-    public int CheepId;
+    public int CheepId { get; set; }
     public string Text { get; set; }
     public DateTime TimeStamp { get; set; }
     [Required]

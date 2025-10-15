@@ -27,7 +27,7 @@ public static class TestUtils
             }
             catch (Exception)
             {
-                Thread.Sleep(1000);
+                Thread.Sleep(10000);
             }
         }
 
