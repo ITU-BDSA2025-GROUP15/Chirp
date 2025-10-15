@@ -53,4 +53,15 @@ public static class TestUtils
             Assert.Equal(expected[i].TimeStamp.ToString(), actual[i].TimeStamp.ToString());
         }
     }
+
+    public static void AssertCheepDTOListsEqual(List<CheepDTO> expected, List<CheepDTO> actual)
+    {
+        Assert.Equal(expected.Count, actual.Count);
+        for (int i = 0; i < expected.Count; i++)
+        {
+            Assert.Equal(expected[i].Author, actual[i].Author);
+            Assert.Equal(expected[i].Message, actual[i].Message);
+            Assert.Equal(expected[i].Timestamp, actual[i].Timestamp);
+        }
+    }
 }
