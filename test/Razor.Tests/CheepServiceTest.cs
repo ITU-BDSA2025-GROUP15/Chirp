@@ -4,7 +4,6 @@ namespace Razor.Tests;
 
 public class CheepServiceTest
 {
-
     [Theory]
     [InlineData(100)]
     public void TimeConversionTest(int a)
@@ -142,5 +141,46 @@ public class CheepServiceTest
         // Assert
         Assert.Empty(messagesUser);
     }
+        //""""""""""""""""""""""""""""""""""""""""""""
+    [Theory]
+    [MemberData(nameof(FuzzData.Timestamps), MemberType = typeof(FuzzData))]
+    public void UnixTimeStampToDateTimeString_FuzzedInput_DoesNotThrow(long timestamp)
+    {
+        // Act
+        var randomUnitTimeStamp = Record.Exception(() => CheepService.UnixTimeStampToDateTimeString(timestamp));
 
+        // Assert
+        Assert.Null(randomUnitTimeStamp);
+    }
+
+    [Theory]
+    [MemberData(nameof(FuzzData.Strings), MemberType = typeof(FuzzData))]
+    public void GetCheepsFromAuthor_FuzzedInputs_DoesNotThrow(string? author)
+    {
+        // Arrange
+        TestUtils.SetupTestDb();
+        var service = new CheepService();
+
+        // Act
+        //                                                                  I want null!
+        var RandomAuthor = Record.Exception(() => service.GetCheepsFromAuthor(author));
+
+        // Assert
+        Assert.Null(RandomAuthor);
+    }
+
+    [Theory]
+    [MemberData(nameof(FuzzData.Strings), MemberType = typeof(FuzzData))]
+    public void CheepListToCheepViewModelList_FuzzedInputs_DoesNotThrow(string? text)
+    {
+        // Arrange
+        //                                       Let there be null
+        var cheeps = new List<Cheep> { new Cheep(text, text, 100) };
+
+        // Act
+        var RandomCheep = Record.Exception(() => CheepService.CheepListToCheepViewModelList(cheeps));
+
+        // Assert
+        Assert.Null(RandomCheep);
+    }
 }
