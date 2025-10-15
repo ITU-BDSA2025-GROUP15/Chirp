@@ -52,7 +52,7 @@ public class CheepService : ICheepService
             var modelCheep = new CheepViewModel(
                 cheep.Author.Name,
                 cheep.Text,
-                cheep.TimeStamp.ToString()
+               CheepService.UnixTimeStampToDateTimeString(((DateTimeOffset)cheep.TimeStamp).ToUnixTimeSeconds())
             );
             modelMessages.Add(modelCheep);
         }

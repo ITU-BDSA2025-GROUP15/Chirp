@@ -12,6 +12,7 @@ public class DBFacade
     public static SqliteConnection GetConnection()
     {
         var path = Environment.GetEnvironmentVariable("CHIRPDBPATH") ?? sqlDBFilePath;
+        var connectionString = $"Data Source={path}";
 
         return new SqliteConnection($"Data Source={path}");
     }
