@@ -144,7 +144,7 @@ public class CheepServiceTest
         //""""""""""""""""""""""""""""""""""""""""""""
     [Theory]
     [MemberData(nameof(FuzzData.Timestamps), MemberType = typeof(FuzzData))]
-    public void UnixTimeStampToDateTimeString_FuzzedInput_DoesNotThrow(long timestamp)
+    public void Timestamptest_FuzzedInput(long timestamp)
     {
         // Act
         var randomUnitTimeStamp = Record.Exception(() => CheepService.UnixTimeStampToDateTimeString(timestamp));
@@ -155,7 +155,7 @@ public class CheepServiceTest
 
     [Theory]
     [MemberData(nameof(FuzzData.Strings), MemberType = typeof(FuzzData))]
-    public void GetCheepsFromAuthor_FuzzedInputs_DoesNotThrow(string? author)
+    public void GetCheepsFromAuthor_FuzzedInputs(string? author)
     {
         // Arrange
         TestUtils.SetupTestDb();
@@ -171,7 +171,7 @@ public class CheepServiceTest
 
     [Theory]
     [MemberData(nameof(FuzzData.Strings), MemberType = typeof(FuzzData))]
-    public void CheepListToCheepViewModelList_FuzzedInputs_DoesNotThrow(string? text)
+    public void CheepListToCheepViewModelList_FuzzedInputs(string? text)
     {
         // Arrange
         //                                       Let there be null
