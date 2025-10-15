@@ -25,7 +25,17 @@ public class CheepServiceTest
     public void CheepListToCheepViewModelListTest(string a, string b, int c)
     {
         //Arrange
-        List<Cheep> cheeps = [new Cheep(a, b, c), new Cheep(b, a, c)];
+        List<Cheep> cheeps = [
+            new Cheep() {
+                Author = new Author() {Name = a},
+                Text = b,
+                TimeStamp = DateTimeOffset.FromUnixTimeSeconds(c).UtcDateTime
+            },
+            new Cheep() {
+                Author = new Author() {Name = b},
+                Text = a,
+                TimeStamp = DateTimeOffset.FromUnixTimeSeconds(c).UtcDateTime
+            }];
         List<CheepViewModel> expectedViewModel = [new CheepViewModel(a, b, CheepService.UnixTimeStampToDateTimeString(c)), new CheepViewModel(b, a, CheepService.UnixTimeStampToDateTimeString(c))];
 
         // Act
