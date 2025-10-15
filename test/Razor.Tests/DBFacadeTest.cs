@@ -7,27 +7,21 @@ namespace Razor.Tests;
 [Collection("Sequential")]
 public class DBFacadeUnitTest
 {
-    public static IEnumerable<object[]> RandomNumber {
-        get {
+    public static IEnumerable<object[]> RandomNumber
+    {
+        get
+        {
             Random rnd = new Random();
             var number_list = new List<object[]>();
 
             var count = 100;
             for (int i = 0; i < count; i++)
             {
-                number_list.Add([rnd.Next(1, 100)]);   
+                number_list.Add([rnd.Next(1, 100)]);
             }
 
             return number_list;
         }
-    }
-
-    private void SetupTestDb()
-    {
-        var tempFilePath = Path.GetTempFileName();
-        var testDb = File.ReadAllBytes("../../../chirp-test.db");
-        File.WriteAllBytes(tempFilePath, testDb);
-        Environment.SetEnvironmentVariable("CHIRPDBPATH", tempFilePath);
     }
     
     [Fact]
@@ -66,7 +60,7 @@ public class DBFacadeUnitTest
     public void ReadMessages_ReturnsFirstPage()
     {
         // Arrange
-        SetupTestDb();
+        TestUtils.SetupTestDb();
 
         // Act
         var messages = DBFacade.ReadMessages();
@@ -80,7 +74,7 @@ public class DBFacadeUnitTest
     public void ReadMessages_WithPageArgument_ReturnsFirstPage()
     {
         // Arrange
-        SetupTestDb();
+        TestUtils.SetupTestDb();
 
         // Act
         var messages = DBFacade.ReadMessages();
@@ -96,7 +90,7 @@ public class DBFacadeUnitTest
     [MemberData(nameof(RandomNumber))]
     private void ReadMessages_ReturnsPage(int pageNumber) {
         // Arrange
-        SetupTestDb();
+        TestUtils.SetupTestDb();
 
         // Act
         var messages = DBFacade.ReadMessages(1,null);

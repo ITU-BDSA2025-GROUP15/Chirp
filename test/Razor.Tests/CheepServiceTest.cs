@@ -5,14 +5,6 @@ namespace Razor.Tests;
 public class CheepServiceTest
 {
 
-    private void SetupTestDb() //this is also in DBFacadeTest. Make test utils
-    {
-        var tempFilePath = Path.GetTempFileName();
-        var testDb = File.ReadAllBytes("../../../chirp-test.db");
-        File.WriteAllBytes(tempFilePath, testDb);
-        Environment.SetEnvironmentVariable("CHIRPDBPATH", tempFilePath);
-    }
-
     [Theory]
     [InlineData(100)]
     public void TimeConversionTest(int a)
@@ -47,7 +39,7 @@ public class CheepServiceTest
     public void ReadMessages_ReturnsFirstPage()
     {
         // Arrange
-        SetupTestDb();
+        TestUtils.SetupTestDb();
         CheepService service = new CheepService();
 
 
@@ -65,7 +57,7 @@ public class CheepServiceTest
     public void ReadMessages_SpecificPage()
     {
         // Arrange
-        SetupTestDb();
+        TestUtils.SetupTestDb();
         CheepService service = new CheepService();
 
 
@@ -83,7 +75,7 @@ public class CheepServiceTest
     public void ReadMessages_SpecificUser()
     {
         // Arrange
-        SetupTestDb();
+        TestUtils.SetupTestDb();
         CheepService service = new CheepService();
 
         // Act
@@ -105,7 +97,7 @@ public class CheepServiceTest
     public void ReadMessages_SpecificUserAndPage()
     {
         // Arrange
-        SetupTestDb();
+        TestUtils.SetupTestDb();
         CheepService service = new CheepService();
 
         // Act
@@ -127,7 +119,7 @@ public class CheepServiceTest
     public void ReadMessages_NonExistingUser()
     {
         // Arrange
-        SetupTestDb();
+        TestUtils.SetupTestDb();
         CheepService service = new CheepService();
 
         // Act
@@ -141,7 +133,7 @@ public class CheepServiceTest
     public void ReadMessages_NonExistingPage()
     {
         // Arrange
-        SetupTestDb();
+        TestUtils.SetupTestDb();
         CheepService service = new CheepService();
 
         // Act
