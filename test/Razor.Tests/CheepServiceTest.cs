@@ -22,7 +22,7 @@ public class CheepServiceTest
 
     [Theory]
     [InlineData("test", "testing", 100)]
-    public void CheepListToCheepViewModelListTest(string a, string b, int c)
+    public void CheepListToCheepDTOListTest(string a, string b, int c)
     {
         //Arrange
         List<Cheep> cheeps = [
@@ -38,13 +38,24 @@ public class CheepServiceTest
                 Text = a,
                 TimeStamp = DateTimeOffset.FromUnixTimeSeconds(c).UtcDateTime
             }];
-        List<CheepViewModel> expectedViewModel = [new CheepViewModel(a, b, CheepService.UnixTimeStampToDateTimeString(c)), new CheepViewModel(b, a, CheepService.UnixTimeStampToDateTimeString(c))];
+        List<CheepDTO> expectedDTO = [
+            new CheepDTO() {
+                Author = a,
+                Message = b,
+                Timestamp = CheepService.UnixTimeStampToDateTimeString(c)
+            },
+            new CheepDTO() {
+                Author = b,
+                Message = a,
+                Timestamp = CheepService.UnixTimeStampToDateTimeString(c)
+            }
+            ];
 
         // Act
-        List<CheepViewModel> viewModel = CheepService.CheepListToCheepViewModelList(cheeps);
+        List<CheepDTO> actualDTO = CheepService.CheepListToCheepDTOList(cheeps);
 
         //Assert
-        Assert.Equal(expectedViewModel, viewModel);
+        TestUtils.AssertCheepDTOListsEqual(expectedDTO, actualDTO);
     }
 
     [Fact]
@@ -62,7 +73,7 @@ public class CheepServiceTest
         // Assert
         Assert.NotNull(messages);
         Assert.Equal(32, messages.Count());
-        Assert.Equal(messagesPage1, messages);
+        TestUtils.AssertCheepDTOListsEqual(messagesPage1, messages);
     }
 
     [Fact]
@@ -98,7 +109,7 @@ public class CheepServiceTest
         Assert.NotNull(messagesUser);
         Assert.Equal(32, messagesUser.Count());
         Assert.NotEqual(messagesUser, messages);
-        foreach (CheepViewModel cheep in messagesUser)
+        foreach (CheepDTO cheep in messagesUser)
         {
             Assert.Equal("Jacqualine Gilcoine", cheep.Author);
         }
@@ -121,7 +132,7 @@ public class CheepServiceTest
         Assert.Equal(32, messagesUserPage2.Count());
         Assert.NotEqual(messagesUserPage2, messagesUser);
 
-        foreach (CheepViewModel cheep in messagesUserPage2)
+        foreach (CheepDTO cheep in messagesUserPage2)
         {
             Assert.Equal("Jacqualine Gilcoine", cheep.Author);
         }
