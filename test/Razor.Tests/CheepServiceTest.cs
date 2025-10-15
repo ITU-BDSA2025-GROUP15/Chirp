@@ -28,11 +28,13 @@ public class CheepServiceTest
         List<Cheep> cheeps = [
             new Cheep() {
                 Author = new Author() {Name = a},
+                AuthorId = 0,
                 Text = b,
                 TimeStamp = DateTimeOffset.FromUnixTimeSeconds(c).UtcDateTime
             },
             new Cheep() {
                 Author = new Author() {Name = b},
+                AuthorId = 0,
                 Text = a,
                 TimeStamp = DateTimeOffset.FromUnixTimeSeconds(c).UtcDateTime
             }];

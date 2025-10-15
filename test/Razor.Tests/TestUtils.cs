@@ -48,6 +48,7 @@ public static class TestUtils
         for (int i = 0; i < expected.Count; i++)
         {
             Assert.Equal(expected[i].Author.Name, actual[i].Author.Name);
+            Assert.Equal(expected[i].AuthorId, actual[i].AuthorId);
             Assert.Equal(expected[i].Text, actual[i].Text);
             Assert.Equal(expected[i].TimeStamp.ToString(), actual[i].TimeStamp.ToString());
         }
