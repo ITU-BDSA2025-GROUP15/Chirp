@@ -1,6 +1,7 @@
 using Chirp.Razor;
 
 using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Razor.Tests;
 
@@ -61,9 +62,10 @@ public class DBFacadeUnitTest
     {
         // Arrange
         TestUtils.SetupTestDb();
+        var provider = TestUtils.SetupDIContainer();
 
         // Act
-        var messages = DBFacade.ReadMessages();
+        var messages = provider.GetRequiredService<DBFacade>().ReadMessages(); 
 
         // Assert
         Assert.NotNull(messages);
@@ -75,10 +77,11 @@ public class DBFacadeUnitTest
     {
         // Arrange
         TestUtils.SetupTestDb();
+        var provider = TestUtils.SetupDIContainer();
 
         // Act
-        var messages = DBFacade.ReadMessages();
-        var messages_arg = DBFacade.ReadMessages(1);
+        var messages = provider.GetRequiredService<DBFacade>().ReadMessages();
+        var messages_arg = provider.GetRequiredService<DBFacade>().ReadMessages(1);
 
         // Assert
         Assert.NotNull(messages);
@@ -91,10 +94,11 @@ public class DBFacadeUnitTest
     private void ReadMessages_ReturnsPage(int pageNumber) {
         // Arrange
         TestUtils.SetupTestDb();
+        var provider = TestUtils.SetupDIContainer();
 
         // Act
-        var messages = DBFacade.ReadMessages(1,null);
-        var messages_pages = DBFacade.ReadMessages(pageNumber);
+        var messages = provider.GetRequiredService<DBFacade>().ReadMessages(1,null);//DBFacade.ReadMessages(1,null);
+        var messages_pages = provider.GetRequiredService<DBFacade>().ReadMessages(pageNumber);//DBFacade.ReadMessages(pageNumber);
         var messages_slice = new List<Cheep>();
 
         var startCheep = (pageNumber - 1) * 32;
