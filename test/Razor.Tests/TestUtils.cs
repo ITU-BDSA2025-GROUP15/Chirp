@@ -1,5 +1,10 @@
 using System.Diagnostics;
 
+using Chirp.Razor;
+
+using Microsoft.EntityFrameworkCore;
+
+using Microsoft.Extensions.DependencyInjection;
 public static class TestUtils
 {
     public static readonly string RazorPath = "src/Chirp.Razor/Chirp.Razor.csproj";
@@ -63,5 +68,29 @@ public static class TestUtils
             Assert.Equal(expected[i].Message, actual[i].Message);
             Assert.Equal(expected[i].Timestamp, actual[i].Timestamp);
         }
+    }
+    public static IServiceProvider SetupDIContainer()
+    {
+        var services = new ServiceCollection();
+
+        services.AddScoped<DBFacade>();
+        services.AddScoped<ICheepService, CheepService>();
+        services.AddScoped<ICheepRepository, CheepRepository>();
+        var sqlDBFilePath = Path.Combine(Path.GetTempPath(), "chirp.db"); // Default fallback path
+        var path = Environment.GetEnvironmentVariable("CHIRPDBPATH") ?? sqlDBFilePath;
+        var connectionString = $"Data Source={path}";
+        services.AddDbContext<ChirpDBContext>(options => options.UseSqlite(connectionString));
+
+        var provider = services.BuildServiceProvider();
+        // Seed the database with example data
+        using (var scope = provider.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ChirpDBContext>();
+            db.Database.Migrate();
+            DbInitializer.SeedDatabase(db);
+        }
+
+        return provider;
+
     }
 }
