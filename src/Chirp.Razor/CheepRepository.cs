@@ -26,9 +26,8 @@ public class CheepRepository : ICheepRepository
     {
         return Task.Run(() => 0); //does nothing
     }
-    public async Task<List<Cheep>> ReadMessages(string? author, int? pages, int? limit)
+    public async Task<List<Cheep>> ReadMessages(string? author, int? pages, int? limit) //maybe DBFacade should handle null values
     {
-        //stupid solution
         var query = _context.Cheeps
             .Join(_context.Authors,
                 Cheeps => Cheeps.AuthorId,
