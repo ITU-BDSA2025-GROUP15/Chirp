@@ -12,27 +12,39 @@ public interface ICheepService
 
 public class CheepService : ICheepService
 {
+    private readonly IServiceProvider _provider;
+    public CheepService(IServiceProvider provider){
+        _provider = provider;
+    }
     public List<CheepDTO> GetCheeps()
     {
-        var messages = DBFacade.ReadMessages();
+        using var scope = _provider.CreateScope();
+        var facade = scope.ServiceProvider.GetRequiredService<DBFacade>();
+        var messages = facade.ReadMessages();
         return CheepListToCheepDTOList(messages);
     }
 
     public List<CheepDTO> GetCheeps(int page)
     {
-        var messages = DBFacade.ReadMessages(page);
+        using var scope = _provider.CreateScope();
+        var facade = scope.ServiceProvider.GetRequiredService<DBFacade>();
+        var messages = facade.ReadMessages(page);
         return CheepListToCheepDTOList(messages);
     }
 
     public List<CheepDTO> GetCheepsFromAuthor(string author)
     {
-        var messages = DBFacade.ReadMessages(author);
+        using var scope = _provider.CreateScope();
+        var facade = scope.ServiceProvider.GetRequiredService<DBFacade>();
+        var messages = facade.ReadMessages(author);
         return CheepListToCheepDTOList(messages);
     }
     
     public List<CheepDTO> GetCheepsFromAuthor(string author, int page)
     {
-        var messages = DBFacade.ReadMessages(author, page);
+        using var scope = _provider.CreateScope();
+        var facade = scope.ServiceProvider.GetRequiredService<DBFacade>();
+        var messages = facade.ReadMessages(author, page);
         return CheepListToCheepDTOList(messages);
     }
 
