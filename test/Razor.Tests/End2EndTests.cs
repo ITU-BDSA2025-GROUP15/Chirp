@@ -2,7 +2,7 @@ using System.Diagnostics;
 
 using Xunit.Abstractions;
 
-
+[Collection("Sequential")]
 public class End2EndTests
 {
     public readonly string Razor_path = "src/Chirp.Razor/Chirp.Razor.csproj";

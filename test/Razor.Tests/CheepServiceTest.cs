@@ -2,6 +2,7 @@ using Chirp.Razor;
 
 namespace Razor.Tests;
 
+[Collection("Sequential")]
 public class CheepServiceTest
 {
 
@@ -134,7 +135,7 @@ public class CheepServiceTest
         var messagesUserPage2 = service.GetCheepsFromAuthor("Jacqualine Gilcoine", 2);
 
         // Assert
-        Assert.NotNull(messagesUserPage2); 
+        Assert.NotNull(messagesUserPage2);
         Assert.Equal(32, messagesUserPage2.Count());
         Assert.NotEqual(messagesUserPage2, messagesUser);
 
