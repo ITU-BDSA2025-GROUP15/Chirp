@@ -97,8 +97,8 @@ public class DBFacadeUnitTest
         var provider = TestUtils.SetupDIContainer();
 
         // Act
-        var messages = provider.GetRequiredService<DBFacade>().ReadMessages(1,null);//DBFacade.ReadMessages(1,null);
-        var messages_pages = provider.GetRequiredService<DBFacade>().ReadMessages(pageNumber);//DBFacade.ReadMessages(pageNumber);
+        var messages = provider.GetRequiredService<DBFacade>().ReadMessages(1,null);
+        var messages_pages = provider.GetRequiredService<DBFacade>().ReadMessages(pageNumber);
         var messages_slice = new List<Cheep>();
 
         var startCheep = (pageNumber - 1) * 32;
