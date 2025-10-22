@@ -5,7 +5,6 @@ namespace Razor.Tests;
 [Collection("Sequential")]
 public class CheepServiceTest
 {
-
     [Theory]
     [InlineData(100)]
     public void TimeConversionTest(int a)
@@ -176,5 +175,55 @@ public class CheepServiceTest
         // Assert
         Assert.Empty(messagesUser);
     }
+    //""""""""""""""""""""""""""""""""""""""""""""
+    [Theory]
+    [MemberData(nameof(FuzzData.Timestamps), MemberType = typeof(FuzzData))]
+    public void Timestamptest_FuzzedInput(long timestamp)
+    {
+        // Act
+        var randomUnitTimeStamp = Record.Exception(() => CheepService.UnixTimeStampToDateTimeString(timestamp));
 
+        // Assert
+        Assert.Null(randomUnitTimeStamp);
+    }
+
+    [Theory]
+    [MemberData(nameof(FuzzData.Strings), MemberType = typeof(FuzzData))]
+    public void GetCheepsFromAuthor_FuzzedInputs(string? author)
+    {
+        // Arrange
+        TestUtils.SetupTestDb();
+        var provider = TestUtils.SetupDIContainer();
+        
+        var service = new CheepService(provider);
+
+        // Act
+        //                                                                  I want null!
+        var RandomAuthor = Record.Exception(() => service.GetCheepsFromAuthor(author));
+
+        // Assert
+        Assert.Null(RandomAuthor);
+    }
+
+    [Theory]
+    [MemberData(nameof(FuzzData.Strings), MemberType = typeof(FuzzData))]
+    public void CheepListToCheepDTOList_FuzzedInputs(string? text)
+    {
+        // Arrange
+        //                          Let there be null
+        var cheeps = new List<Cheep> { 
+            new Cheep {
+                AuthorId = 1,
+                Author = new Author { Name = text },
+                Text = text,
+                TimeStamp = DateTimeOffset.FromUnixTimeSeconds(100).DateTime
+            }
+        };
+
+        // Act
+        var RandomCheep = Record.Exception(() => CheepService.CheepListToCheepDTOList(cheeps));
+
+        // Assert
+        Assert.Null(RandomCheep);
+    }
 }
