@@ -83,7 +83,7 @@ public class DBFacadeUnitTest
         // Assert
         Assert.NotNull(messages);
         Assert.NotNull(messages_arg);
-        Assert.Equal(messages, messages_arg);
+        TestUtils.AssertCheepListsEqual(messages, messages_arg);
     }
 
     [Theory]
@@ -104,6 +104,6 @@ public class DBFacadeUnitTest
         }
 
         // Assert
-        Assert.Equal(messages_slice,messages_pages);
+        TestUtils.AssertCheepListsEqual(messages_slice,messages_pages);
     }
 }

@@ -1,59 +1,52 @@
 using Chirp.Razor;
 
-public record CheepViewModel(string Author, string Message, string Timestamp);
+//public record CheepViewModel(string Author, string Message, string Timestamp);
 
 public interface ICheepService
 {
-    public List<CheepViewModel> GetCheeps();
-    public List<CheepViewModel> GetCheeps(int page);
-    public List<CheepViewModel> GetCheepsFromAuthor(string author);
-    public List<CheepViewModel> GetCheepsFromAuthor(string author, int page);
+    public List<CheepDTO> GetCheeps();
+    public List<CheepDTO> GetCheeps(int page);
+    public List<CheepDTO> GetCheepsFromAuthor(string author);
+    public List<CheepDTO> GetCheepsFromAuthor(string author, int page);
 }
 
 public class CheepService : ICheepService
 {
-    // These would normally be loaded from a database for example
-    private static readonly List<CheepViewModel> _cheeps = new()
-        {
-            new CheepViewModel("Helge", "Hello, BDSA students!", UnixTimeStampToDateTimeString(1690892208)),
-            new CheepViewModel("Adrian", "Hej, velkommen til kurset.", UnixTimeStampToDateTimeString(1690895308)),
-        };
-
-    public List<CheepViewModel> GetCheeps()
+    public List<CheepDTO> GetCheeps()
     {
         var messages = DBFacade.ReadMessages();
-        return CheepListToCheepViewModelList(messages);
+        return CheepListToCheepDTOList(messages);
     }
 
-    public List<CheepViewModel> GetCheeps(int page)
+    public List<CheepDTO> GetCheeps(int page)
     {
         var messages = DBFacade.ReadMessages(page);
-        return CheepListToCheepViewModelList(messages);
+        return CheepListToCheepDTOList(messages);
     }
 
-    public List<CheepViewModel> GetCheepsFromAuthor(string author)
+    public List<CheepDTO> GetCheepsFromAuthor(string author)
     {
         var messages = DBFacade.ReadMessages(author);
-        return CheepListToCheepViewModelList(messages);
+        return CheepListToCheepDTOList(messages);
     }
     
-    public List<CheepViewModel> GetCheepsFromAuthor(string author, int page)
+    public List<CheepDTO> GetCheepsFromAuthor(string author, int page)
     {
         var messages = DBFacade.ReadMessages(author, page);
-        return CheepListToCheepViewModelList(messages);
+        return CheepListToCheepDTOList(messages);
     }
 
-    public static List<CheepViewModel> CheepListToCheepViewModelList(List<Cheep> cheeps)
+    public static List<CheepDTO> CheepListToCheepDTOList(List<Cheep> cheeps)
     {
-        var modelMessages = new List<CheepViewModel>();
+        var modelMessages = new List<CheepDTO>();
 
         foreach (var cheep in cheeps)
         {
-            var modelCheep = new CheepViewModel(
-                cheep.author,
-                cheep.message,
-                UnixTimeStampToDateTimeString(cheep.timestamp)
-            );
+            var modelCheep = new CheepDTO() {
+                Author = cheep.Author.Name,
+                Message = cheep.Text,
+                Timestamp = CheepService.UnixTimeStampToDateTimeString(((DateTimeOffset)cheep.TimeStamp).ToUnixTimeSeconds())
+            };
             modelMessages.Add(modelCheep);
         }
 
