@@ -10,7 +10,7 @@ public static class FuzzData
         yield return new object[] { 0L };
         //test max and min values
         yield return new object[] { int.MaxValue };
-        yield return new object[] { int.MinValue };;
+        yield return new object[] { int.MinValue };
         //test random time
         yield return new object[] { random.NextInt64(-10000000000, 10000000000) };
     }
