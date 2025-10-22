@@ -164,7 +164,7 @@ public class CheepServiceTest
         // Assert
         Assert.Empty(messagesUser);
     }
-        //""""""""""""""""""""""""""""""""""""""""""""
+    //""""""""""""""""""""""""""""""""""""""""""""
     [Theory]
     [MemberData(nameof(FuzzData.Timestamps), MemberType = typeof(FuzzData))]
     public void Timestamptest_FuzzedInput(long timestamp)
@@ -194,14 +194,21 @@ public class CheepServiceTest
 
     [Theory]
     [MemberData(nameof(FuzzData.Strings), MemberType = typeof(FuzzData))]
-    public void CheepListToCheepViewModelList_FuzzedInputs(string? text)
+    public void CheepListToCheepDTOList_FuzzedInputs(string? text)
     {
         // Arrange
-        //                                       Let there be null
-        var cheeps = new List<Cheep> { new Cheep(text, text, 100) };
+        //                          Let there be null
+        var cheeps = new List<Cheep> { 
+            new Cheep {
+                AuthorId = 1,
+                Author = new Author { Name = text },
+                Text = text,
+                TimeStamp = DateTimeOffset.FromUnixTimeSeconds(100).DateTime
+            }
+        };
 
         // Act
-        var RandomCheep = Record.Exception(() => CheepService.CheepListToCheepViewModelList(cheeps));
+        var RandomCheep = Record.Exception(() => CheepService.CheepListToCheepDTOList(cheeps));
 
         // Assert
         Assert.Null(RandomCheep);
