@@ -36,7 +36,7 @@ public class CheepRepositoryUnitTest
         var repository = provider.GetRequiredService<ICheepRepository>();
 
         // Act
-        var messages = await repository.ReadMessages(null, null, null); 
+        var messages = await repository.ReadMessages(null, null, null);
 
         // Assert
         Assert.NotNull(messages);
@@ -52,8 +52,8 @@ public class CheepRepositoryUnitTest
         var repository = provider.GetRequiredService<ICheepRepository>();
 
         // Act
-        var messages = await repository.ReadMessages(null, null, null); 
-        var messages_arg = await repository.ReadMessages(null, 1, null); 
+        var messages = await repository.ReadMessages(null, null, null);
+        var messages_arg = await repository.ReadMessages(null, 1, null);
 
         // Assert
         Assert.NotNull(messages);
@@ -63,11 +63,12 @@ public class CheepRepositoryUnitTest
 
     [Theory]
     [MemberData(nameof(RandomNumber))]
-    public async Task ReadMessages_ReturnsPage(int pageNumber) {
+    public async Task ReadMessages_ReturnsPage(int pageNumber)
+    {
         // Arrange
         TestUtils.SetupTestDb();
         var provider = TestUtils.SetupDIContainer();
-        var repository = provider.GetRequiredService<ICheepRepository>(); 
+        var repository = provider.GetRequiredService<ICheepRepository>();
 
         // Act
         var messagesAll = await repository.ReadMessages(null, 1, int.MaxValue);

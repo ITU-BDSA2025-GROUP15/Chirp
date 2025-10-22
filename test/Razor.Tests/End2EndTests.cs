@@ -6,7 +6,7 @@ using Xunit.Abstractions;
 public class End2EndTests
 {
     public readonly string Razor_path = "src/Chirp.Razor/Chirp.Razor.csproj";
-    
+
     //for debugging test
     /*
     private readonly ITestOutputHelper _output;
@@ -19,46 +19,48 @@ public class End2EndTests
     public async void End2End()
     {
         Process razorPage = await TestUtils.StartRazorPage();
-        
-        
+
         using (Process process = new Process())
         {
             try
             {
-                //Arrange
+                // Arrange
                 var baseURL = "http://localhost:5273/";
                 using HttpClient client = new();
                 client.BaseAddress = new Uri(baseURL);
 
-                //Act
-
-                //Default page
+                // Act
+                // Default page
                 var HTTPResponsePageDefault = await client.GetAsync("/");
                 string responseBodyPageDefault = await HTTPResponsePageDefault.Content.ReadAsStringAsync();
 
-                //Page1
+                // Page 1
                 var HTTPResponsePage1 = await client.GetAsync("/?page=1");
-                string responsebodyPage1 = await HTTPResponsePage1.Content.ReadAsStringAsync();
+                string responseBodyPage1 = await HTTPResponsePage1.Content.ReadAsStringAsync();
 
-                //Page2
+                // Page 2
                 var HTTPResponsePage2 = await client.GetAsync("/?page=2");
                 string responseBodyPage2 = await HTTPResponsePage2.Content.ReadAsStringAsync();
 
-                //user page Adrian
+                // User page Adrian
                 var HTTPResponseUser = await client.GetAsync("/Adrian");
                 string responseBodyUser = await HTTPResponseUser.Content.ReadAsStringAsync();
 
+                // Assert
+                // Page 1 and default page is the same
+                Assert.Equal(responseBodyPageDefault, responseBodyPage1);
 
-                //Assert
+                // Cheep that should be on the first page
+                Assert.Contains("Starbuck now is what we hear the worst.", responseBodyPageDefault);
 
-                Assert.Contains("Starbuck now is what we hear the worst.", responseBodyPageDefault); //cheep that should be on the first page
-
-                Assert.Equal(responseBodyPageDefault, responsebodyPage1);//page 1 and default is the same
-
-                Assert.Contains("It is asking much of it in the world.", responseBodyPage2); //cheep on page 2
+                // Cheep on page 2
+                Assert.Contains("It is asking much of it in the world.", responseBodyPage2);
                 Assert.Contains("Jacqualine Gilcoine", responseBodyPage2);
-                Assert.NotEqual(responseBodyPageDefault, responseBodyPage2); //page 1 and 2 not equal
-                
+
+                // Page 1 and 2 not equal
+                Assert.NotEqual(responseBodyPageDefault, responseBodyPage2); 
+
+                // Only Adrians posts should be on the user page
                 //_output.WriteLine(responseBodyUser);
                 Assert.Contains(@"<strong>
                             <a href=""/Adrian"">Adrian</a>
@@ -67,7 +69,6 @@ public class End2EndTests
                         <small>&mdash;"
                         , responseBodyUser);
                 Assert.DoesNotContain("Jacqualine Gilcoine", responseBodyUser);
-
             }
             finally
             {
@@ -76,7 +77,5 @@ public class End2EndTests
                 razorPage.Dispose();
             }
         }
-        
     }
-
 }

@@ -13,8 +13,9 @@ public interface ICheepService
 public class CheepService : ICheepService
 {
     private readonly ICheepRepository _repository;
-    
-    public CheepService(ICheepRepository repository){
+
+    public CheepService(ICheepRepository repository)
+    {
         _repository = repository;
     }
     public List<CheepDTO> GetCheeps()
@@ -61,7 +62,7 @@ public class CheepService : ICheepService
 
         return modelMessages;
     }
-    
+
     /// <summary>
     /// Converts a DateTime object into a formatted string, in the format MM/dd/yy H:mm:ss.
     /// </summary>
