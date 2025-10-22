@@ -73,7 +73,6 @@ public static class TestUtils
     {
         var services = new ServiceCollection();
 
-        services.AddScoped<DBFacade>();
         services.AddScoped<ICheepService, CheepService>();
         services.AddScoped<ICheepRepository, CheepRepository>();
         var path = Path.Combine(Path.GetTempPath(), "chirp.db");

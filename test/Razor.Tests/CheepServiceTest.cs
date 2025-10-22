@@ -1,5 +1,7 @@
 using Chirp.Razor;
 
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Razor.Tests;
 
 [Collection("Sequential")]
@@ -14,7 +16,8 @@ public class CheepServiceTest
                                 .ToString("MM/dd/yy H:mm:ss");
 
         // Act
-        var result = CheepService.UnixTimeStampToDateTimeString(a);
+        var dateTime = DateTimeOffset.FromUnixTimeSeconds(a).DateTime;
+        var result = CheepService.DateTimeToDateTimeString(dateTime);
 
         // Assert
         Assert.Equal(answer, result);
@@ -42,12 +45,12 @@ public class CheepServiceTest
             new CheepDTO() {
                 Author = a,
                 Message = b,
-                Timestamp = CheepService.UnixTimeStampToDateTimeString(c)
+                Timestamp = CheepService.DateTimeToDateTimeString(DateTimeOffset.FromUnixTimeSeconds(c).DateTime)
             },
             new CheepDTO() {
                 Author = b,
                 Message = a,
-                Timestamp = CheepService.UnixTimeStampToDateTimeString(c)
+                Timestamp = CheepService.DateTimeToDateTimeString(DateTimeOffset.FromUnixTimeSeconds(c).DateTime)
             }
             ];
 
@@ -64,8 +67,9 @@ public class CheepServiceTest
         // Arrange
         TestUtils.SetupTestDb();
         var provider = TestUtils.SetupDIContainer();
+        var repository = provider.GetRequiredService<ICheepRepository>();
 
-        var service = new CheepService(provider);
+        var service = new CheepService(repository);
 
         // Act
         var messages = service.GetCheeps();
@@ -83,8 +87,9 @@ public class CheepServiceTest
         // Arrange
         TestUtils.SetupTestDb();
         var provider = TestUtils.SetupDIContainer();
+        var repository = provider.GetRequiredService<ICheepRepository>();
 
-        var service = new CheepService(provider);
+        var service = new CheepService(repository);
 
         // Act
         var messagePage1 = service.GetCheeps(1);
@@ -102,8 +107,9 @@ public class CheepServiceTest
         // Arrange
         TestUtils.SetupTestDb();
         var provider = TestUtils.SetupDIContainer();
+        var repository = provider.GetRequiredService<ICheepRepository>();
 
-        var service = new CheepService(provider);
+        var service = new CheepService(repository);
 
         // Act
         var messagesUser = service.GetCheepsFromAuthor("Jacqualine Gilcoine");
@@ -126,8 +132,9 @@ public class CheepServiceTest
         // Arrange
         TestUtils.SetupTestDb();
         var provider = TestUtils.SetupDIContainer();
+        var repository = provider.GetRequiredService<ICheepRepository>();
 
-        var service = new CheepService(provider);
+        var service = new CheepService(repository);
 
         // Act
         var messagesUser = service.GetCheepsFromAuthor("Jacqualine Gilcoine");
@@ -150,8 +157,9 @@ public class CheepServiceTest
         // Arrange
         TestUtils.SetupTestDb();
         var provider = TestUtils.SetupDIContainer();
+        var repository = provider.GetRequiredService<ICheepRepository>();
 
-        var service = new CheepService(provider);
+        var service = new CheepService(repository);
 
         // Act
         var messagesUser = service.GetCheepsFromAuthor("This user does not exist");
@@ -166,8 +174,9 @@ public class CheepServiceTest
         // Arrange
         TestUtils.SetupTestDb();
         var provider = TestUtils.SetupDIContainer();
+        var repository = provider.GetRequiredService<ICheepRepository>();
 
-        var service = new CheepService(provider);
+        var service = new CheepService(repository);
 
         // Act
         var messagesUser = service.GetCheeps(1000000000);
@@ -181,7 +190,9 @@ public class CheepServiceTest
     public void Timestamptest_FuzzedInput(long timestamp)
     {
         // Act
-        var randomUnitTimeStamp = Record.Exception(() => CheepService.UnixTimeStampToDateTimeString(timestamp));
+        var randomUnitTimeStamp = Record.Exception(
+            () => CheepService.DateTimeToDateTimeString(DateTimeOffset.FromUnixTimeSeconds(timestamp).DateTime)
+        );
 
         // Assert
         Assert.Null(randomUnitTimeStamp);
@@ -194,12 +205,14 @@ public class CheepServiceTest
         // Arrange
         TestUtils.SetupTestDb();
         var provider = TestUtils.SetupDIContainer();
-        
-        var service = new CheepService(provider);
+        var repository = provider.GetRequiredService<ICheepRepository>();
+
+        var service = new CheepService(repository);
 
         // Act
-        //                                                                  I want null!
+#pragma warning disable CS8604 //                                           I want null!
         var RandomAuthor = Record.Exception(() => service.GetCheepsFromAuthor(author));
+#pragma warning restore CS8604 
 
         // Assert
         Assert.Null(RandomAuthor);
@@ -210,8 +223,8 @@ public class CheepServiceTest
     public void CheepListToCheepDTOList_FuzzedInputs(string? text)
     {
         // Arrange
-        //                          Let there be null
-        var cheeps = new List<Cheep> { 
+#pragma warning disable CS8601 // Let there be null
+        var cheeps = new List<Cheep> {
             new Cheep {
                 AuthorId = 1,
                 Author = new Author { Name = text },
@@ -219,6 +232,7 @@ public class CheepServiceTest
                 TimeStamp = DateTimeOffset.FromUnixTimeSeconds(100).DateTime
             }
         };
+#pragma warning restore CS8601
 
         // Act
         var RandomCheep = Record.Exception(() => CheepService.CheepListToCheepDTOList(cheeps));

@@ -26,7 +26,15 @@ public class CheepRepository : ICheepRepository
     {
         return Task.Run(() => 0); //does nothing
     }
-    public async Task<List<CheepDTO>> ReadMessages(string? author, int? pages, int? limit) //maybe DBFacade should handle null values
+
+    /// <summary>
+    /// Reads messages from database.
+    /// </summary>
+    /// <param name="author">Author of messages. If null, all authors are returned.</param>
+    /// <param name="page">Page number to read. If null, defaults to 1.</param>
+    /// <param name="limit">Messages per page. If null, defaults to 32.</param>
+    /// <returns>List of messages converted to CheepDTO.</returns>
+    public async Task<List<CheepDTO>> ReadMessages(string? author, int? page, int? limit)
     {
         var query = _context.Cheeps
             .Join(_context.Authors,
@@ -45,18 +53,13 @@ public class CheepRepository : ICheepRepository
 
         query = query.OrderByDescending(Cheep => Cheep.Timestamp);
 
-        if (pages != null && limit != null)
-        {
-            int notNullLimit = limit ?? defaultLimit;
-            int notNullPage = pages ?? 1;
-            query = query.Skip((notNullPage - 1) * notNullLimit);
-        }
-        if (limit != null)
-        {
-            int notNullLimit = limit ?? defaultLimit;
-            query = query.Take(notNullLimit);
-        }
+        // Use default values for limit/page if any null
+        int _limit = limit ?? defaultLimit;
+        int _page = page ?? 1;
 
+        query = query.Skip((_page - 1) * _limit);
+        query = query.Take(_limit);
+    
         var cheeps = await query.ToListAsync();
         var cheepdtos = new List<CheepDTO>();
 
@@ -66,7 +69,7 @@ public class CheepRepository : ICheepRepository
             {
                 Author = cheep.Author,
                 Message = cheep.Message,
-                Timestamp = cheep.Timestamp.ToString("MM/dd/yy H:mm:ss")
+                Timestamp = CheepService.DateTimeToDateTimeString(cheep.Timestamp)
             });
         }
 
