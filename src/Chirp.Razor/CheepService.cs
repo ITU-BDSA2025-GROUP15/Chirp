@@ -12,30 +12,54 @@ public interface ICheepService
 
 public class CheepService : ICheepService
 {
+    private readonly IServiceProvider _provider;
+    public CheepService(IServiceProvider provider){
+        _provider = provider;
+    }
     public List<CheepDTO> GetCheeps()
     {
-        var messages = DBFacade.ReadMessages();
-        return CheepListToCheepDTOList(messages);
+        using var scope = _provider.CreateScope();
+        var facade = scope.ServiceProvider.GetRequiredService<DBFacade>();
+        var messages = facade.ReadMessages();
+        return messages;
     }
 
     public List<CheepDTO> GetCheeps(int page)
     {
-        var messages = DBFacade.ReadMessages(page);
-        return CheepListToCheepDTOList(messages);
+        using var scope = _provider.CreateScope();
+        var facade = scope.ServiceProvider.GetRequiredService<DBFacade>();
+        var messages = facade.ReadMessages(page);
+        return messages;
     }
 
     public List<CheepDTO> GetCheepsFromAuthor(string author)
     {
-        var messages = DBFacade.ReadMessages(author);
-        return CheepListToCheepDTOList(messages);
+        using var scope = _provider.CreateScope();
+        var facade = scope.ServiceProvider.GetRequiredService<DBFacade>();
+        var messages = facade.ReadMessages(author);
+        return messages;
     }
     
     public List<CheepDTO> GetCheepsFromAuthor(string author, int page)
     {
-        var messages = DBFacade.ReadMessages(author, page);
-        return CheepListToCheepDTOList(messages);
+        using var scope = _provider.CreateScope();
+        var facade = scope.ServiceProvider.GetRequiredService<DBFacade>();
+        var messages = facade.ReadMessages(author, page);
+        return messages;
     }
-
+    /// <summary>
+    /// lol 
+    /// <example>
+    /// like this
+    /// <code>
+    /// int = 2
+    /// </code>
+    /// </example>
+    /// </summary>
+    /// <param name="cheeps"></param>
+    /// <returns>
+    /// List CheepDTO
+    /// </returns>
     public static List<CheepDTO> CheepListToCheepDTOList(List<Cheep> cheeps)
     {
         var modelMessages = new List<CheepDTO>();
@@ -52,12 +76,17 @@ public class CheepService : ICheepService
 
         return modelMessages;
     }
-
-    public static string UnixTimeStampToDateTimeString(double unixTimeStamp)
+    ///
+    /// <summary>
+    /// does some nice shit? maybe
+    /// </summary>
+    /// <param name="unixTimestamp"></param>
+    /// <returns></returns>
+    public static string UnixTimeStampToDateTimeString(double unixTimestamp)
     {
         // Unix timestamp is seconds past epoch
         DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-        dateTime = dateTime.AddSeconds(unixTimeStamp);
+        dateTime = dateTime.AddSeconds(unixTimestamp);
         return dateTime.ToString("MM/dd/yy H:mm:ss");
     }
 }

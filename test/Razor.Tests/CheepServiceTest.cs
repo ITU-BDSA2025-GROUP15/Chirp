@@ -2,6 +2,7 @@ using Chirp.Razor;
 
 namespace Razor.Tests;
 
+[Collection("Sequential")]
 public class CheepServiceTest
 {
     [Theory]
@@ -62,8 +63,9 @@ public class CheepServiceTest
     {
         // Arrange
         TestUtils.SetupTestDb();
-        CheepService service = new CheepService();
+        var provider = TestUtils.SetupDIContainer();
 
+        var service = new CheepService(provider);
 
         // Act
         var messages = service.GetCheeps();
@@ -80,8 +82,9 @@ public class CheepServiceTest
     {
         // Arrange
         TestUtils.SetupTestDb();
-        CheepService service = new CheepService();
+        var provider = TestUtils.SetupDIContainer();
 
+        var service = new CheepService(provider);
 
         // Act
         var messagePage1 = service.GetCheeps(1);
@@ -98,7 +101,9 @@ public class CheepServiceTest
     {
         // Arrange
         TestUtils.SetupTestDb();
-        CheepService service = new CheepService();
+        var provider = TestUtils.SetupDIContainer();
+
+        var service = new CheepService(provider);
 
         // Act
         var messagesUser = service.GetCheepsFromAuthor("Jacqualine Gilcoine");
@@ -120,14 +125,16 @@ public class CheepServiceTest
     {
         // Arrange
         TestUtils.SetupTestDb();
-        CheepService service = new CheepService();
+        var provider = TestUtils.SetupDIContainer();
+
+        var service = new CheepService(provider);
 
         // Act
         var messagesUser = service.GetCheepsFromAuthor("Jacqualine Gilcoine");
         var messagesUserPage2 = service.GetCheepsFromAuthor("Jacqualine Gilcoine", 2);
 
         // Assert
-        Assert.NotNull(messagesUserPage2); // 
+        Assert.NotNull(messagesUserPage2);
         Assert.Equal(32, messagesUserPage2.Count());
         Assert.NotEqual(messagesUserPage2, messagesUser);
 
@@ -142,7 +149,9 @@ public class CheepServiceTest
     {
         // Arrange
         TestUtils.SetupTestDb();
-        CheepService service = new CheepService();
+        var provider = TestUtils.SetupDIContainer();
+
+        var service = new CheepService(provider);
 
         // Act
         var messagesUser = service.GetCheepsFromAuthor("This user does not exist");
@@ -156,7 +165,9 @@ public class CheepServiceTest
     {
         // Arrange
         TestUtils.SetupTestDb();
-        CheepService service = new CheepService();
+        var provider = TestUtils.SetupDIContainer();
+
+        var service = new CheepService(provider);
 
         // Act
         var messagesUser = service.GetCheeps(1000000000);
