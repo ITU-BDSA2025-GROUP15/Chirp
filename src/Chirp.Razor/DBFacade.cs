@@ -50,31 +50,31 @@ public class DBFacade
         }
     }
 
-    public List<Cheep> ReadMessages()
+    public List<CheepDTO> ReadMessages()
     {
         return ReadMessages(null, null, defaultLimit);
     }
 
-    public List<Cheep> ReadMessages(int? pages)
+    public List<CheepDTO> ReadMessages(int? pages)
     {
         return ReadMessages(null, pages, defaultLimit);
     }
-    public List<Cheep> ReadMessages(int? pages, int? limit)
+    public List<CheepDTO> ReadMessages(int? pages, int? limit)
     {
         return ReadMessages(null, pages, limit);
     }
 
-    public List<Cheep> ReadMessages(string? author)
+    public List<CheepDTO> ReadMessages(string? author)
     {
         return ReadMessages(author, null, defaultLimit);
     }
 
-    public List<Cheep> ReadMessages(string? author, int? pages)
+    public List<CheepDTO> ReadMessages(string? author, int? pages)
     {
         return ReadMessages(author, pages, defaultLimit);
     }
 
-    public List<Cheep> ReadMessages(string? author, int? pages, int? limit)
+    public List<CheepDTO> ReadMessages(string? author, int? pages, int? limit)
     {
         return _repository.ReadMessages(author, pages, limit).GetAwaiter().GetResult();
     }

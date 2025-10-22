@@ -8,7 +8,7 @@ using System.Linq;
 public interface ICheepRepository
 {
     public Task CreateMessage(CheepDTO newMessage);
-    public Task<List<Cheep>> ReadMessages(string? author, int? pages, int? limit);
+    public Task<List<CheepDTO>> ReadMessages(string? author, int? pages, int? limit);
     public Task UpdateMessage(CheepDTO alteredMessage);
 }
 
@@ -26,31 +26,30 @@ public class CheepRepository : ICheepRepository
     {
         return Task.Run(() => 0); //does nothing
     }
-    public async Task<List<Cheep>> ReadMessages(string? author, int? pages, int? limit) //maybe DBFacade should handle null values
+    public async Task<List<CheepDTO>> ReadMessages(string? author, int? pages, int? limit) //maybe DBFacade should handle null values
     {
         var query = _context.Cheeps
             .Join(_context.Authors,
                 Cheeps => Cheeps.AuthorId,
                 Authors => Authors.AuthorId,
-                (Cheeps, Authors) => new Cheep
+                (Cheeps, Authors) => new
                 {
-                    AuthorId = Authors.AuthorId,
-                    Author = new Author { AuthorId = Authors.AuthorId, Name = Authors.Name },
-                    Text = Cheeps.Text,
-                    TimeStamp = Cheeps.TimeStamp
+                    Author = Authors.Name,
+                    Message = Cheeps.Text,
+                    Timestamp = Cheeps.TimeStamp
                 });
         if (author != null)
         {
-            query = query.Where(Cheep => Cheep.Author.Name == author);
+            query = query.Where(Cheep => Cheep.Author == author);
         }
 
-        query = query.OrderByDescending(Cheep => Cheep.TimeStamp);
+        query = query.OrderByDescending(Cheep => Cheep.Timestamp);
 
         if (pages != null && limit != null)
         {
             int notNullLimit = limit ?? defaultLimit;
             int notNullPage = pages ?? 1;
-            query = query.Skip((notNullPage-1) * notNullLimit);
+            query = query.Skip((notNullPage - 1) * notNullLimit);
         }
         if (limit != null)
         {
@@ -58,7 +57,20 @@ public class CheepRepository : ICheepRepository
             query = query.Take(notNullLimit);
         }
 
-        return await query.ToListAsync();
+        var cheeps = await query.ToListAsync();
+        var cheepdtos = new List<CheepDTO>();
+
+        foreach (var cheep in cheeps)
+        {
+            cheepdtos.Add(new CheepDTO
+            {
+                Author = cheep.Author,
+                Message = cheep.Message,
+                Timestamp = cheep.Timestamp.ToString("MM/dd/yy H:mm:ss")
+            });
+        }
+
+        return cheepdtos;
     }
     public Task UpdateMessage(CheepDTO alteredMessage)
     {

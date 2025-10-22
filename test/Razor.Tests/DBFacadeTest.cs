@@ -86,7 +86,7 @@ public class DBFacadeUnitTest
         // Assert
         Assert.NotNull(messages);
         Assert.NotNull(messages_arg);
-        TestUtils.AssertCheepListsEqual(messages, messages_arg);
+        TestUtils.AssertCheepDTOListsEqual(messages, messages_arg);
     }
 
     [Theory]
@@ -99,7 +99,7 @@ public class DBFacadeUnitTest
         // Act
         var messages = provider.GetRequiredService<DBFacade>().ReadMessages(1,null);
         var messages_pages = provider.GetRequiredService<DBFacade>().ReadMessages(pageNumber);
-        var messages_slice = new List<Cheep>();
+        var messages_slice = new List<CheepDTO>();
 
         var startCheep = (pageNumber - 1) * 32;
         for (int i = startCheep; i < startCheep + 32 && i < messages.Count(); i++)
@@ -108,6 +108,6 @@ public class DBFacadeUnitTest
         }
 
         // Assert
-        TestUtils.AssertCheepListsEqual(messages_slice,messages_pages);
+        TestUtils.AssertCheepDTOListsEqual(messages_slice,messages_pages);
     }
 }
