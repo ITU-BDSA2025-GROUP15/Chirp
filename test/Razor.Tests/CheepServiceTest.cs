@@ -193,7 +193,9 @@ public class CheepServiceTest
     {
         // Arrange
         TestUtils.SetupTestDb();
-        var service = new CheepService();
+        var provider = TestUtils.SetupDIContainer();
+        
+        var service = new CheepService(provider);
 
         // Act
         //                                                                  I want null!
