@@ -1,4 +1,4 @@
 public interface IAuthorRepository
 {
-    public Task CreateAuthor(CheepDTO newMessage);
+    public void CreateAuthor(Author author);
 }

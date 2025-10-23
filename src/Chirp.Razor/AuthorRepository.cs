@@ -7,8 +7,9 @@ public class AuthorRepository : IAuthorRepository
         _context = context;
     }
 
-        public Task CreateAuthor(CheepDTO newMessage)
+        public void CreateAuthor(Author author)
     {
-        return Task.Run(() => 0); //does nothing
+        _context.Authors.Add(author);
+        await _context.SaveChangesAsync();
     }
 }
