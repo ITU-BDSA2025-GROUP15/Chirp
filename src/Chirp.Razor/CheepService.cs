@@ -12,81 +12,63 @@ public interface ICheepService
 
 public class CheepService : ICheepService
 {
-    private readonly IServiceProvider _provider;
-    public CheepService(IServiceProvider provider){
-        _provider = provider;
+    private readonly ICheepRepository _repository;
+
+    public CheepService(ICheepRepository repository)
+    {
+        _repository = repository;
     }
     public List<CheepDTO> GetCheeps()
     {
-        using var scope = _provider.CreateScope();
-        var facade = scope.ServiceProvider.GetRequiredService<DBFacade>();
-        var messages = facade.ReadMessages();
-        return messages;
+        var messages = _repository.ReadMessages(null, null, null);
+        return messages.GetAwaiter().GetResult();
     }
 
     public List<CheepDTO> GetCheeps(int page)
     {
-        using var scope = _provider.CreateScope();
-        var facade = scope.ServiceProvider.GetRequiredService<DBFacade>();
-        var messages = facade.ReadMessages(page);
-        return messages;
+        var messages = _repository.ReadMessages(null, page, null);
+        return messages.GetAwaiter().GetResult();
     }
 
     public List<CheepDTO> GetCheepsFromAuthor(string author)
     {
-        using var scope = _provider.CreateScope();
-        var facade = scope.ServiceProvider.GetRequiredService<DBFacade>();
-        var messages = facade.ReadMessages(author);
-        return messages;
+        var messages = _repository.ReadMessages(author, null, null);
+        return messages.GetAwaiter().GetResult();
     }
-    
+
     public List<CheepDTO> GetCheepsFromAuthor(string author, int page)
     {
-        using var scope = _provider.CreateScope();
-        var facade = scope.ServiceProvider.GetRequiredService<DBFacade>();
-        var messages = facade.ReadMessages(author, page);
-        return messages;
+        var messages = _repository.ReadMessages(author, page, null);
+        return messages.GetAwaiter().GetResult();
     }
+
     /// <summary>
-    /// lol 
-    /// <example>
-    /// like this
-    /// <code>
-    /// int = 2
-    /// </code>
-    /// </example>
+    /// Converts a list of Cheeps into a list of corresponding CheepDTOs.
     /// </summary>
-    /// <param name="cheeps"></param>
-    /// <returns>
-    /// List CheepDTO
-    /// </returns>
     public static List<CheepDTO> CheepListToCheepDTOList(List<Cheep> cheeps)
     {
         var modelMessages = new List<CheepDTO>();
 
         foreach (var cheep in cheeps)
         {
-            var modelCheep = new CheepDTO() {
+            var modelCheep = new CheepDTO()
+            {
                 Author = cheep.Author.Name,
                 Message = cheep.Text,
-                Timestamp = CheepService.UnixTimeStampToDateTimeString(((DateTimeOffset)cheep.TimeStamp).ToUnixTimeSeconds())
+                Timestamp = DateTimeToDateTimeString(cheep.TimeStamp)
             };
             modelMessages.Add(modelCheep);
         }
 
         return modelMessages;
     }
-    ///
+
     /// <summary>
-    /// does some nice shit? maybe
+    /// Converts a DateTime object into a formatted string, in the format MM/dd/yy H:mm:ss.
     /// </summary>
-    /// <param name="unixTimestamp"></param>
-    /// <returns></returns>
-    public static string UnixTimeStampToDateTimeString(double unixTimestamp)
+    /// <returns>A formatted date/time string, i.e. 12/31/25 9:41:23.</returns>
+    public static string DateTimeToDateTimeString(DateTime dateTime)
     {
-        // Unix timestamp is seconds past epoch
-        DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-        dateTime = dateTime.AddSeconds(unixTimestamp);
         return dateTime.ToString("MM/dd/yy H:mm:ss");
     }
 }
