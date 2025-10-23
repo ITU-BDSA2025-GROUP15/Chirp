@@ -1,4 +1,4 @@
 public interface IAuthorRepository
 {
-    public void CreateAuthor(Author author);
+    public Task CreateAuthor(Author author);
 }

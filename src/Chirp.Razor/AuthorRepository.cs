@@ -7,7 +7,7 @@ public class AuthorRepository : IAuthorRepository
         _context = context;
     }
 
-        public void CreateAuthor(Author author)
+    public async Task CreateAuthor(Author author)
     {
         _context.Authors.Add(author);
         await _context.SaveChangesAsync();
