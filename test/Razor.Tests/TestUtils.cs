@@ -1,13 +1,11 @@
 using System.Diagnostics;
 
-using Chirp.Razor;
-
 using Microsoft.EntityFrameworkCore;
 
 using Microsoft.Extensions.DependencyInjection;
 public static class TestUtils
 {
-    public static readonly string RazorPath = "src/Chirp.Razor/Chirp.Razor.csproj";
+    public static readonly string RazorPath = "src/Chirp.Web/Chirp.Web.csproj";
 
     public static async Task<Process> StartRazorPage()
     {
