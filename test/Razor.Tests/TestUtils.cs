@@ -1,5 +1,6 @@
 using System.Diagnostics;
 
+using Chirp.Razor;
 using Microsoft.EntityFrameworkCore;
 
 using Microsoft.Extensions.DependencyInjection;

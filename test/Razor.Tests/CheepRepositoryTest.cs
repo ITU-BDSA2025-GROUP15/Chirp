@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 
+using Chirp.Razor;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 

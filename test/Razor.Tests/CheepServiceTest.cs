@@ -1,3 +1,5 @@
+using Chirp.Razor;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Razor.Tests;
