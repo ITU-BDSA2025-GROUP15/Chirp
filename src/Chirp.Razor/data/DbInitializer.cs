@@ -1,7 +1,40 @@
 using System;
 
+/// <summary>
+/// Helper class that seeds the database with initial sample data used by tests and the demo application.
+/// </summary>
+/// <remarks>
+/// Student-friendly explanation: the seed data gives the app a realistic set of authors and cheeps so
+/// that pages and tests have something to show. You can replace or shrink this data during development
+/// if you only need a few rows.
+/// </remarks>
 public static class DbInitializer
 {
+    /// <summary>
+    /// Seeds the provided <see cref="ChirpDBContext"/> with authors and cheeps if they do not already exist.
+    /// </summary>
+    /// <param name="chirpContext">The <see cref="ChirpDBContext"/> instance to seed.</param>
+    /// <remarks>
+    /// This method is idempotent: it checks whether the Authors and Cheeps collections already contain data
+    /// and will skip seeding if the DB appears already populated. The sample data set is intentionally
+    /// large to support pagination and UI/tests.
+    /// </remarks>
+    /// <permission>
+    /// The caller must ensure the process has write access to the SQLite database file and the folder
+    /// where it resides; seeding writes data using EF Core's <c>SaveChanges</c>.
+    /// </permission>
+    /// <exception cref="System.Exception">Any I/O or database error encountered while writing the seed data.</exception>
+    /// <example>
+    /// Typical usage from application startup (see <c>Program.cs</c>):
+    /// <code>
+    /// using (var scope = app.Services.CreateScope())
+    /// {
+    ///     var db = scope.ServiceProvider.GetRequiredService<ChirpDBContext>();
+    ///     db.Database.Migrate();
+    ///     DbInitializer.SeedDatabase(db);
+    /// }
+    /// </code>
+    /// </example>
     public static void SeedDatabase(ChirpDBContext chirpContext)
     {
         if (!(chirpContext.Authors.Any() && chirpContext.Cheeps.Any()))
