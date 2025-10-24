@@ -42,5 +42,3 @@ app.UseRouting();
 app.MapRazorPages();
 
 app.Run();
-
-// Hahaha i am going to push to main!
