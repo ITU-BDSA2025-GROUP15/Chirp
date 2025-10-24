@@ -2,31 +2,22 @@ using Chirp.Razor;
 
 //public record CheepViewModel(string Author, string Message, string Timestamp);
 
-<<<<<<< Updated upstream
-=======
 /// <summary>
 /// A service-layer abstraction that handles reading cheeps for the app.
 /// </summary>
->>>>>>> Stashed changes
 public interface ICheepService
 {
     public List<CheepDTO> GetCheeps();
-<<<<<<< Updated upstream
-=======
 
     /// <summary>
     /// Gets a specific page of cheeps.
     /// </summary>
     /// <param name="page">The page number to get (starting from 1).</param>
     /// <returns>A list of <see cref="CheepDTO"/> for the requested page.</returns>
->>>>>>> Stashed changes
     public List<CheepDTO> GetCheeps(int page);
-    public List<CheepDTO> GetCheepsFromAuthor(string author);
-<<<<<<< Updated upstream
-    public List<CheepDTO> GetCheepsFromAuthor(string author, int page);
-}
 
-=======
+
+    public List<CheepDTO> GetCheepsFromAuthor(string author);
 
     //why is GetCheepsFromAuthor here twice. there must be a smarter way to do this. shouldnt it just defoult to page 1 if no page is given?
 
@@ -42,18 +33,14 @@ public interface ICheepService
 /// <summary>
 /// Implementation of <see cref="ICheepService"/> which delegates to a repository.
 /// </summary>
->>>>>>> Stashed changes
 public class CheepService : ICheepService
 {
     private readonly ICheepRepository _repository;
 
-<<<<<<< Updated upstream
-=======
     /// <summary>
     /// Initializes a new instance of <see cref="CheepService"/>.
     /// </summary>
     /// <param name="repository">Repository used to fetch cheep data.</param>
->>>>>>> Stashed changes
     public CheepService(ICheepRepository repository)
     {
         _repository = repository;
@@ -83,10 +70,6 @@ public class CheepService : ICheepService
     }
 
     /// <summary>
-<<<<<<< Updated upstream
-    /// Converts a list of Cheeps into a list of corresponding CheepDTOs.
-    /// </summary>
-=======
     /// Converts a list of <see cref="Cheep"/>'s instances into a list of <see cref="CheepDTO"/>'s.
     /// </summary>
     /// <param name="cheeps">The list of cheep entities to convert.</param>
@@ -96,7 +79,6 @@ public class CheepService : ICheepService
     /// It expects each <paramref name="cheeps"/> item to have a populated <c>Author</c>.
     /// </para>
     /// </remarks>
->>>>>>> Stashed changes
     public static List<CheepDTO> CheepListToCheepDTOList(List<Cheep> cheeps)
     {
         var modelMessages = new List<CheepDTO>();
@@ -116,11 +98,6 @@ public class CheepService : ICheepService
     }
 
     /// <summary>
-<<<<<<< Updated upstream
-    /// Converts a DateTime object into a formatted string, in the format MM/dd/yy H:mm:ss.
-    /// </summary>
-    /// <returns>A formatted date/time string, i.e. 12/31/25 9:41:23.</returns>
-=======
     /// Converts <see cref="DateTime"/> into a formatted string using the pattern "MM/dd/yy H:mm:ss".
     /// </summary>
     /// <param name="dateTime">Date/time value to format.</param>
@@ -132,7 +109,6 @@ public class CheepService : ICheepService
     /// var formatted = CheepService.DateTimeToDateTimeString(now);
     /// </code>
     /// </example>
->>>>>>> Stashed changes
     public static string DateTimeToDateTimeString(DateTime dateTime)
     {
         return dateTime.ToString("MM/dd/yy H:mm:ss");

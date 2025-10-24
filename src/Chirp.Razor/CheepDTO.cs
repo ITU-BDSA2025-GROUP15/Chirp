@@ -1,9 +1,3 @@
-<<<<<<< Updated upstream
-public class CheepDTO
-{
-    public string Author { get; set; }
-    public string Message { get; set; }
-=======
 /// <summary>
 /// Presentation-friendly view of a <see cref="Cheep"/> used by UI code.
 /// </summary>
@@ -39,6 +33,5 @@ public class CheepDTO
     /// <value>
     /// A formatted timestamp produced by <see cref="CheepService.DateTimeToDateTimeString"/>.
     /// </value>
->>>>>>> Stashed changes
     public string Timestamp { get; set; }
 }
