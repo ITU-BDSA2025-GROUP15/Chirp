@@ -81,6 +81,6 @@ public class CheepRepository : ICheepRepository
     /// <returns></returns>
     public async Task<Cheep> FindMessage(int cheepId)
     {
-        return _context.Cheeps.Where(a => a.CheepId.Equals(cheepId)).First();
+        return await Task.Run(() =>_context.Cheeps.Where(a => a.CheepId.Equals(cheepId)).First());
     }
 }
