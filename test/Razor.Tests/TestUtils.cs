@@ -75,6 +75,7 @@ public static class TestUtils
 
         services.AddScoped<ICheepService, CheepService>();
         services.AddScoped<ICheepRepository, CheepRepository>();
+        services.AddScoped<IAuthorRepository, AuthorRepository>();
         var path = Path.Combine(Path.GetTempPath(), "chirp.db");
         var connectionString = $"Data Source={path}";
         services.AddDbContext<ChirpDBContext>(options => options.UseSqlite(connectionString));
