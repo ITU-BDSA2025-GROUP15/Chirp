@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 var sqlDBFilePath = Path.Combine(Path.GetTempPath(), "chirp.db"); // Default fallback path
 var path = Environment.GetEnvironmentVariable("CHIRPDBPATH") ?? sqlDBFilePath;
 var connectionString = $"Data Source={path}";
-builder.Services.AddDbContext<ChirpDBContext>(options => options.UseSqlite(connectionString));
+builder.Services.AddDbContext<ChirpDBContext>(options => options.UseSqlite(connectionString, b => b.MigrationsAssembly("Chirp.Web")));
 
 // Add services to the container.
 builder.Services.AddRazorPages();

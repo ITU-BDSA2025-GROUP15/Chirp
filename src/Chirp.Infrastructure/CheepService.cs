@@ -1,14 +1,4 @@
-using Chirp.Razor;
-
 //public record CheepViewModel(string Author, string Message, string Timestamp);
-
-public interface ICheepService
-{
-    public List<CheepDTO> GetCheeps();
-    public List<CheepDTO> GetCheeps(int page);
-    public List<CheepDTO> GetCheepsFromAuthor(string author);
-    public List<CheepDTO> GetCheepsFromAuthor(string author, int page);
-}
 
 public class CheepService : ICheepService
 {

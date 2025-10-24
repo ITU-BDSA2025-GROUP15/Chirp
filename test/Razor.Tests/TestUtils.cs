@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 public static class TestUtils
 {
-    public static readonly string RazorPath = "src/Chirp.Razor/Chirp.Razor.csproj";
+    public static readonly string RazorPath = "src/Chirp.Web/Chirp.Web.csproj";
 
     public static async Task<Process> StartRazorPage()
     {
@@ -81,7 +81,7 @@ public static class TestUtils
         var connectionString = "Data Source=:memory:";
         var conn = new SqliteConnection(connectionString);
         conn.Open();
-        services.AddDbContext<ChirpDBContext>(options => options.UseSqlite(conn));
+        services.AddDbContext<ChirpDBContext>(options => options.UseSqlite(conn, b => b.MigrationsAssembly("Chirp.Web")));
 
         var provider = services.BuildServiceProvider();
         // Seed the database with example data

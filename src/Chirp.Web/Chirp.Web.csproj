@@ -24,4 +24,10 @@
     <EmbeddedResource Include="data/dump.sql" />
   </ItemGroup>
 
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\Chirp.Infrastructure\Chirp.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
