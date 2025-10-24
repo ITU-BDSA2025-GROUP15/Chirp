@@ -56,6 +56,5 @@ public class AuthorRepositoryUnitTest
 
         // Assert
         Assert.Equal(authorExpected, authorFound);
-
     }
 }
