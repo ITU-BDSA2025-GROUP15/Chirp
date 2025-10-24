@@ -41,13 +41,6 @@ public static class TestUtils
         return process;
     }
 
-    public static void SetupTestDb()
-    {
-        var tempFilePath = Path.GetTempFileName();
-        var testDb = File.ReadAllBytes("../../../chirp-test.db");
-        File.WriteAllBytes(tempFilePath, testDb);
-        Environment.SetEnvironmentVariable("CHIRPDBPATH", tempFilePath);
-    }
 
     public static void AssertCheepListsEqual(List<Cheep> expected, List<Cheep> actual)
     {
