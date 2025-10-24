@@ -1,12 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 
-<<<<<<< Updated upstream
-public class Author
-{
-    public int AuthorId { get; set; }
-    public string Name { get; set; }
-    public string? Email { get; set; }
-=======
 /// <summary>
 /// Represents an author of cheeps in the system.
 /// </summary>
@@ -41,6 +34,5 @@ public class Author
     /// May be null when not loaded from the database.
     /// </summary>
     /// <value>A list of <see cref="Cheep"/> instances or <c>null</c> if not loaded by EF.</value>
->>>>>>> Stashed changes
     public List<Cheep>? Cheeps { get; set; }
 }

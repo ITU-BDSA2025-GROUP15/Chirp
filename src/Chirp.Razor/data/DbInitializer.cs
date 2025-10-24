@@ -1,9 +1,5 @@
 using System;
 
-<<<<<<< Updated upstream
-public static class DbInitializer
-{
-=======
 /// <summary>
 /// Its used to seed the database with initial sample data used by tests.
 /// </summary>
@@ -30,7 +26,6 @@ public static class DbInitializer
     /// }
     /// </code>
     /// </example>
->>>>>>> Stashed changes
     public static void SeedDatabase(ChirpDBContext chirpContext)
     {
         if (!(chirpContext.Authors.Any() && chirpContext.Cheeps.Any()))

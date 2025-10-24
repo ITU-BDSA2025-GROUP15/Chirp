@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 // Program startup for the Chirp Razor application.
 //
 // This file contains top-level statements that configure the ASP.NET Core host, register
@@ -7,7 +5,6 @@
 // and seeded, and then start the web server. It is intentionally a minimal entry point
 // used by the sample application and integration tests.
 
->>>>>>> Stashed changes
 using Chirp.Razor;
 using Microsoft.EntityFrameworkCore;
 
