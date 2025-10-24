@@ -91,8 +91,12 @@ public class CheepRepositoryUnitTest
         {
             CheepId = 676767,
             Text = "Hi",
-            AuthorId = 10,
-            Author = null
+            AuthorId = 676767,
+            Author = new Author()
+            {
+                AuthorId = 676767,
+                Name = "67"
+            }
         };
 
         // Act
