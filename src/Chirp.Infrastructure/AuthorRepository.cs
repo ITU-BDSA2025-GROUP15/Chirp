@@ -14,11 +14,11 @@ public class AuthorRepository : IAuthorRepository
     }
     public async Task<Author> FindAuthorByName(string name)
     {
-        return _context.Authors.Where(a => a.Name.Equals(name)).First(); //Unique Names??? if not this needs to change
+        return await Task.Run(()=>_context.Authors.Where(a => a.Name.Equals(name)).First()); //Unique Names??? if not this needs to change
     }
     public async Task<Author> FindAuthorByEmail(string email)
     {
-        return _context.Authors.Where(e => e.Email.Equals(email)).First(); 
+        return await Task.Run(()=>_context.Authors.Where(e => e.Email!.Equals(email)).First()); 
     }
     public async Task RemoveAuthor(Author author)
     {

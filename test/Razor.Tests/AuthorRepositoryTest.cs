@@ -9,7 +9,6 @@ public class AuthorRepositoryUnitTest
     public async Task FindAuthorByNameTest()
     {
         // Arrange
-        TestUtils.SetupTestDb();
         var provider = TestUtils.SetupDIContainer();
         var repository = provider.GetRequiredService<IAuthorRepository>();
 
@@ -25,7 +24,6 @@ public class AuthorRepositoryUnitTest
     public async Task FindAuthorByEmailTest()
     {
         // Arrange
-        TestUtils.SetupTestDb();
         var provider = TestUtils.SetupDIContainer();
         var repository = provider.GetRequiredService<IAuthorRepository>();
 
@@ -41,7 +39,6 @@ public class AuthorRepositoryUnitTest
     public async Task CreateAuthorTest()
     {
         // Arrange
-        TestUtils.SetupTestDb();
         var provider = TestUtils.SetupDIContainer();
         var repository = provider.GetRequiredService<IAuthorRepository>();
 

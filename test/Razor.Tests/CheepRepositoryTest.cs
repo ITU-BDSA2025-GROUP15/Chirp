@@ -30,7 +30,6 @@ public class CheepRepositoryUnitTest
     public async Task ReadMessages_ReturnsFirstPage()
     {
         // Arrange
-        TestUtils.SetupTestDb();
         var provider = TestUtils.SetupDIContainer();
         var repository = provider.GetRequiredService<ICheepRepository>();
 
@@ -46,7 +45,6 @@ public class CheepRepositoryUnitTest
     public async Task ReadMessages_WithPageArgument_ReturnsFirstPage()
     {
         // Arrange
-        TestUtils.SetupTestDb();
         var provider = TestUtils.SetupDIContainer();
         var repository = provider.GetRequiredService<ICheepRepository>();
 
@@ -65,7 +63,6 @@ public class CheepRepositoryUnitTest
     public async Task ReadMessages_ReturnsPage(int pageNumber)
     {
         // Arrange
-        TestUtils.SetupTestDb();
         var provider = TestUtils.SetupDIContainer();
         var repository = provider.GetRequiredService<ICheepRepository>();
 
