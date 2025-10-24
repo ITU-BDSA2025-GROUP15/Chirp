@@ -65,7 +65,6 @@ public class CheepServiceTest
     public void ReadMessages_ReturnsFirstPage()
     {
         // Arrange
-        TestUtils.SetupTestDb();
         var provider = TestUtils.SetupDIContainer();
         var repository = provider.GetRequiredService<ICheepRepository>();
 
@@ -85,7 +84,6 @@ public class CheepServiceTest
     public void ReadMessages_SpecificPage()
     {
         // Arrange
-        TestUtils.SetupTestDb();
         var provider = TestUtils.SetupDIContainer();
         var repository = provider.GetRequiredService<ICheepRepository>();
 
@@ -105,7 +103,6 @@ public class CheepServiceTest
     public void ReadMessages_SpecificUser()
     {
         // Arrange
-        TestUtils.SetupTestDb();
         var provider = TestUtils.SetupDIContainer();
         var repository = provider.GetRequiredService<ICheepRepository>();
 
@@ -130,7 +127,6 @@ public class CheepServiceTest
     public void ReadMessages_SpecificUserAndPage()
     {
         // Arrange
-        TestUtils.SetupTestDb();
         var provider = TestUtils.SetupDIContainer();
         var repository = provider.GetRequiredService<ICheepRepository>();
 
@@ -155,7 +151,6 @@ public class CheepServiceTest
     public void ReadMessages_NonExistingUser()
     {
         // Arrange
-        TestUtils.SetupTestDb();
         var provider = TestUtils.SetupDIContainer();
         var repository = provider.GetRequiredService<ICheepRepository>();
 
@@ -172,7 +167,6 @@ public class CheepServiceTest
     public void ReadMessages_NonExistingPage()
     {
         // Arrange
-        TestUtils.SetupTestDb();
         var provider = TestUtils.SetupDIContainer();
         var repository = provider.GetRequiredService<ICheepRepository>();
 
@@ -203,7 +197,6 @@ public class CheepServiceTest
     public void GetCheepsFromAuthor_FuzzedInputs(string? author)
     {
         // Arrange
-        TestUtils.SetupTestDb();
         var provider = TestUtils.SetupDIContainer();
         var repository = provider.GetRequiredService<ICheepRepository>();
 

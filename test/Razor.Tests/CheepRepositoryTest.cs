@@ -17,9 +17,9 @@ public class CheepRepositoryUnitTest
             var number_list = new List<object[]>();
 
             var count = 100;
-            for (int i = 0; i < count; i++)
+            for (int i = 1; i < count; i++)
             {
-                number_list.Add([rnd.Next(1, 100)]);
+                number_list.Add([i]);
             }
 
             return number_list;
