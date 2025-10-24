@@ -80,4 +80,30 @@ public class CheepRepositoryUnitTest
         // Assert
         TestUtils.AssertCheepDTOListsEqual(messagesAllSliced, messagesPage);
     }
+    [Fact]
+    public async Task CreateCheepTest()
+    {
+        // Arrange
+        var provider = TestUtils.SetupDIContainer();
+        var repository = provider.GetRequiredService<ICheepRepository>();
+
+        var cheepExpected = new Cheep()
+        {
+            CheepId = 676767,
+            Text = "Hi",
+            AuthorId = 676767,
+            Author = new Author()
+            {
+                AuthorId = 676767,
+                Name = "67"
+            }
+        };
+
+        // Act
+        await repository.CreateMessage(cheepExpected);
+        Cheep cheepFound = await repository.FindMessage(676767);
+
+        // Assert
+        Assert.Equal(cheepExpected,cheepFound);
+    }
 }

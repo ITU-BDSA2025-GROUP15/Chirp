@@ -16,9 +16,10 @@ public class CheepRepository : ICheepRepository
         _context = context;
     }
 
-    public Task CreateMessage(CheepDTO newMessage)
+    public async Task CreateMessage(Cheep newMessage)
     {
-        return Task.Run(() => 0); //does nothing
+        var query = _context.Cheeps.Add(newMessage);
+        await _context.SaveChangesAsync();
     }
 
     /// <summary>
@@ -72,5 +73,14 @@ public class CheepRepository : ICheepRepository
     public Task UpdateMessage(CheepDTO alteredMessage)
     {
         return Task.Run(() => 0); //does nothing
+    }
+    /// <summary>
+    /// For testing purposes
+    /// </summary>
+    /// <param name="cheepId"></param>
+    /// <returns></returns>
+    public async Task<Cheep> FindMessage(int cheepId)
+    {
+        return await Task.Run(() =>_context.Cheeps.Where(a => a.CheepId.Equals(cheepId)).First());
     }
 }
