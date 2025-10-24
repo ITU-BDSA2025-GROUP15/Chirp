@@ -1,13 +1,3 @@
-// Program startup for the Chirp Razor application.
-//
-// Student-friendly notes:
-// - This file creates and configures the web application, wires up dependency injection,
-//   migrates the database and seeds example data, then starts the web server.
-// - To run the app with a specific SQLite file, set the CHIRPDBPATH environment variable.
-//   Example (PowerShell):
-//     $env:CHIRPDBPATH = "C:\temp\chirp.db"; dotnet run
-// - The code below is deliberately small so it is easy to read during exercises and tests.
-
 using Chirp.Razor;
 using Microsoft.EntityFrameworkCore;
 
