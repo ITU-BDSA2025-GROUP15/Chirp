@@ -81,7 +81,7 @@ public static class TestUtils
         var connectionString = "Data Source=:memory:";
         var conn = new SqliteConnection(connectionString);
         conn.Open();
-        services.AddDbContext<ChirpDBContext>(options => options.UseSqlite(connectionString));
+        services.AddDbContext<ChirpDBContext>(options => options.UseSqlite(conn));
 
         var provider = services.BuildServiceProvider();
         // Seed the database with example data
