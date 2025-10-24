@@ -1,7 +1,36 @@
 using System;
 
+<<<<<<< Updated upstream
 public static class DbInitializer
 {
+=======
+/// <summary>
+/// Its used to seed the database with initial sample data used by tests.
+/// </summary>
+public static class DbInitializer
+{
+    /// <summary>
+    /// Seeds the provided <see cref="ChirpDBContext"/> with authors and cheeps if they do not already exist.
+    /// </summary>
+    /// <param name="chirpContext">The <see cref="ChirpDBContext"/> instance to seed.</param>
+    /// <remarks>
+    /// It checks whether the Authors and Cheeps collections already contain data
+    ///It skips seeding if Authors and Cheeps already have data.
+    /// </remarks>
+    /// <permission>
+    /// The caller must ensure the process has write access to the SQLite database. seeding writes data using EF Core's <c>SaveChanges</c>.
+    /// </permission>
+    /// <example>
+    /// <code>
+    /// using (var scope = app.Services.CreateScope())
+    /// {
+    ///     var db = scope.ServiceProvider.GetRequiredService<ChirpDBContext>();
+    ///     db.Database.Migrate();
+    ///     DbInitializer.SeedDatabase(db);
+    /// }
+    /// </code>
+    /// </example>
+>>>>>>> Stashed changes
     public static void SeedDatabase(ChirpDBContext chirpContext)
     {
         if (!(chirpContext.Authors.Any() && chirpContext.Cheeps.Any()))

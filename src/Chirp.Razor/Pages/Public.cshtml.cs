@@ -13,6 +13,23 @@ public class PublicModel : PageModel
         _service = service;
     }
 
+<<<<<<< Updated upstream
+=======
+    /// <summary>
+    /// Handles GET requests for the public timeline. Accepts an optional page query parameter.
+    /// </summary>
+    /// <param name="page">The page number to get page number to display (starting from 1).</param>
+    /// <returns>A <see cref="PageResult"/> representing the rendered page.</returns>
+    /// <example>
+    /// Request examples:
+    /// <code>
+    /// // Default page (same as page=1)
+    /// GET /
+    /// // Explicit page
+    /// GET /?page=2
+    /// </code>
+    /// </example>
+>>>>>>> Stashed changes
     public ActionResult OnGet([FromQuery] int page)
     {
         Cheeps = _service.GetCheeps(page);
