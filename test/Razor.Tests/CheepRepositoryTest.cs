@@ -85,5 +85,4 @@ public class CheepRepositoryUnitTest
         TestUtils.AssertCheepDTOListsEqual(messagesAllSliced, messagesPage);
     }
 
-    
 }
