@@ -1,6 +1,9 @@
 using System.Diagnostics;
 
 using Chirp.Razor;
+
+using Microsoft.Data.Sqlite;
+
 using Microsoft.EntityFrameworkCore;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -74,9 +77,11 @@ public static class TestUtils
 
         services.AddScoped<ICheepService, CheepService>();
         services.AddScoped<ICheepRepository, CheepRepository>();
-        var path = Path.Combine(Path.GetTempPath(), "chirp.db");
-        var connectionString = $"Data Source={path}";
-        services.AddDbContext<ChirpDBContext>(options => options.UseSqlite(connectionString));
+        services.AddScoped<IAuthorRepository, AuthorRepository>();
+        var connectionString = "Data Source=:memory:";
+        var conn = new SqliteConnection(connectionString);
+        conn.Open();
+        services.AddDbContext<ChirpDBContext>(options => options.UseSqlite(conn, b => b.MigrationsAssembly("Chirp.Web")));
 
         var provider = services.BuildServiceProvider();
         // Seed the database with example data
