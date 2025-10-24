@@ -77,6 +77,7 @@ public static class TestUtils
 
         services.AddScoped<ICheepService, CheepService>();
         services.AddScoped<ICheepRepository, CheepRepository>();
+        services.AddScoped<IAuthorRepository, AuthorRepository>();
         var connectionString = "Data Source=:memory:";
         var conn = new SqliteConnection(connectionString);
         conn.Open();
