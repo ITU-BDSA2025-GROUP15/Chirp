@@ -9,6 +9,9 @@ var path = Environment.GetEnvironmentVariable("CHIRPDBPATH") ?? sqlDBFilePath;
 var connectionString = $"Data Source={path}";
 builder.Services.AddDbContext<ChirpDBContext>(options => options.UseSqlite(connectionString, b => b.MigrationsAssembly("Chirp.Web")));
 
+builder.Services.AddDefaultIdentity<Author>(options => options.SignIn.RequireConfirmedAccount = true) 
+                .AddEntityFrameworkStores<ChirpDBContext>();
+
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<ICheepRepository, CheepRepository>();
@@ -38,6 +41,9 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication(); 
+app.UseAuthorization(); 
 
 app.MapRazorPages();
 
