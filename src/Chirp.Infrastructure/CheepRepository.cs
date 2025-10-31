@@ -17,7 +17,11 @@ public class CheepRepository : ICheepRepository
     }
 
     public async Task CreateMessage(Cheep newMessage)
-    {
+    {   
+        if (String.IsNullOrWhiteSpace(newMessage.Text)||newMessage.Text.Length > 160)
+        {
+            throw new ArgumentException("Max length exceeded!?!, or message is empty!?!");
+        }
         var query = _context.Cheeps.Add(newMessage);
         await _context.SaveChangesAsync();
     }
