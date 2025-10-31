@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+    <members>
+        <member name="T:Author">
+            <summary>
+            Represents a user who can create cheeps.
+            </summary>
+            <remarks>
+            Instances of this class map to the Authors table in the database and can have multiple associated <see cref="Cheep"/> instances.
+            The <see cref="Cheeps"/> collection contains cheeps authored by this user.
+            </remarks>
+            <example>
+            Showing object construction (not persisted until saved via DbContext):
+            <code>
+            var a = new Author { Name = "omar", Email = "Omal@itu.dk" };
+            db.Authors.Add(a);
+            db.SaveChanges();
+            </code>
+            </example>
+        </member>
+        <member name="P:Author.AuthorId">
+            <summary>Gets or sets the primary key for the author.</summary>
+            <value>An integer that uniquely identifies the author in the database.</value>
+
+        </member>
+        <member name="P:Author.Name">
+            <summary>Gets or sets the user name of the author.</summary>
+            <value>The user name chosen by the author.
+            The author display name used throughout the UI and in URLs.</value>
+        </member>
+
+        <member name="P:Author.Email">
+            <summary>Gets or sets the email address of the author.</summary>
+            <value>The email address associated with the author.</value>
+        </member>
+
+        <member name="P:Author.Cheeps">
+            <summary>Gets or sets the collection of <see cref="Cheep"/> instances authored by this user.</summary>
+            <remarks>
+            may be null when not loaded from the database.
+            </remarks>
+            <value>A list of <see cref="Cheep"/> instances or <c>null</c> if not loaded by EF.</value>
+        </member>
+    </members>
+</doc>
