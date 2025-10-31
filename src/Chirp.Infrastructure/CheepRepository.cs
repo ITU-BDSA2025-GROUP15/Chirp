@@ -22,7 +22,9 @@ public class CheepRepository : ICheepRepository
         {
             throw new ArgumentException("Message is empty!?!");
         }
-        if (newMessage.Text.Length > 160)
+        /*max length for cheeps*/
+        const int maxLength = 160;
+        if (newMessage.Text.Length > maxLength)
         {
             throw new ArgumentException("Max length exceeded!?!");
         }
