@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+    <members>
+        <member name="T:Cheep">
+            <summary>
+            Represents a short user message (a "cheep").       
+            </summary>
+            <remarks>
+            Instances map to the Cheeps table in the database and are associated with an <see cref="Author"/>
+            </remarks>
+            <example>
+            Showing object construction (not persisted until saved via DbContext):
+            <code>
+            var c = new Cheep { Text = "Hello world", TimeStamp = DateTime.UtcNow, AuthorId = 1 };
+            db.Cheeps.Add(c);
+            db.SaveChanges();
+            </code>
+            </example>
+        </member>
+
+        <member name="P:Cheep.CheepId">
+            <summary>Gets or sets the primary key for the cheep.</summary>
+            <value>The unique integer identifier for the cheep.</value>
+        </member>
+
+        <member name="P:Cheep.Text">
+            <summary>
+             Gets or Sets the text body of the cheep.
+             </summary>
+             <remarks>
+                This property is required and has a maximum length of 280 characters.
+             </remarks>
+             <value>The body text of the cheep.</value>
+        </member>
+
+        <member name="P:Cheep.TimeStamp">
+            <summary>Gets or sets the timestamp when the cheep was created.</summary>
+            <value>The UTC date and time when the cheep was created.</value>
+            <remarks>
+             This property is required and must be set when creating a new cheep.
+            </remarks>
+        </member>
+
+        <member name="P:Cheep.AuthorId">
+            <summary>Gets or sets the foreign key referencing the <see cref="Author"/> who created the cheep.
+            </summary>
+            <remarks>
+            This requires an <see cref="Author"/> to be present in the database.
+            </remarks>
+            <value>
+            The integer foreign key of the cheep's author.
+            </value>
+        </member>
+        
+        <member name="P:Cheep.Author">
+            <summary>
+            Gets or sets the navigation property to the <see cref="Author"/> who wrote the cheep.
+            </summary>
+             <value>An <see cref="Author"/> instance representing the cheep's author.</value>
+        </member>
+    </members>
+</doc>
+
+
