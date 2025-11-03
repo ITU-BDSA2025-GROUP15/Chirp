@@ -5,13 +5,14 @@
 <div class=navigation>
     @if (SignInManager.IsSignedIn(User))
     {
+        string name = (await UserManager.GetUserAsync(User))!.Name;
         <div>
-            <a href="/@((await UserManager.GetUserAsync(User)).Name)">my timeline</a> |
+            <a href="/@(name)">my timeline</a> |
             <a href="/">public timeline</a> |
             <a asp-area="Identity" asp-page="/Account/Logout">
                 <form class="form-inline" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })"
                     asp-area="Identity" method="post">
-                    <button style="margin: 0;" type="submit">logout [@((await UserManager.GetUserAsync(User)).Name)]</button>
+                    <button style="margin: 0;" type="submit">logout [@(name)]</button>
                 </form>
             </a>
             
