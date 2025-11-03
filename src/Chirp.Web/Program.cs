@@ -1,4 +1,6 @@
 using Chirp.Razor;
+
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,12 +22,17 @@ builder.Services.AddScoped<ICheepService, CheepService>();
 
 var app = builder.Build();
 
-// Seed the database with example data
+// Seed the database with example data and initial accounts
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ChirpDBContext>();
     db.Database.Migrate();
     DbInitializer.SeedDatabase(db);
+
+    var userManager = scope.ServiceProvider.GetRequiredService<Microsoft.AspNetCore.Identity.UserManager<Author>>();
+    var userStore = scope.ServiceProvider.GetRequiredService<Microsoft.AspNetCore.Identity.IUserStore<Author>>();
+    var emailStore = (IUserEmailStore<Author>)userStore;
+    new AccountsInitializer(userManager,userStore, emailStore).SeedAccounts();
 }
 
 // Configure the HTTP request pipeline.
