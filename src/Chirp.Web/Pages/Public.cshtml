@@ -29,4 +29,24 @@
     {
         <em>There are no cheeps so far.</em>
     }
+    <center>
+        @if (Model.HasPreviousPage) 
+        {
+            <a href="/?page=@Model.PreviousPage" class="btn btn-primary">Previous</a>
+        }
+        else 
+        {
+            <a class="btn btn-primary" disabled>Previous</a>
+        }
+        <span>@Model.CurrentPage</span>
+        @if (Model.HasNextPage) 
+        {
+            <a href="/?page=@Model.NextPage" class="btn btn-primary">Next</a>
+        }
+        else
+        {
+            <a class="btn btn-primary" disabled>Next</a>
+        }
+        
+    </center>
 </div>
