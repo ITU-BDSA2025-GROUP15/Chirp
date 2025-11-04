@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Chirp.Razor.Pages;
 
-public class UserTimelineModel : PaginationLayoutModel
+public class UserTimelineModel : PaginationModel
 {
     public UserTimelineModel(ICheepService service) : base(service) {}
 
