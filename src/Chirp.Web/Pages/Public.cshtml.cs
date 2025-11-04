@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Chirp.Razor.Pages;
 
-public class PublicModel : PageModelLayout
+public class PublicModel : PaginationLayoutModel
 {
 
     public PublicModel(ICheepService service) : base(service) {}

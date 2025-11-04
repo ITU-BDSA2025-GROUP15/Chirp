@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Chirp.Razor.Pages;
 
-public class PageModelLayout : PageModel
+public class PaginationLayoutModel : PageModel
 {
     protected readonly ICheepService _service;
     public required List<CheepDTO> Cheeps { get; set; }
@@ -41,7 +41,7 @@ public class PageModelLayout : PageModel
         }
     }
 
-    public PageModelLayout(ICheepService service)
+    public PaginationLayoutModel(ICheepService service)
     {
         _service = service;
     }
