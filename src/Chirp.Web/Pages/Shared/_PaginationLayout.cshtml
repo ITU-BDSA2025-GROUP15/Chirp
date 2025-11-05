@@ -1,0 +1,24 @@
+@{
+    Layout = "./_Layout";
+    var path = ViewContext.HttpContext.Request.Path;
+}
+@RenderBody()
+<center>
+            @if (Model.HasPreviousPage) 
+            {
+                <a href="@path?page=@Model.PreviousPage" class="btn">Previous</a>
+            }
+            else 
+            {
+                <a class="btn" disabled>Previous</a>
+            }
+            <span>@Model.CurrentPage</span>
+            @if (Model.HasNextPage) 
+            {
+                <a href="@path?page=@Model.NextPage" class="btn">Next</a>
+            }
+            else
+            {
+                <a class="btn" disabled>Next</a>
+            }
+</center>
