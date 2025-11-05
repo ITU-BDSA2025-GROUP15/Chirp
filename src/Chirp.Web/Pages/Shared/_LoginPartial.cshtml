@@ -1,4 +1,5 @@
 @using Microsoft.AspNetCore.Identity
+@using System.Web
 @inject SignInManager<Author> SignInManager
 @inject UserManager<Author> UserManager
 
@@ -6,8 +7,9 @@
     @if (SignInManager.IsSignedIn(User))
     {
         string name = (await UserManager.GetUserAsync(User))!.Name;
+        string nameUrl = HttpUtility.UrlEncode(name);
         <div>
-            <a href="/@(name)">my timeline</a> |
+            <a href="/@(nameUrl)">my timeline</a> |
             <a href="/">public timeline</a> |
             <a asp-area="Identity" asp-page="/Account/Logout">
                 <form class="form-inline" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })"
