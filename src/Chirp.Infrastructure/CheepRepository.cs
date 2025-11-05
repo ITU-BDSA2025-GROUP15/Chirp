@@ -34,7 +34,7 @@ public class CheepRepository : ICheepRepository
         var query = _context.Cheeps
             .Join(_context.Authors,
                 Cheeps => Cheeps.AuthorId,
-                Authors => Authors.AuthorId,
+                Authors => Authors.Id,
                 (Cheeps, Authors) => new
                 {
                     Author = Authors.Name,
