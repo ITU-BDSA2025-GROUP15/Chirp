@@ -13,7 +13,7 @@ public class UserTimelineModel : PaginationModel
         Cheeps = _service.GetCheepsFromAuthor(author, page);
         if (Cheeps.Count == 0 || page < 0)
         {
-            return RedirectToPage("/Public");
+            return RedirectToPage();
         }
         return Page();
     }

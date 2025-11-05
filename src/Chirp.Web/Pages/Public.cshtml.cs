@@ -14,7 +14,7 @@ public class PublicModel : PaginationModel
         Cheeps = _service.GetCheeps(page);
         if (Cheeps.Count == 0 || page < 0)
         {
-            return RedirectToPage("/Public");
+            return RedirectToPage();
         }
         return Page();
     }
