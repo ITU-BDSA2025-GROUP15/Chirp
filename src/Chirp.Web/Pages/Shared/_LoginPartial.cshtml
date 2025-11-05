@@ -1,5 +1,4 @@
 @using Microsoft.AspNetCore.Identity
-@using System.Web
 @inject SignInManager<Author> SignInManager
 @inject UserManager<Author> UserManager
 
@@ -7,7 +6,7 @@
     @if (SignInManager.IsSignedIn(User))
     {
         string name = (await UserManager.GetUserAsync(User))!.Name;
-        string nameUrl = HttpUtility.UrlEncode(name);
+        string nameUrl = Uri.EscapeDataString(name);
         <div>
             <a href="/@(nameUrl)">my timeline</a> |
             <a href="/">public timeline</a> |
