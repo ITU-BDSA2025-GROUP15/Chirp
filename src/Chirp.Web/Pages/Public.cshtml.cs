@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Chirp.Razor.Pages;
@@ -11,7 +11,7 @@ public class PublicModel : PaginationModel
     {
         CurrentPage = page == 0 ? 1 : page;
         Cheeps = _service.GetCheeps(page);
-        if (Cheeps.Count == 0 || page < 0)
+        if ((Cheeps.Count == 0 && CurrentPage != 1) || page < 0)
         {
             return RedirectToPage();
         }

@@ -6,19 +6,19 @@
 <center>
             @if (Model.HasPreviousPage) 
             {
-                <a href="@path?page=@Model.PreviousPage" class="btn btn-primary">←</a>
+                <a href="@path?page=@Model.PreviousPage" class="btn">Previous</a>
             }
             else 
             {
-                <a class="btn btn-primary" disabled>←</a>
+                <a class="btn" disabled>Previous</a>
             }
             <span>@Model.CurrentPage</span>
             @if (Model.HasNextPage) 
             {
-                <a href="@path?page=@Model.NextPage" class="btn btn-primary">→</a>
+                <a href="@path?page=@Model.NextPage" class="btn">Next</a>
             }
             else
             {
-                <a class="btn btn-primary" disabled>→</a>
+                <a class="btn" disabled>Next</a>
             }
 </center>
