@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Chirp.Razor.Pages;
 
 public class PublicModel : PaginationModel
 {
-
     public PublicModel(ICheepService service) : base(service) {}
 
     public ActionResult OnGet([FromQuery] int page)
