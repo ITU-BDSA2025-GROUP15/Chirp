@@ -25,6 +25,10 @@ public class End2EndTests
             try
             {
                 // Arrange
+                var expectedDateTime = DateTime.Parse("2023-08-01 13:08:28");
+                var expectedDateTimeStr = expectedDateTime.ToString("MM/dd/yy H:mm:ss");
+                var expectedFullStr = $"<strong>\n                            <a href=\"/Adrian\">Adrian</a>\n                        </strong>\n                        Hej, velkommen til kurset.\n                        <small>&mdash; {expectedDateTimeStr}";
+
                 var baseURL = "http://localhost:5273/";
                 using HttpClient client = new();
                 client.BaseAddress = new Uri(baseURL);
@@ -58,16 +62,11 @@ public class End2EndTests
                 Assert.Contains("Jacqualine Gilcoine", responseBodyPage2);
 
                 // Page 1 and 2 not equal
-                Assert.NotEqual(responseBodyPageDefault, responseBodyPage2); 
+                Assert.NotEqual(responseBodyPageDefault, responseBodyPage2);
 
                 // Only Adrians posts should be on the user page
                 //_output.WriteLine(responseBodyUser);
-                Assert.Contains(@"<strong>
-                            <a href=""/Adrian"">Adrian</a>
-                        </strong>
-                        Hej, velkommen til kurset.
-                        <small>&mdash;"
-                        , responseBodyUser);
+                Assert.Contains(expectedFullStr, responseBodyUser);
                 Assert.DoesNotContain("Jacqualine Gilcoine", responseBodyUser);
             }
             finally
