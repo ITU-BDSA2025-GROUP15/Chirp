@@ -20,19 +20,30 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<ICheepRepository, CheepRepository>();
 builder.Services.AddScoped<ICheepService, CheepService>();
 
-builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultChallengeScheme = "GitHub";
-    })
-    .AddCookie()
-    .AddGitHub(o =>
-    {
-        o.ClientId = builder.Configuration["authentication:github:clientId"]!;
-        o.ClientSecret = builder.Configuration["authentication:github:clientSecret"]!;
-        o.CallbackPath = "/signin-github";
-    });
+string? ghClientId = builder.Configuration["authentication:github:clientId"];
+string? ghClientSecret = builder.Configuration["authentication:github:clientSecret"];
+bool ghConfigured = false;
+
+if (ghClientId != null && ghClientSecret != null)
+{
+    builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultChallengeScheme = "GitHub";
+        })
+        .AddCookie()
+        .AddGitHub(o =>
+        {
+            o.ClientId = ghClientId;
+            o.ClientSecret = ghClientSecret;
+            o.CallbackPath = "/signin-github";
+        });
+
+    ghConfigured = true;
+}
 
 var app = builder.Build();
+
+if (!ghConfigured) app.Logger.LogWarning("GitHub Authentication not configured. Client ID or client secret missing!");
 
 // Seed the database with example data and initial accounts
 using (var scope = app.Services.CreateScope())
@@ -44,7 +55,7 @@ using (var scope = app.Services.CreateScope())
     var userManager = scope.ServiceProvider.GetRequiredService<Microsoft.AspNetCore.Identity.UserManager<Author>>();
     var userStore = scope.ServiceProvider.GetRequiredService<Microsoft.AspNetCore.Identity.IUserStore<Author>>();
     var emailStore = (IUserEmailStore<Author>)userStore;
-    new AccountsInitializer(userManager, userStore, emailStore, db).SeedAccounts();    
+    new AccountsInitializer(userManager, userStore, emailStore, db).SeedAccounts();
 }
 
 // Configure the HTTP request pipeline.
