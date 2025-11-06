@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.Json;
 using Microsoft.Extensions.Logging;
 
@@ -120,10 +121,20 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+            // server-side uniqueness check for the display Name
+            if (!string.IsNullOrWhiteSpace(Input.Name))
+            {
+                var nameTaken = await _userManager.Users.AnyAsync(u => u.Name == Input.Name);
+                if (nameTaken)
+                {
+                    ModelState.AddModelError("Input.Name", "Name already taken.");
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
-
                 user.Name = Input.Name;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
