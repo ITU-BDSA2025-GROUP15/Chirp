@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doc>
     <members>
-        <member name="T:Author">
+        <class name="T:Author">
             <summary>
             Represents a user who can create cheeps.
             </summary>
@@ -17,7 +17,7 @@
             db.SaveChanges();
             </code>
             </example>
-        </member>
+        
         <member name="P:Author.AuthorId">
             <summary>Gets or sets the primary key for the author.</summary>
             <value>An integer that uniquely identifies the author in the database.</value>
@@ -41,5 +41,6 @@
             </remarks>
             <value>A list of <see cref="Cheep"/> instances or <c>null</c> if not loaded by EF.</value>
         </member>
+        </class>
     </members>
 </doc>
