@@ -1,12 +1,30 @@
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc;
+@using Microsoft.AspNetCore.Mvc.RazorPages;
+
 @inject SignInManager<Author> SignInManager
 @inject UserManager<Author> UserManager
 
 <div class=navigation>
+    @{ 
+        bool signedIn = false; 
+        string name = "";
+        string nameUrl = "";
+    }
     @if (SignInManager.IsSignedIn(User))
     {
-        string name = (await UserManager.GetUserAsync(User))!.Name;
-        string nameUrl = Uri.EscapeDataString(name);
+        var user = await UserManager.GetUserAsync(User);
+        if (user != null) {
+            signedIn = true;
+            name = user.Name;
+            nameUrl = Uri.EscapeDataString(name);
+        } else {
+            await SignInManager.SignOutAsync();
+        }
+    }
+        
+    @if (signedIn) 
+    {
         <div>
             <a href="/@(nameUrl)">my timeline</a> |
             <a href="/">public timeline</a> |
@@ -16,7 +34,6 @@
                     <button style="margin: 0;" type="submit">logout [@(name)]</button>
                 </form>
             </a>
-            
         </div>
     }
     else
