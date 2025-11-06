@@ -5,8 +5,20 @@ namespace Chirp.Razor.Pages;
 
 public class PublicModel : PaginationModel
 {
-    public PublicModel(ICheepService service) : base(service) {}
+    [BindProperty]
+    public string Message { get; set; }
 
+    public static Author CurrentAuthor;
+
+    public PublicModel(ICheepService service) : base(service)
+    {
+    }
+
+    private void LoadCheeps(int page)
+    {
+        CurrentPage = page == 0 ? 1 : page;
+        Cheeps = _service.GetCheeps(CurrentPage);
+    }
     public ActionResult OnGet([FromQuery] int page)
     {
         CurrentPage = page == 0 ? 1 : page;
@@ -16,5 +28,10 @@ public class PublicModel : PaginationModel
             return RedirectToPage();
         }
         return Page();
+    }
+    public void OnPost()
+    {
+        _service.PostCheep(CurrentAuthor, Message);
+        LoadCheeps(CurrentPage);
     }
 }

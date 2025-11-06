@@ -18,6 +18,7 @@ public class CheepRepository : ICheepRepository
 
     public async Task CreateMessage(Cheep newMessage)
     {
+        Console.WriteLine("Creating new message...");
         if (String.IsNullOrWhiteSpace(newMessage.Text))
         {
             throw new ArgumentException("Message is empty!?!");
