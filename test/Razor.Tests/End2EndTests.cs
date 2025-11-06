@@ -9,13 +9,14 @@ public class End2EndTests
     public readonly string Razor_path = "src/Chirp.Razor/Chirp.Razor.csproj";
 
     //for debugging test
-    
+    /*
     private readonly ITestOutputHelper _output;
 
     public End2EndTests(ITestOutputHelper output)
     {
         _output = output;
     }
+    */
     [Fact]
     public async void End2End()
     {
@@ -69,7 +70,7 @@ public class End2EndTests
                 Assert.NotEqual(responseBodyPageDefault, responseBodyPage2);
 
                 // Only Adrians posts should be on the user page
-                _output.WriteLine(responseBodyUser);
+                // _output.WriteLine(responseBodyUser);
                 Assert.Contains(expectedFullStr, responseBodyUser);
                 Assert.DoesNotContain("Jacqualine Gilcoine", responseBodyUser);
             }
