@@ -49,6 +49,7 @@ public class End2EndTests
                 // User page Adrian
                 var HTTPResponseUser = await client.GetAsync("/Adrian");
                 string responseBodyUser = await HTTPResponseUser.Content.ReadAsStringAsync();
+                responseBodyUser = responseBodyUser.Replace("\r\n", "\n"); // In case of Windows users
 
                 // Assert
                 // Page 1 and default page is the same
