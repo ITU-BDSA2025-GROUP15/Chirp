@@ -14,7 +14,6 @@
     <h2> @routeName's Timeline </h2>
         @if (SignInManager.IsSignedIn(User))
     {
-        Author currentAuthor = (await UserManager.GetUserAsync(User))!;
         <div class="cheepbox">
             <h3>What's on your mind @(await UserManager.GetUserAsync(User))!.Name)?</h3>
             <form method="post">

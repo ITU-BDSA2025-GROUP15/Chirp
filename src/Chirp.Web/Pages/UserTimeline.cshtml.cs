@@ -1,15 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Chirp.Razor.Pages;
 
 public class UserTimelineModel : PaginationModel
 {
+    private readonly UserManager<Author> _userManager;
     [BindProperty]
     public string Message { get; set; }
 
     public static Author CurrentAuthor;
-    public UserTimelineModel(ICheepService service) : base(service) { }
+    public UserTimelineModel(ICheepService service, UserManager<Author> userManager) : base(service)
+    {
+        _userManager = userManager;
+    }
 
     public void LoadCheeps(int page, string author)
     {
@@ -26,9 +31,11 @@ public class UserTimelineModel : PaginationModel
         }
         return Page();
     }
-    public void OnPost()
+    public async Task<IActionResult> OnPostAsync()
     {
-        _service.PostCheep(CurrentAuthor, Message);
-        LoadCheeps(CurrentPage, CurrentAuthor.Name);
+        Author author = await _userManager.GetUserAsync(User);
+        _service.PostCheep(author, Message);
+        LoadCheeps(CurrentPage, author.Name);
+        return Page();
     }
 }

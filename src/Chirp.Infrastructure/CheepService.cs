@@ -64,15 +64,9 @@ public class CheepService : ICheepService
 
      public void PostCheep(Author author, string message)
     {
-        Author author1 = new Author
-        {
-            Id = 500,
-            Name = "sample name",
-            Email = "f@f.f",
-        };
         Cheep cheep = new Cheep {
-            AuthorId = 40,
-            Author = author1,
+            AuthorId = author.Id,
+            Author = author,
             Text = message,
             TimeStamp = DateTime.Now
         };
