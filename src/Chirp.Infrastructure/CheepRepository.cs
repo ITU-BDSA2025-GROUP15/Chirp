@@ -18,6 +18,16 @@ public class CheepRepository : ICheepRepository
 
     public async Task CreateMessage(Cheep newMessage)
     {
+        if (String.IsNullOrWhiteSpace(newMessage.Text))
+        {
+            throw new ArgumentException("Message is empty!?!");
+        }
+        /*max length for cheeps*/
+        const int maxLength = 160;
+        if (newMessage.Text.Length > maxLength)
+        {
+            throw new ArgumentException("Max length exceeded!?!");
+        }
         var query = _context.Cheeps.Add(newMessage);
         await _context.SaveChangesAsync();
     }
@@ -34,7 +44,7 @@ public class CheepRepository : ICheepRepository
         var query = _context.Cheeps
             .Join(_context.Authors,
                 Cheeps => Cheeps.AuthorId,
-                Authors => Authors.AuthorId,
+                Authors => Authors.Id,
                 (Cheeps, Authors) => new
                 {
                     Author = Authors.Name,

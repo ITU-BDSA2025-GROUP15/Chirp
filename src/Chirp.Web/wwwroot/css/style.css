@@ -250,7 +250,7 @@ form * {
     margin: 2px 0;
 }
 
-button {
+button, a.btn {
     background-color: #cc6e6e;
     border: none;
     color: white;
@@ -260,8 +260,13 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+button:hover, a.btn:hover {
     background-color: #8b4949;
+}
+
+button[disabled], a.btn[disabled] {
+    background-color: #7d5858;
+    cursor: not-allowed;
 }
 
 ul.nav {
