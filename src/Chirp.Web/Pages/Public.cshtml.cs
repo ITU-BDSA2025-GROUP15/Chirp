@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.ComponentModel.DataAnnotations;
+
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -8,6 +10,8 @@ public class PublicModel : PaginationModel
 {
     private readonly UserManager<Author> _userManager;
     [BindProperty]
+    [Required]
+    [StringLength(160, ErrorMessage = "Maximum length is {1}")]
     public string Message { get; set; }
     public Author CurrentAuthor { get; set; }
 
@@ -39,8 +43,9 @@ public class PublicModel : PaginationModel
     }
     public async Task<IActionResult> OnPostAsync()
     {
-        _service.PostCheep(await _userManager.GetUserAsync(User), Message);
+        var userAuthor = await _userManager.GetUserAsync(User);
+        _service.PostCheep(userAuthor, Message);
         LoadCheeps(CurrentPage);
-        return RedirectToPage();
+        return Redirect("/" + userAuthor.Name);
     }
 }
