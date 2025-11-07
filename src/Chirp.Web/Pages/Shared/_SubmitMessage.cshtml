@@ -2,18 +2,22 @@
 @model Chirp.Razor.Pages.PublicModel
 @using Chirp.Razor.Pages
 @using Microsoft.AspNetCore.Identity
-
 @inject SignInManager<Author> SignInManager
 @inject UserManager<Author> UserManager
 
-@if (SignInManager.IsSignedIn(User))
-{
-    Author currentAuthor = (await UserManager.GetUserAsync(User))!;
-    <div class="cheepbox">
-        <h3>What's on your mind @(await UserManager.GetUserAsync(User))!.Name)?</h3>
-        <form method="post">
-            <input style="float: left" type="text" asp-for="Message">
-            <input type="submit" value="Share">
-        </form>
-    </div>
+@{
+    var routeName = ViewContext.HttpContext.GetRouteValue("author");
+    Task<Author?> authorTask = UserManager.GetUserAsync(User);
+    authorTask.Wait();
+    string? authorName = authorTask.Result.Name ?? "";
 }
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <div class="cheepbox">
+            <h3>What's on your mind @authorName?</h3>
+            <form method="post">
+                <input style="float: left" type="text" asp-for="Message">
+                <input type="submit" value="Share">
+            </form>
+        </div>
+    }
