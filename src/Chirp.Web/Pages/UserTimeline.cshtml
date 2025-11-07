@@ -10,6 +10,7 @@
 <div>
     <h2> @routeName's Timeline </h2>
     <partial name="_SubmitMessage"/>
+    <p>@ViewData["Error"]</p>
     @if (Model.Cheeps.Any())
     {
         <ul id="messagelist" class="cheeps">
