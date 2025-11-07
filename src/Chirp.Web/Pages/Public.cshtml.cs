@@ -35,6 +35,6 @@ public class PublicModel : PaginationModel
     {
         _service.PostCheep(await _userManager.GetUserAsync(User), Message);
         LoadCheeps(CurrentPage);
-        return Page();
+        return RedirectToPage();
     }
 }
