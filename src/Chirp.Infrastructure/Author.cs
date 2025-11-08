@@ -9,7 +9,8 @@ using Microsoft.EntityFrameworkCore;
 public class Author : IdentityUser<int>
 {
     /// <include file="../../docs/AuthorDocs.xml" path="/doc/members/class/member[@name='P:Author.AuthorId']/*" />
-    public int AuthorId { get; set; }
+    [NotMapped]
+    public int AuthorId { get { return Id; } set { Id = value; } }
 
     /// <include file="../../docs/AuthorDocs.xml" path="/doc/members/class/member[@name='P:Author.Name']/*" />
     public required string Name { get; set; }
