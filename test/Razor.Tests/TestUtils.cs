@@ -13,11 +13,16 @@ public static class TestUtils
 
     public static async Task<Process> StartRazorPage()
     {
+        // Use random path for db
+        var dbPath = Path.GetTempFileName();
+        Environment.SetEnvironmentVariable("CHIRPDBPATH", dbPath);
+
         Process process = new Process();
         process.StartInfo.FileName = "dotnet";
         process.StartInfo.Arguments = $"run --project ../../../../../{RazorPath}";
         process.StartInfo.UseShellExecute = false;
         process.StartInfo.RedirectStandardOutput = true;
+        process.StartInfo.RedirectStandardError = true;
         process.Start();
 
         var baseURL = "http://localhost:5273";
@@ -34,6 +39,7 @@ public static class TestUtils
             }
             catch (Exception)
             {
+                if (process.HasExited) Assert.Fail($"Razor process exited. {process.StandardError.ReadToEnd()}");
                 Thread.Sleep(10000);
             }
         }
