@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<doc>
+    <members>
+        <member name="T:AuthorRepository">
+            <summary>
+            Provides data access methods for <see cref="Author"/> entities.
+            </summary>
+            <remarks>
+            This repository handles CRUD operations for authors in the database.
+            It uses Entity Framework Core for data access and manages the <see cref="Author"/> instances.
+            </remarks>
+            <example>
+            Example usage of the AuthorRepository:
+            <code>
+            using (var repo = new AuthorRepository(dbContext))
+            {
+                var author = repo.GetAuthorById(1);
+                author.Name = "newname";
+                repo.UpdateAuthor(author);
+                repo.SaveChanges();
+            }
+            </code>
+            </example>
+        </member>
+
+        <member name="M:AuthorRepository.#ctor(ChirpDBContext)">
+            <summary>
+            Initializes a new instance of the <see cref="AuthorRepository"/> class using the supplied <see cref="ChirpDBContext"/>.
+            </summary>
+            <param name="context">The <see cref="ChirpDBContext"/> used for data access.</param>
+        </member>
+
+        <member name="P:ChirpDBContext.Authors">
+            <summary>Gets or sets the DbSet of <see cref="Author"/> entities.</summary>
+            <value>A DbSet representing the Authors table in the database.</value>
+        </member>
+
+        <member name="F:AuthorRepository._context">
+            <summary>
+            The database context used for data access.
+            </summary>
+            <remarks>
+            This field holds the instance of <see cref="ChirpDBContext"/> used by the repository to interact with the database.
+            </remarks>
+            <value>An instance of <see cref="ChirpDBContext"/>.</value>
+        </member>
+
+        <member name="M:AuthorRepository.CreateAuthor(Author)">
+            <summary>
+            Adds a new <see cref="Author"/> to the database.
+            </summary>
+            <param name="author">The <see cref="Author"/> instance to add.</param>
+            <remarks>
+            The author instance must have a unique Name and valid Email before calling this method.
+            </remarks>
+            <example>
+            Example of creating a new author:
+            <code>
+            var newAuthor = new Author { Name = "omar", Email = "omaralhassan90@gmail.com" };
+            authorRepository.CreateAuthor(newAuthor);
+            </code>
+            </example>
+        </member>
+        <member name="M:AuthorRepository.FindAuthorByName(System.String)">
+            <summary>
+            Finds an <see cref="Author"/> by their user name.
+            </summary>
+            <param name="name">The user name of the author to find.</param>
+            <returns>The <see cref="Author"/> instance if found; otherwise, null.</returns>
+            <remarks>
+            This method performs an equality search for the author's name. Case-sensitivity depends on the database collation; callers should be aware that some databases perform case-insensitive comparisons by default.
+            </remarks>
+            <example>
+            Example of finding an author by name:
+            <code>
+            var author = authorRepository.FindAuthorByName("omar");
+            </code>
+            </example>
+        </member>
+
+        <member name="M:AuthorRepository.FindAuthorByEmail(System.String)">
+            <summary>
+            Finds an <see cref="Author"/> by their email address.
+            </summary>
+            <param name="email">The email address of the author to find.</param>
+            <returns>The <see cref="Author"/> instance if found; otherwise, null.</returns>
+            <remarks>
+            This method performs an equality search for the author's email. Case-sensitivity depends on the database collation.
+            </remarks>
+            <example>
+            Example of finding an author by email:
+            <code>
+            var author = authorRepository.FindAuthorByEmail("omaralhassan90@gmail.com");
+            </code>
+            </example>
+        </member>
+
+        <member name="M:AuthorRepository.RemoveAuthor(Author)">
+            <summary>
+            Removes an existing <see cref="Author"/> from the database.
+            </summary>
+            <param name="author">The <see cref="Author"/> instance to remove.</param>
+            <remarks>
+            The author instance must exist in the database before calling this method.
+            </remarks>
+            <example>
+            Example of removing an author:
+            <code>
+            var author = authorRepository.FindAuthorByName("omar");
+            if (author != null)
+            {
+                authorRepository.RemoveAuthor(author);
+            }
+            </code>
+            </example>
+        </member>
+        </members>
+</doc>
