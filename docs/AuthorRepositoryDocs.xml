@@ -69,7 +69,13 @@
             <param name="name">The user name of the author to find.</param>
             <returns>The <see cref="Author"/> instance if found; otherwise, null.</returns>
             <remarks>
-            This method performs an equality search for the author's name. Case-sensitivity depends on the database collation; callers should be aware that some databases perform case-insensitive comparisons by default.
+            <para>
+            Use EF Core async query to avoid blocking a thread pool thread.
+            </para>
+            This preserves the original behaviour (throws if no match) using FirstAsync.
+            <para>
+            Note: This method performs an equality search for the author's name, Equality/case-sensitivity depends on DB collation.
+            </para>
             </remarks>
             <example>
             Example of finding an author by name:

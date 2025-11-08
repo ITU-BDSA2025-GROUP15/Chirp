@@ -25,9 +25,7 @@ public class AuthorRepository : IAuthorRepository
     /// <include file="../../docs/AuthorRepositoryDocs.xml" path="/doc/members/member[@name='M:AuthorRepository.FindAuthorByName(System.String)']/*" />
     public async Task<Author> FindAuthorByName(string name)
     {
-        // Use EF Core async query to avoid blocking a thread pool thread.
-        // This preserves the original behaviour (throws if no match) using FirstAsync.
-        return await _context.Authors.FirstAsync(a => a.Name.Equals(name)); // Note: equality/case-sensitivity depends on DB collation
+        return await _context.Authors.FirstAsync(a => a.Name.Equals(name));
     }
 
     /// <include file="../../docs/AuthorRepositoryDocs.xml" path="/doc/members/member[@name='M:AuthorRepository.FindAuthorByEmail(System.String)']/*" />
