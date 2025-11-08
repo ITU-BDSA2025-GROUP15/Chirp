@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 /// <include file="../../docs/AuthorDocs.xml" path="/doc/members/class[@name='T:Author']/*" />
-public class Author
+[Index(nameof(Name), IsUnique=true)]
+public class Author : IdentityUser<int>
 {
     /// <include file="../../docs/AuthorDocs.xml" path="/doc/members/class/member[@name='P:Author.AuthorId']/*" />
     public int AuthorId { get; set; }
