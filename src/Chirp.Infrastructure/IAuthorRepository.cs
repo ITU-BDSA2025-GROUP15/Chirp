@@ -11,5 +11,6 @@ public interface IAuthorRepository
     public Task<Author> FindAuthorByEmail(string email);
 
     /// <include file="../../docs/IAuthorRepositoryDocs.xml" path="/doc/members/member[@name='M:IAuthorRepository.RemoveAuthor(Author)']/*" />
-    public Task RemoveAuthor(Author author);//temp till testing in memory.
+    public Task RemoveAuthor(Author author);
+
 }
