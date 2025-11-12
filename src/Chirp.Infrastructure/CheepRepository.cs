@@ -84,11 +84,6 @@ public class CheepRepository : ICheepRepository
     }
     
     ///<include file="../../docs/CheepRepositoryDocs.xml" path="/doc/members/member[@name='M:CheepRepository.FindMessage(System.Int32)']/*" />
-    /// <summary>
-    /// For testing purposes
-    /// </summary>
-    /// <param name="cheepId"></param>
-    /// <returns></returns>
     public async Task<Cheep> FindMessage(int cheepId)
     {
         return await Task.Run(() =>_context.Cheeps.Where(a => a.CheepId.Equals(cheepId)).First());
