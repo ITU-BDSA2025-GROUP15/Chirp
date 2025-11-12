@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations;
  /// <include file="../../docs/CheepDocs.xml" path="/doc/members/member[@name='T:Cheep']/*" />
 public class Cheep
 {
-    
     /// <include file="../../docs/CheepDocs.xml" path="/doc/members/member[@name='P:Cheep.CheepId']/*" />
     public int CheepId { get; set; }
 
