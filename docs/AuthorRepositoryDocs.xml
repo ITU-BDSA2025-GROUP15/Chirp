@@ -4,21 +4,19 @@
     <members>
         <member name="T:AuthorRepository">
             <summary>
-            Provides data access methods for <see cref="Author"/> entities.
+            Simple data access for authors (create, find, remove).
             </summary>
             <remarks>
-            This repository handles CRUD operations for authors in the database.
-            It uses Entity Framework Core for data access and manages the <see cref="Author"/> instances.
+            This repository talks to the database to store and fetch <see cref="Author"/> objects. It uses EF Core under the hood. Think of it as the place to put code that reads or writes authors.
             </remarks>
             <example>
-            Example usage of the AuthorRepository:
+            Quick example:
             <code>
             using (var repo = new AuthorRepository(dbContext))
             {
-                var author = repo.GetAuthorById(1);
+                var author = repo.FindAuthorByName("omar");
                 author.Name = "newname";
-                repo.UpdateAuthor(author);
-                repo.SaveChanges();
+                repo.RemoveAuthor(author);
             }
             </code>
             </example>
@@ -48,56 +46,47 @@
 
         <member name="M:AuthorRepository.CreateAuthor(Author)">
             <summary>
-            Adds a new <see cref="Author"/> to the database.
+            Add a new author to the database.
             </summary>
-            <param name="author">The <see cref="Author"/> instance to add.</param>
+            <param name="author">The <see cref="Author"/> to add.</param>
             <remarks>
-            The author instance must have a unique Name and valid Email before calling this method.
+            Make sure the author has a unique name and a valid email before calling this.
             </remarks>
             <example>
-            Example of creating a new author:
             <code>
-            var newAuthor = new Author { Name = "omar", Email = "omaralhassan90@gmail.com" };
-            authorRepository.CreateAuthor(newAuthor);
+            var newAuthor = new Author { Name = "omar", Email = "omar@example.com" };
+            await authorRepository.CreateAuthor(newAuthor);
             </code>
             </example>
         </member>
         <member name="M:AuthorRepository.FindAuthorByName(System.String)">
             <summary>
-            Finds an <see cref="Author"/> by their user name.
+            Find an author by their display name.
             </summary>
-            <param name="name">The user name of the author to find.</param>
-            <returns>The <see cref="Author"/> instance if found; otherwise, null.</returns>
+            <param name="name">The name to look for.</param>
+            <returns>The matching <see cref="Author"/>. (This method throws if no match is found.)</returns>
             <remarks>
-            <para>
-            Use EF Core async query to avoid blocking a thread pool thread.
-            </para>
-            This preserves the original behaviour (throws if no match) using FirstAsync.
-            <para>
-            Note: This method performs an equality search for the author's name, Equality/case-sensitivity depends on DB collation.
-            </para>
+            This uses EF Core's async queries. Whether the search is case-sensitive depends on your database settings (collation).
             </remarks>
             <example>
-            Example of finding an author by name:
             <code>
-            var author = authorRepository.FindAuthorByName("omar");
+            var author = await authorRepository.FindAuthorByName("omar");
             </code>
             </example>
         </member>
 
         <member name="M:AuthorRepository.FindAuthorByEmail(System.String)">
             <summary>
-            Finds an <see cref="Author"/> by their email address.
+            Find an author by email.
             </summary>
-            <param name="email">The email address of the author to find.</param>
-            <returns>The <see cref="Author"/> instance if found; otherwise, null.</returns>
+            <param name="email">The email to search for.</param>
+            <returns>The matching <see cref="Author"/>. (This method throws if no match is found.)</returns>
             <remarks>
-            This method performs an equality search for the author's email. Case-sensitivity depends on the database collation.
+            The search uses database equality rules. Case-sensitivity depends on the DB collation.
             </remarks>
             <example>
-            Example of finding an author by email:
             <code>
-            var author = authorRepository.FindAuthorByEmail("omaralhassan90@gmail.com");
+            var author = await authorRepository.FindAuthorByEmail("omar@example.com");
             </code>
             </example>
         </member>

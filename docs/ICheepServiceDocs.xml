@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <members>
+    <member name="T:ICheepService">
+      <summary>Simple service for reading cheeps for the app.</summary>
+      <remarks>It calls the repository to fetch cheeps and provides small helpers for converting entities to DTOs.</remarks>
+    </member>
+
+    <member name="M:ICheepService.GetCheeps">
+      <summary>Get the latest cheeps (first page).</summary>
+      <returns>A list of <see cref="CheepDTO"/>.</returns>
+    </member>
+
+    <member name="M:ICheepService.GetCheeps(System.Int32)">
+      <summary>Get a specific page of cheeps.</summary>
+      <param name="page">Page number starting from 1.</param>
+      <returns>A list of <see cref="CheepDTO"/> for that page.</returns>
+    </member>
+
+    <member name="M:ICheepService.GetCheepsFromAuthor(System.String)">
+      <summary>Get the latest cheeps from a given author (first page).</summary>
+      <param name="author">Author display name.</param>
+      <returns>A list of <see cref="CheepDTO"/> by that author.</returns>
+    </member>
+
+    <member name="M:ICheepService.GetCheepsFromAuthor(System.String,System.Int32)">
+      <summary>Get a page of cheeps by a specific author.</summary>
+      <param name="author">Author display name.</param>
+      <param name="page">Page number starting at 1.</param>
+      <returns>A list of <see cref="CheepDTO"/> for that author and page.</returns>
+    </member>
+  </members>
+</doc>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <members>
+    <member name="T:ICheepRepository">
+      <summary>Repository interface for working with cheeps.</summary>
+      <remarks>Implementations should provide async methods to create, list, update and find cheeps.</remarks>
+    </member>
+
+    <member name="M:ICheepRepository.CreateMessage(Cheep)">
+      <summary>Add a new cheep to the store.</summary>
+      <param name="newMessage">The <see cref="Cheep"/> to add.</param>
+      <remarks>Implementations should check the message text and save the entity.</remarks>
+    </member>
+
+    <member name="M:ICheepRepository.ReadMessages(System.String,System.Nullable{System.Int32},System.Nullable{System.Int32})">
+      <summary>Get cheeps, optionally for one author and with paging.</summary>
+      <param name="author">If provided, return only cheeps by that author.</param>
+      <param name="page">Page number (1-based). If null, default to the first page.</param>
+      <param name="limit">Page size. If null, implementation default is used.</param>
+      <returns>A task resolving to a list of <see cref="CheepDTO"/>.</returns>
+    </member>
+
+    <member name="M:ICheepRepository.UpdateMessage(CheepDTO)">
+      <summary>Update a cheep's data.</summary>
+      <param name="alteredMessage">A <see cref="CheepDTO"/> with updated values.</param>
+      <remarks>Implementations should find the record and persist changes.</remarks>
+    </member>
+
+    <member name="M:ICheepRepository.FindMessage(System.Int32)">
+      <summary>Find a cheep by id.</summary>
+      <param name="cheepId">The id to look up.</param>
+      <returns>A task resolving to the matching <see cref="Cheep"/>.</returns>
+      <remarks>This may throw if not found; use a nullable result if you want null instead.</remarks>
+    </member>
+  </members>
+</doc>

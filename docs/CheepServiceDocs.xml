@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <members>
+    <member name="T:CheepService">
+      <summary>Service that reads cheeps and converts them to DTOs. It calls the repository to get data.</summary>
+    </member>
+
+    <member name="M:CheepService.#ctor(ICheepRepository)">
+      <summary>Create a new <see cref="CheepService"/> using the provided repository.</summary>
+      <param name="repository">Repository used to fetch cheep data.</param>
+    </member>
+
+    <member name="M:CheepService.GetCheeps">
+      <summary>Get the most recent cheeps (first page).</summary>
+      <returns>A list of <see cref="CheepDTO"/>.</returns>
+    </member>
+
+    <member name="M:CheepService.GetCheeps(System.Int32)">
+      <summary>Get a specific page of cheeps.</summary>
+      <param name="page">Page number (starting at 1).</param>
+      <returns>A list of <see cref="CheepDTO"/> for that page.</returns>
+    </member>
+
+    <member name="M:CheepService.GetCheepsFromAuthor(System.String)">
+      <summary>Get the most recent cheeps from one author (first page).</summary>
+      <param name="author">Author display name.</param>
+      <returns>A list of <see cref="CheepDTO"/> by that author.</returns>
+    </member>
+
+    <member name="M:CheepService.GetCheepsFromAuthor(System.String,System.Int32)">
+      <summary>Get a specific page of cheeps from one author.</summary>
+      <param name="author">Author display name.</param>
+      <param name="page">Page number (starting at 1).</param>
+      <returns>A list of <see cref="CheepDTO"/> for that author and page.</returns>
+    </member>
+
+    <member name="M:CheepService.CheepListToCheepDTOList(System.Collections.Generic.List{Cheep})">
+      <summary>Turn a list of <see cref="Cheep"/> into a list of <see cref="CheepDTO"/> for the UI.</summary>
+      <param name="cheeps">Cheep entities to convert (each should have an Author loaded).</param>
+      <returns>A list of <see cref="CheepDTO"/>.</returns>
+    </member>
+
+    <member name="M:CheepService.DateTimeToDateTimeString(System.DateTime)">
+      <summary>Format a <see cref="System.DateTime"/> as "MM/dd/yy H:mm:ss" for display.</summary>
+      <param name="dateTime">The date/time to format.</param>
+      <returns>A formatted string, e.g. "12/31/25 9:41:23".</returns>
+      <example>
+        <code>
+          var now = DateTime.UtcNow;
+          var formatted = CheepService.DateTimeToDateTimeString(now);
+        </code>
+      </example>
+    </member>
+
+  </members>
+</doc>

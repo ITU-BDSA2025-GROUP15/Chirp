@@ -3,21 +3,17 @@
     <members>
         <member name="T:CheepRepository">
             <summary>
-            Provides data access methods for <see cref="Cheep"/> entities.
+            Simple data access for cheeps (the short messages in the app).
             </summary>
             <remarks>
-            This repository handles CRUD operations for cheeps in the database.
-            It uses Entity Framework Core for data access and manages the <see cref="Cheep"/> instances.
+            This repository reads and writes cheeps to the database using EF Core. It contains methods for creating, listing and finding cheeps.
             </remarks>
             <example>
-            Example usage of the CheepRepository:
             <code>
             using (var repo = new CheepRepository(dbContext))
             {
-                var cheep = repo.GetCheepById(1);
-                cheep.Text = "Updated text";
-                repo.UpdateCheep(cheep);
-                repo.SaveChanges();
+                var cheep = await repo.FindMessage(1);
+                // do something with cheep
             }
             </code>
             </example>
@@ -47,11 +43,11 @@
 
         <member name="M:CheepRepository.CreateMessage(Cheep)">
             <summary>
-            Adds a new <see cref="Cheep"/> to the database after validating text and length.
+            Save a new cheep to the database after checking the text.
             </summary>
-            <param name="newMessage">The <see cref="Cheep"/> instance to add.</param>
+            <param name="newMessage">The <see cref="Cheep"/> to add.</param>
             <remarks>
-            This method validates that the message text is non-empty and does not exceed the maximum allowed length (160 characters by default).
+            The method checks the message isn't empty and isn't longer than 160 characters, then saves it.
             </remarks>
             <example>
             <code>
@@ -63,32 +59,31 @@
 
         <member name="M:CheepRepository.ReadMessages(System.String,System.Nullable{System.Int32},System.Nullable{System.Int32})">
             <summary>
-            Reads messages from database.
+            Get cheeps from the database, with optional author filter and paging.
             </summary>
-            <param name="author">Author of messages. If null, all authors are returned.</param>
-            <param name="page">Page number to read. If null, defaults to 1.</param>
-            <param name="limit">Messages per page. If null, defaults to 32.</param>
-            <returns>List of messages converted to CheepDTO.</returns>
+            <param name="author">If supplied, only cheeps from this author are returned. If null, returns cheeps from all authors.</param>
+            <param name="page">Page number (1-based). If null, defaults to the first page.</param>
+            <param name="limit">How many cheeps per page. If null, repository's default (usually 32) is used.</param>
+            <returns>A list of <see cref="CheepDTO"/> for the requested page/filter.</returns>
         </member>
 
         <member name="M:CheepRepository.UpdateMessage(CheepDTO)">
             <summary>
-            Updates an existing message. This implementation is currently a no-op placeholder used in tests.
+            Update an existing cheep (currently a placeholder in this project).
             </summary>
-            <param name="alteredMessage">A <see cref="CheepDTO"/> containing the updated message data.</param>
+            <param name="alteredMessage">A <see cref="CheepDTO"/> with the new data.</param>
             <remarks>
-            The current implementation returns a completed task and does not persist changes. Implement as needed for production.
+            Right now this method is a no-op used in tests. You can implement it to save edits.
             </remarks>
         </member>
 
         <member name="M:CheepRepository.FindMessage(System.Int32)">
             <summary>
-            Finds a <see cref="Cheep"/> by its id. Intended for testing purposes.
-            </summary>
-            <param name="cheepId">The id of the cheep to find.</param>
-            <returns>The <see cref="Cheep"/> instance if found.</returns>
+            Find a cheep by its id (useful for tests).</summary>
+            <param name="cheepId">The id to look up.</param>
+            <returns>The matching <see cref="Cheep"/>.</returns>
             <remarks>
-            The method throws if no cheep with the supplied id exists. Consider using a nullable return or FirstOrDefaultAsync if you prefer a null result when not found.
+            This throws if no cheep is found. If you prefer a null result when missing, use a nullable return or FirstOrDefaultAsync in your implementation.
             </remarks>
         </member>
     </members>
