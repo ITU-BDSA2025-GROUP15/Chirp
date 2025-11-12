@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+    <members>
+        <member name="T:CheepRepository">
+            <summary>
+            Provides data access methods for <see cref="Cheep"/> entities.
+            </summary>
+            <remarks>
+            This repository handles CRUD operations for cheeps in the database.
+            It uses Entity Framework Core for data access and manages the <see cref="Cheep"/> instances.
+            </remarks>
+            <example>
+            Example usage of the CheepRepository:
+            <code>
+            using (var repo = new CheepRepository(dbContext))
+            {
+                var cheep = repo.GetCheepById(1);
+                cheep.Text = "Updated text";
+                repo.UpdateCheep(cheep);
+                repo.SaveChanges();
+            }
+            </code>
+            </example>
+        </member>
+
+        <member name="M:CheepRepository.#ctor(ChirpDBContext)">
+            <summary>
+            Initializes a new instance of the <see cref="CheepRepository"/> class using the supplied <see cref="ChirpDBContext"/>.
+            </summary>
+            <param name="context">The <see cref="ChirpDBContext"/> used for data access.</param>
+        </member>
+
+        <member name="P:ChirpDBContext.Cheeps">
+            <summary>Gets or sets the DbSet of <see cref="Cheep"/> entities.</summary>
+            <value>A DbSet representing the Cheeps table in the database.</value>
+        </member>
+
+        <member name="F:CheepRepository._context">
+            <summary>
+            The database context used for data access.
+            </summary>
+            <remarks>
+            This field holds the instance of <see cref="ChirpDBContext"/> used by the repository to interact with the database.
+            </remarks>
+            <value>An instance of <see cref="ChirpDBContext"/>.</value>
+        </member>
+
+        <member name="M:CheepRepository.CreateMessage(Cheep)">
+            <summary>
+            Adds a new <see cref="Cheep"/> to the database after validating text and length.
+            </summary>
+            <param name="newMessage">The <see cref="Cheep"/> instance to add.</param>
+            <remarks>
+            This method validates that the message text is non-empty and does not exceed the maximum allowed length (160 characters by default).
+            </remarks>
+            <example>
+            <code>
+            var newCheep = new Cheep { AuthorId = 1, Text = "Hello world" };
+            await cheepRepository.CreateMessage(newCheep);
+            </code>
+            </example>
+        </member>
+
+        <member name="M:CheepRepository.ReadMessages(System.String,System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Reads messages from database.
+            </summary>
+            <param name="author">Author of messages. If null, all authors are returned.</param>
+            <param name="page">Page number to read. If null, defaults to 1.</param>
+            <param name="limit">Messages per page. If null, defaults to 32.</param>
+            <returns>List of messages converted to CheepDTO.</returns>
+        </member>
+
+        <member name="M:CheepRepository.UpdateMessage(CheepDTO)">
+            <summary>
+            Updates an existing message. This implementation is currently a no-op placeholder used in tests.
+            </summary>
+            <param name="alteredMessage">A <see cref="CheepDTO"/> containing the updated message data.</param>
+            <remarks>
+            The current implementation returns a completed task and does not persist changes. Implement as needed for production.
+            </remarks>
+        </member>
+
+        <member name="M:CheepRepository.FindMessage(System.Int32)">
+            <summary>
+            Finds a <see cref="Cheep"/> by its id. Intended for testing purposes.
+            </summary>
+            <param name="cheepId">The id of the cheep to find.</param>
+            <returns>The <see cref="Cheep"/> instance if found.</returns>
+            <remarks>
+            The method throws if no cheep with the supplied id exists. Consider using a nullable return or FirstOrDefaultAsync if you prefer a null result when not found.
+            </remarks>
+        </member>
+    </members>
+</doc>

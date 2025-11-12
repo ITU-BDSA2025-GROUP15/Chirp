@@ -5,17 +5,19 @@ using SQLitePCL;
 
 using System.Linq;
 
-
+/// <include file="../../docs/CheepRepositoryDocs.xml" path="/doc/members/member[@name='T:CheepRepository']/*" />
 public class CheepRepository : ICheepRepository
 {
     private readonly int defaultLimit = 32;
     private readonly ChirpDBContext _context;
 
+
+    /// <include file="../../docs/CheepRepositoryDocs.xml" path="/doc/members/member[@name='M:CheepRepository.#ctor(ChirpDBContext)']/*" />
     public CheepRepository(ChirpDBContext context)
     {
         _context = context;
     }
-
+    /// <include file="../../docs/CheepRepositoryDocs.xml" path="/doc/members/member[@name='M:CheepRepository.CreateMessage(Cheep)']/*" />
     public async Task CreateMessage(Cheep newMessage)
     {
         if (String.IsNullOrWhiteSpace(newMessage.Text))
@@ -32,13 +34,7 @@ public class CheepRepository : ICheepRepository
         await _context.SaveChangesAsync();
     }
 
-    /// <summary>
-    /// Reads messages from database.
-    /// </summary>
-    /// <param name="author">Author of messages. If null, all authors are returned.</param>
-    /// <param name="page">Page number to read. If null, defaults to 1.</param>
-    /// <param name="limit">Messages per page. If null, defaults to 32.</param>
-    /// <returns>List of messages converted to CheepDTO.</returns>
+    /// <include file="../../docs/CheepRepositoryDocs.xml" path="/doc/members/member[@name='M:CheepRepository.ReadMessages(System.String,System.Nullable{System.Int32},System.Nullable{System.Int32})']/*" />
     public async Task<List<CheepDTO>> ReadMessages(string? author, int? page, int? limit)
     {
         var query = _context.Cheeps
@@ -64,7 +60,7 @@ public class CheepRepository : ICheepRepository
 
         query = query.Skip((_page - 1) * _limit);
         query = query.Take(_limit);
-    
+
         var cheeps = await query.ToListAsync();
         var cheepdtos = new List<CheepDTO>();
 
@@ -80,10 +76,14 @@ public class CheepRepository : ICheepRepository
 
         return cheepdtos;
     }
+
+    /// <include file="../../docs/CheepRepositoryDocs.xml" path="/doc/members/member[@name='M:CheepRepository.UpdateMessage(CheepDTO)']/*" />
     public Task UpdateMessage(CheepDTO alteredMessage)
     {
         return Task.Run(() => 0); //does nothing
     }
+    
+    ///<include file="../../docs/CheepRepositoryDocs.xml" path="/doc/members/member[@name='M:CheepRepository.FindMessage(System.Int32)']/*" />
     /// <summary>
     /// For testing purposes
     /// </summary>
