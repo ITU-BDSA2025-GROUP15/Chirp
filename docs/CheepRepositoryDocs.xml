@@ -73,7 +73,7 @@
             </summary>
             <param name="alteredMessage">A <see cref="CheepDTO"/> with the new data.</param>
             <remarks>
-            Right now this method is a no-op used in tests. You can implement it to save edits.
+            Right now this method is a no-op used in tests. Can be implemented to save edits.
             </remarks>
         </member>
 
