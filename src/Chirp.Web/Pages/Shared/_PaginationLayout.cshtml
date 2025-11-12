@@ -18,11 +18,12 @@
                     name="page" 
                     value=@Model.CurrentPage 
                     pattern="[1-9][0-9]*" 
-                    onchange="if (this.checkValidity()) {
-                    this.form.submit();
-                    }else {
-                    this.setCustomValidity('Please enter a valid page number.');
-                    }" 
+                    onchange="
+                        if (this.checkValidity()) {
+                            this.form.submit();
+                        }else {
+                            this.setCustomValidity('Please enter a valid page number.');
+                        }" 
                     style="width:15px;"
                 ></input>
             </form>
