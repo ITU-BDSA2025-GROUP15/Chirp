@@ -7,7 +7,7 @@
             Simple data access for authors (create, find, remove).
             </summary>
             <remarks>
-            This repository talks to the database to store and fetch <see cref="Author"/> objects. It uses EF Core under the hood. Think of it as the place to put code that reads or writes authors.
+            This repository talks to the database to store and fetch <see cref="Author"/> objects. It uses EF Core under the hood.
             </remarks>
             <example>
             Quick example:
