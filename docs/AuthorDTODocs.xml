@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <members>
+    <member name="T:AuthorDTO">
+      <summary>Data Transfer Object used to represent an author in UI layers.</summary>
+      <remarks>Contains minimal display information for authors.</remarks>
+    </member>
+
+    <member name="P:AuthorDTO.Name">
+      <summary>The display name of the author.</summary>
+    </member>
+  </members>
+</doc>

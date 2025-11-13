@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+    <members>
+        <member name="T:CheepRepository">
+            <summary>
+            Simple data access for cheeps (the short messages in the app).
+            </summary>
+            <remarks>
+            This repository reads and writes cheeps to the database using EF Core. It contains methods for creating, listing and finding cheeps.
+            </remarks>
+            <example>
+            <code>
+            using (var repo = new CheepRepository(dbContext))
+            {
+                var cheep = await repo.FindMessage(1);
+                // do something with cheep
+            }
+            </code>
+            </example>
+        </member>
+
+        <member name="M:CheepRepository.#ctor(ChirpDBContext)">
+            <summary>
+            Initializes a new instance of the <see cref="CheepRepository"/> class using the supplied <see cref="ChirpDBContext"/>.
+            </summary>
+            <param name="context">The <see cref="ChirpDBContext"/> used for data access.</param>
+        </member>
+
+        <member name="P:ChirpDBContext.Cheeps">
+            <summary>Gets or sets the DbSet of <see cref="Cheep"/> entities.</summary>
+            <value>A DbSet representing the Cheeps table in the database.</value>
+        </member>
+
+        <member name="F:CheepRepository._context">
+            <summary>
+            The database context used for data access.
+            </summary>
+            <remarks>
+            This field holds the instance of <see cref="ChirpDBContext"/> used by the repository to interact with the database.
+            </remarks>
+            <value>An instance of <see cref="ChirpDBContext"/>.</value>
+        </member>
+
+        <member name="M:CheepRepository.CreateMessage(Cheep)">
+            <summary>
+            Save a new cheep to the database after checking the text.
+            </summary>
+            <param name="newMessage">The <see cref="Cheep"/> to add.</param>
+            <remarks>
+            The method checks the message isn't empty and isn't longer than 160 characters, then saves it.
+            </remarks>
+            <example>
+            <code>
+            var newCheep = new Cheep { AuthorId = 1, Text = "Hello world" };
+            await cheepRepository.CreateMessage(newCheep);
+            </code>
+            </example>
+        </member>
+
+        <member name="M:CheepRepository.ReadMessages(System.String,System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Get cheeps from the database, with optional author filter and paging.
+            </summary>
+            <param name="author">If supplied, only cheeps from this author are returned. If null, returns cheeps from all authors.</param>
+            <param name="page">Page number (1-based). If null, defaults to the first page.</param>
+            <param name="limit">How many cheeps per page. If null, repository's default (usually 32) is used.</param>
+            <returns>A list of <see cref="CheepDTO"/> for the requested page/filter.</returns>
+        </member>
+
+        <member name="M:CheepRepository.UpdateMessage(CheepDTO)">
+            <summary>
+            Update an existing cheep (currently a placeholder in this project).
+            </summary>
+            <param name="alteredMessage">A <see cref="CheepDTO"/> with the new data.</param>
+            <remarks>
+            Right now this method is a no-op used in tests. Can be implemented to save edits.
+            </remarks>
+        </member>
+
+        <member name="M:CheepRepository.FindMessage(System.Int32)">
+            <summary>
+            Find a cheep by its id (useful for tests).</summary>
+            <param name="cheepId">The id to look up.</param>
+            <returns>The matching <see cref="Cheep"/>.</returns>
+            <remarks>
+            This throws if no cheep is found. If you prefer a null result when missing, use a nullable return or FirstOrDefaultAsync in your implementation.
+            </remarks>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <members>
+    <member name="T:ChirpDBContext">
+      <summary>The EF Core database context used by the app.</summary>
+      <remarks>It exposes the DbSet properties for your entities (Authors and Cheeps) and wires up ASP.NET Identity for authors.</remarks>
+    </member>
+
+    <member name="M:ChirpDBContext.#ctor(Microsoft.EntityFrameworkCore.DbContextOptions)">
+      <summary>Create the context with the given EF options.</summary>
+      <param name="options">EF Core options used to configure the context.</param>
+    </member>
+
+    <member name="P:ChirpDBContext.Authors">
+      <summary>A table-like set for <see cref="Author"/> objects.</summary>
+      <value>Represents the Authors table in the database.</value>
+    </member>
+
+    <member name="P:ChirpDBContext.Cheeps">
+      <summary>A table-like set for <see cref="Cheep"/> objects.</summary>
+      <value>Represents the Cheeps table in the database.</value>
+    </member>
+  </members>
+</doc>

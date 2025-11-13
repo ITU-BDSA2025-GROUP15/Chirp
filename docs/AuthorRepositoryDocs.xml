@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<doc>
+    <members>
+        <member name="T:AuthorRepository">
+            <summary>
+            Simple data access for authors (create, find, remove).
+            </summary>
+            <remarks>
+            This repository talks to the database to store and fetch <see cref="Author"/> objects. It uses EF Core under the hood.
+            </remarks>
+            <example>
+            Quick example:
+            <code>
+            using (var repo = new AuthorRepository(dbContext))
+            {
+                var author = repo.FindAuthorByName("omar");
+                author.Name = "newname";
+                repo.RemoveAuthor(author);
+            }
+            </code>
+            </example>
+        </member>
+
+        <member name="M:AuthorRepository.#ctor(ChirpDBContext)">
+            <summary>
+            Initializes a new instance of the <see cref="AuthorRepository"/> class using the supplied <see cref="ChirpDBContext"/>.
+            </summary>
+            <param name="context">The <see cref="ChirpDBContext"/> used for data access.</param>
+        </member>
+
+        <member name="P:ChirpDBContext.Authors">
+            <summary>Gets or sets the DbSet of <see cref="Author"/> entities.</summary>
+            <value>A DbSet representing the Authors table in the database.</value>
+        </member>
+
+        <member name="F:AuthorRepository._context">
+            <summary>
+            The database context used for data access.
+            </summary>
+            <remarks>
+            This field holds the instance of <see cref="ChirpDBContext"/> used by the repository to interact with the database.
+            </remarks>
+            <value>An instance of <see cref="ChirpDBContext"/>.</value>
+        </member>
+
+        <member name="M:AuthorRepository.CreateAuthor(Author)">
+            <summary>
+            Add a new author to the database.
+            </summary>
+            <param name="author">The <see cref="Author"/> to add.</param>
+            <remarks>
+            Make sure the author has a unique name and a valid email before calling this.
+            </remarks>
+            <example>
+            <code>
+            var newAuthor = new Author { Name = "omar", Email = "omar@example.com" };
+            await authorRepository.CreateAuthor(newAuthor);
+            </code>
+            </example>
+        </member>
+        <member name="M:AuthorRepository.FindAuthorByName(System.String)">
+            <summary>
+            Find an author by their display name.
+            </summary>
+            <param name="name">The name to look for.</param>
+            <returns>The matching <see cref="Author"/>. (This method throws if no match is found.)</returns>
+            <remarks>
+            This uses EF Core's async queries. Whether the search is case-sensitive depends on your database settings (collation).
+            </remarks>
+            <example>
+            <code>
+            var author = await authorRepository.FindAuthorByName("omar");
+            </code>
+            </example>
+        </member>
+
+        <member name="M:AuthorRepository.FindAuthorByEmail(System.String)">
+            <summary>
+            Find an author by email.
+            </summary>
+            <param name="email">The email to search for.</param>
+            <returns>The matching <see cref="Author"/>. (This method throws if no match is found.)</returns>
+            <remarks>
+            The search uses database equality rules. Case-sensitivity depends on the DB collation.
+            </remarks>
+            <example>
+            <code>
+            var author = await authorRepository.FindAuthorByEmail("omar@example.com");
+            </code>
+            </example>
+        </member>
+
+        <member name="M:AuthorRepository.RemoveAuthor(Author)">
+            <summary>
+            Removes an existing <see cref="Author"/> from the database.
+            </summary>
+            <param name="author">The <see cref="Author"/> instance to remove.</param>
+            <remarks>
+            The author instance must exist in the database before calling this method.
+            </remarks>
+            <example>
+            Example of removing an author:
+            <code>
+            var author = authorRepository.FindAuthorByName("omar");
+            if (author != null)
+            {
+                authorRepository.RemoveAuthor(author);
+            }
+            </code>
+            </example>
+        </member>
+        </members>
+</doc>

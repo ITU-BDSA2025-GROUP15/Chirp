@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <members>
+    <member name="T:CheepDTO">
+      <summary>Data Transfer Object used to represent cheeps in the UI layer.</summary>
+      <remarks>Contains the author's display name, the message text and a formatted timestamp string.</remarks>
+    </member>
+
+    <member name="P:CheepDTO.Author">
+      <summary>The display name of the cheep's author.</summary>
+    </member>
+
+    <member name="P:CheepDTO.Message">
+      <summary>The text content of the cheep.</summary>
+    </member>
+
+    <member name="P:CheepDTO.Timestamp">
+      <summary>A formatted timestamp string (see <see cref="CheepService.DateTimeToDateTimeString"/>).</summary>
+    </member>
+  </members>
+</doc>
