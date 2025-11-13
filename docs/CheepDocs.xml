@@ -28,7 +28,7 @@
              Gets or Sets the text body of the cheep.
              </summary>
              <remarks>
-                This property is required and has a maximum length of 280 characters.
+                This property is required and has a maximum length of 160 characters.
              </remarks>
              <value>The body text of the cheep.</value>
         </member>
