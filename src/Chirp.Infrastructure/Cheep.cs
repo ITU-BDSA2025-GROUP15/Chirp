@@ -10,7 +10,7 @@ public class Cheep
 
     /// <include file="../../docs/CheepDocs.xml" path="/doc/members/member[@name='P:Cheep.Text']/*" />
     [Required]
-    [StringLength(280)]
+    [StringLength(160)]
     public required string Text { get; set; }
 
     /// <include file="../../docs/CheepDocs.xml" path="/doc/members/member[@name='P:Cheep.TimeStamp']/*" />
