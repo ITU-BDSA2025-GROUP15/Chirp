@@ -61,4 +61,15 @@ public class CheepService : ICheepService
     {
         return dateTime.ToString("MM/dd/yy H:mm:ss");
     }
+
+     public void PostCheep(Author author, string message)
+    {
+        Cheep cheep = new Cheep {
+            AuthorId = author.Id,
+            Author = author,
+            Text = message,
+            TimeStamp = DateTime.Now
+        };
+        _repository.CreateMessage(cheep);
+    }
 }

@@ -1,0 +1,31 @@
+@model Chirp.Razor.Pages.PublicModel
+@using Chirp.Razor.Pages
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<Author> SignInManager
+@inject UserManager<Author> UserManager
+
+@{
+    var routeName = ViewContext.HttpContext.GetRouteValue("author");
+    
+}
+@if (SignInManager.IsSignedIn(User))
+{
+    Author? author = await UserManager.GetUserAsync(User);
+    string authorName = author!.Name;
+    if (author != null && authorName != null)
+    {
+        <div class="cheepbox">
+            <h3>What's on your mind @authorName?</h3>
+            <form method="post">
+                <input style="float: left" type="text" asp-for="Message" asp-for="routeName">
+                <input type="submit" value="Share">
+            </form>
+        </div>
+    }
+    else
+    {
+        <div>
+            <p>Account or name not found!</p> @*this will most likely never happen*@
+        </div>
+    }
+}

@@ -1,13 +1,20 @@
 ﻿@page "/"
 @model Chirp.Razor.Pages.PublicModel
+@using Chirp.Razor.Pages
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<Author> SignInManager
+@inject UserManager<Author> UserManager
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_PaginationLayout";
+    var routeName = ViewContext.HttpContext.GetRouteValue("author");
 }
 
 <div>
     <h2> Public Timeline </h2>
-
+    <partial name="_SubmitMessage"/>
+    <p>@ViewData["Error"]</p>
     @if (Model.Cheeps.Any())
     {
         <ul id="messagelist" class="cheeps">
