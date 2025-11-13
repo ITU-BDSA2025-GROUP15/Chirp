@@ -14,17 +14,11 @@
             }
             <form onsubmit="return this.checkValidity()" style="display:inline-block;">
                 <input 
-                    type="text" 
+                    type="number" 
+                    class="pageInput"
                     name="page" 
-                    value=@Model.CurrentPage 
-                    pattern="[1-9][0-9]*" 
-                    onchange="
-                        if (this.checkValidity()) {
-                            this.form.submit();
-                        }else {
-                            this.setCustomValidity('Please enter a valid page number.');
-                        }" 
-                    style="width:15px;"
+                    value=@Model.CurrentPage
+                    min="1"
                 ></input>
             </form>
             @if (Model.HasNextPage) 
