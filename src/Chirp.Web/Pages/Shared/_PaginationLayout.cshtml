@@ -12,7 +12,15 @@
             {
                 <a class="btn" disabled>Previous</a>
             }
-            <span>@Model.CurrentPage</span>
+            <form onsubmit="return this.checkValidity()" style="display:inline-block;">
+                <input 
+                    type="number" 
+                    class="pageInput"
+                    name="page" 
+                    value=@Model.CurrentPage
+                    min="1"
+                ></input>
+            </form>
             @if (Model.HasNextPage) 
             {
                 <a href="@path?page=@Model.NextPage" class="btn">Next</a>

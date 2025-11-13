@@ -292,3 +292,14 @@ ul.nav li a {
 ul.nav li a:hover {
     background-color: #8b4949;
 }
+
+/* Remove arrows from number field */
+.pageInput {
+    -moz-appearance:textfield;
+    width: 20px;
+}
+
+.pageInput::-webkit-outer-spin-button,
+.pageInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
