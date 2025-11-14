@@ -43,10 +43,10 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     {
         _fixture = fixture;
     }
-    [Fact]
-    public async void Page1AndDefaultEqual()
-    {
 
+    [Fact]
+    public async Task Page1AndDefaultEqual()
+    {
         // Act
         // Default page
         var HTTPResponsePageDefault = await _fixture.client.GetAsync("/");
@@ -59,12 +59,11 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         // Assert
         // Page 1 and default page is the same
         Assert.Equal(responseBodyPageDefault, responseBodyPage1);
-
     }
-    [Fact]
-    public async void CheepThatShouldBeOnPage1()
-    {
 
+    [Fact]
+    public async Task CheepThatShouldBeOnPage1()
+    {
         //Act
         var HTTPResponsePageDefault = await _fixture.client.GetAsync("/");
         string responseBodyPageDefault = await HTTPResponsePageDefault.Content.ReadAsStringAsync();
@@ -72,13 +71,11 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         //Assert
         // Cheep that should be on the first page
         Assert.Contains("Starbuck now is what we hear the worst.", responseBodyPageDefault);
-
     }
 
     [Fact]
-    public async void CheepThatShouldBeOnPage2()
+    public async Task CheepThatShouldBeOnPage2()
     {
-
         //Act
         //Page 2
         var HTTPResponsePage2 = await _fixture.client.GetAsync("/?page=2");
@@ -86,13 +83,11 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
 
         Assert.Contains("It is asking much of it in the world.", responseBodyPage2);
         Assert.Contains("Jacqualine Gilcoine", responseBodyPage2);
-
     }
+    
     [Fact]
-    public async void Page1and2AreNotTheSame()
+    public async Task Page1and2AreNotTheSame()
     {
-
-
         //Act
         var HTTPResponsePageDefault = await _fixture.client.GetAsync("/");
         string responseBodyPageDefault = await HTTPResponsePageDefault.Content.ReadAsStringAsync();
@@ -104,11 +99,10 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         //Assert
         // Page 1 and 2 not equal
         Assert.NotEqual(responseBodyPageDefault, responseBodyPage2);
-
     }
 
     [Fact]
-    public async void AdrianHtmlMessage()
+    public async Task AdrianHtmlMessage()
     {
         // Arrange
         var expectedDateTime = DateTime.Parse("2023-08-01 13:08:28");
@@ -126,6 +120,5 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         // _output.WriteLine(responseBodyUser);
         Assert.Contains(expectedFullStr, responseBodyUser);
         Assert.DoesNotContain("Jacqualine Gilcoine", responseBodyUser);
-
     }
 }
