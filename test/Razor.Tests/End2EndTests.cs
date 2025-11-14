@@ -2,11 +2,33 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 using Xunit.Abstractions;
+public class RazorPageFixture : IAsyncLifetime
+{
+    Process _razorPage;
+    public HttpClient client;
+    public async Task InitializeAsync()
+    {
+        _razorPage = await TestUtils.StartRazorPage();
+        var baseURL = "http://localhost:5273/";
+        client = new();
+        client.BaseAddress = new Uri(baseURL);
+    }
+    public Task DisposeAsync()
+    {
+        client.Dispose(); //I don't know if this is needed
+        _razorPage.Kill(true);
+        _razorPage.WaitForExit();
+        _razorPage.Dispose();
+        return Task.CompletedTask;
+    }
+}
 
 [Collection("Sequential")]
-public class End2EndTests
+public class End2EndTests : IClassFixture<RazorPageFixture>
 {
     public readonly string Razor_path = "src/Chirp.Razor/Chirp.Razor.csproj";
+
+    RazorPageFixture _fixture;
 
     //for debugging test
     /*
@@ -17,69 +39,93 @@ public class End2EndTests
         _output = output;
     }
     */
-    [Fact]
-    public async void End2End()
+    public End2EndTests(RazorPageFixture fixture)
     {
-        Process razorPage = await TestUtils.StartRazorPage();
+        _fixture = fixture;
+    }
+    [Fact]
+    public async void Page1AndDefaultEqual()
+    {
 
-        using (Process process = new Process())
-        {
-            try
-            {
-                // Arrange
-                var expectedDateTime = DateTime.Parse("2023-08-01 13:08:28");
-                var expectedDateTimeStr = expectedDateTime.ToString("MM/dd/yy H:mm:ss");
-                var expectedFullStr = $"<strong><a href=\"/Adrian\">Adrian</a></strong>Hej, velkommen til kurset.<small>&mdash; {expectedDateTimeStr}";
+        // Act
+        // Default page
+        var HTTPResponsePageDefault = await _fixture.client.GetAsync("/");
+        string responseBodyPageDefault = await HTTPResponsePageDefault.Content.ReadAsStringAsync();
 
-                var baseURL = "http://localhost:5273/";
-                using HttpClient client = new();
-                client.BaseAddress = new Uri(baseURL);
+        // Page 1
+        var HTTPResponsePage1 = await _fixture.client.GetAsync("/?page=1");
+        string responseBodyPage1 = await HTTPResponsePage1.Content.ReadAsStringAsync();
 
-                // Act
-                // Default page
-                var HTTPResponsePageDefault = await client.GetAsync("/");
-                string responseBodyPageDefault = await HTTPResponsePageDefault.Content.ReadAsStringAsync();
+        // Assert
+        // Page 1 and default page is the same
+        Assert.Equal(responseBodyPageDefault, responseBodyPage1);
 
-                // Page 1
-                var HTTPResponsePage1 = await client.GetAsync("/?page=1");
-                string responseBodyPage1 = await HTTPResponsePage1.Content.ReadAsStringAsync();
+    }
+    [Fact]
+    public async void CheepThatShouldBeOnPage1()
+    {
 
-                // Page 2
-                var HTTPResponsePage2 = await client.GetAsync("/?page=2");
-                string responseBodyPage2 = await HTTPResponsePage2.Content.ReadAsStringAsync();
+        //Act
+        var HTTPResponsePageDefault = await _fixture.client.GetAsync("/");
+        string responseBodyPageDefault = await HTTPResponsePageDefault.Content.ReadAsStringAsync();
 
-                // User page Adrian
-                var HTTPResponseUser = await client.GetAsync("/Adrian");
-                string responseBodyUser = await HTTPResponseUser.Content.ReadAsStringAsync();
+        //Assert
+        // Cheep that should be on the first page
+        Assert.Contains("Starbuck now is what we hear the worst.", responseBodyPageDefault);
 
-                responseBodyUser = responseBodyUser.Replace("\r\n", "\n"); // In case of Windows users
-                responseBodyUser = Regex.Replace(responseBodyUser, "\n\\s*", ""); // Strip leading whitespace
+    }
 
-                // Assert
-                // Page 1 and default page is the same
-                Assert.Equal(responseBodyPageDefault, responseBodyPage1);
+    [Fact]
+    public async void CheepThatShouldBeOnPage2()
+    {
 
-                // Cheep that should be on the first page
-                Assert.Contains("Starbuck now is what we hear the worst.", responseBodyPageDefault);
+        //Act
+        //Page 2
+        var HTTPResponsePage2 = await _fixture.client.GetAsync("/?page=2");
+        string responseBodyPage2 = await HTTPResponsePage2.Content.ReadAsStringAsync();
 
-                // Cheep on page 2
-                Assert.Contains("It is asking much of it in the world.", responseBodyPage2);
-                Assert.Contains("Jacqualine Gilcoine", responseBodyPage2);
+        Assert.Contains("It is asking much of it in the world.", responseBodyPage2);
+        Assert.Contains("Jacqualine Gilcoine", responseBodyPage2);
 
-                // Page 1 and 2 not equal
-                Assert.NotEqual(responseBodyPageDefault, responseBodyPage2);
+    }
+    [Fact]
+    public async void Page1and2AreNotTheSame()
+    {
 
-                // Only Adrians posts should be on the user page
-                // _output.WriteLine(responseBodyUser);
-                Assert.Contains(expectedFullStr, responseBodyUser);
-                Assert.DoesNotContain("Jacqualine Gilcoine", responseBodyUser);
-            }
-            finally
-            {
-                razorPage.Kill(true);
-                razorPage.WaitForExit();
-                razorPage.Dispose();
-            }
-        }
+
+        //Act
+        var HTTPResponsePageDefault = await _fixture.client.GetAsync("/");
+        string responseBodyPageDefault = await HTTPResponsePageDefault.Content.ReadAsStringAsync();
+        //Page 2
+        var HTTPResponsePage2 = await _fixture.client.GetAsync("/?page=2");
+        string responseBodyPage2 = await HTTPResponsePage2.Content.ReadAsStringAsync();
+
+
+        //Assert
+        // Page 1 and 2 not equal
+        Assert.NotEqual(responseBodyPageDefault, responseBodyPage2);
+
+    }
+
+    [Fact]
+    public async void AdrianHtmlMessage()
+    {
+        // Arrange
+        var expectedDateTime = DateTime.Parse("2023-08-01 13:08:28");
+        var expectedDateTimeStr = expectedDateTime.ToString("MM/dd/yy H:mm:ss");
+        var expectedFullStr = $"<strong><a href=\"/Adrian\">Adrian</a></strong>Hej, velkommen til kurset.<small>&mdash; {expectedDateTimeStr}";
+
+        // User page Adrian
+        var HTTPResponseUser = await _fixture.client.GetAsync("/Adrian");
+        string responseBodyUser = await HTTPResponseUser.Content.ReadAsStringAsync();
+
+        responseBodyUser = responseBodyUser.Replace("\r\n", "\n"); // In case of Windows users
+        responseBodyUser = Regex.Replace(responseBodyUser, "\n\\s*", ""); // Strip leading whitespace
+
+        // Only Adrians posts should be on the user page
+        // _output.WriteLine(responseBodyUser);
+        Assert.Contains(expectedFullStr, responseBodyUser);
+        Assert.DoesNotContain("Jacqualine Gilcoine", responseBodyUser);
+
     }
 }
