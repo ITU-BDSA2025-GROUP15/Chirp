@@ -10,13 +10,13 @@ public class RazorPageFixture : IAsyncLifetime
     Process? _razorPage;
     public required HttpClient Client;
 
-    public required IBrowserContext Context;
+    readonly IBrowserContext[] _contexts = new IBrowserContext[3];
 
     IPlaywright? _playwright;
 
-    IBrowser? _browser;
+    readonly IBrowser[] _browsers = new IBrowser[3];
 
-    public required IPage Page;
+    public required IPage[] Pages = new IPage[3];
     public async Task InitializeAsync()
     {
         _razorPage = await TestUtils.StartRazorPage();
@@ -25,23 +25,23 @@ public class RazorPageFixture : IAsyncLifetime
         Client.BaseAddress = new Uri(baseURL);
 
         _playwright = await Playwright.CreateAsync();
-        _browser = await _playwright.Chromium.LaunchAsync(new()
+        int i = 0;
+        foreach (var browserName in new string[]{"Chromium", "Firefox", "Webkit"})
         {
-            Headless = false,
-
-        });
-        Context = await _browser.NewContextAsync();
-
-        Page = await Context.NewPageAsync();
-        await Page.GotoAsync("http://localhost:5273/");
+            _browsers[i] = await _playwright[browserName].LaunchAsync(new BrowserTypeLaunchOptions
+            {
+                Headless = true
+            });
+            _contexts[i] = await _browsers[i].NewContextAsync();
+            Pages[i] = await _contexts[i].NewPageAsync();
+            await Pages[i].GotoAsync("http://localhost:5273/");
+            i++;
+        }
     }
     public Task DisposeAsync()
     {
         _playwright!.Dispose();
-        _browser!.DisposeAsync();
-        Context.DisposeAsync();
-
-        Client.Dispose(); 
+        Client.Dispose();
         _razorPage!.Kill(true);
         _razorPage.WaitForExit();
         _razorPage.Dispose();
@@ -148,85 +148,97 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         Assert.DoesNotContain("Jacqualine Gilcoine", responseBodyUser);
     }
 
-    [Fact]
-    public async Task loginLogoutChirp()
+    [Theory]
+    [MemberData(nameof(BrowserTypes.Number), MemberType = typeof(BrowserTypes))]
+    public async Task loginLogoutChirp(int browser)
     {
         //tries to login with incorrect password.
-        await _fixture.Page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
-        await _fixture.Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).ClickAsync();
-        await _fixture.Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("adho@itu.dk");
-        await _fixture.Page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).ClickAsync();
-        await _fixture.Page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("LetM31n!");
-        await _fixture.Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        await _fixture.Pages[browser].GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+        await _fixture.Pages[browser].GetByRole(AriaRole.Textbox, new() { Name = "Email" }).ClickAsync();
+        await _fixture.Pages[browser].GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("adho@itu.dk");
+        await _fixture.Pages[browser].GetByRole(AriaRole.Textbox, new() { Name = "Password" }).ClickAsync();
+        await _fixture.Pages[browser].GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("LetM31n!");
+        await _fixture.Pages[browser].GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
 
-        Assert.Equal("Invalid login attempt.", await _fixture.Page.GetByText("Invalid login attempt.").InnerTextAsync());
+        Assert.Equal("Invalid login attempt.", await _fixture.Pages[browser].GetByText("Invalid login attempt.").InnerTextAsync());
 
         //Correct password
-        await _fixture.Page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).ClickAsync();
-        await _fixture.Page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("M32Want_Access");
-        await _fixture.Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
-        await _fixture.Page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
+        await _fixture.Pages[browser].GetByRole(AriaRole.Textbox, new() { Name = "Password" }).ClickAsync();
+        await _fixture.Pages[browser].GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("M32Want_Access");
+        await _fixture.Pages[browser].GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        await _fixture.Pages[browser].GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
 
         //My timeline is Adrian's Timeline
-        Assert.Equal("Adrian's Timeline", await _fixture.Page.GetByRole(AriaRole.Heading, new() { Name = "Adrian's Timeline" }).InnerTextAsync());
+        Assert.Equal("Adrian's Timeline", await _fixture.Pages[browser].GetByRole(AriaRole.Heading, new() { Name = "Adrian's Timeline" }).InnerTextAsync());
 
         //logs out
-        await _fixture.Page.GetByRole(AriaRole.Button, new() { Name = "logout [Adrian]" }).ClickAsync();
+        await _fixture.Pages[browser].GetByRole(AriaRole.Button, new() { Name = "logout [Adrian]" }).ClickAsync();
     }
-    [Fact]
-    public async Task PostCheep()
+    [Theory]
+    [MemberData(nameof(BrowserTypes.Number), MemberType = typeof(BrowserTypes))]
+    public async Task PostCheep(int browser)
     {
         //logs in
-        await _fixture.Page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
-        await _fixture.Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).ClickAsync();
-        await _fixture.Page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("adho@itu.dk");
-        await _fixture.Page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).ClickAsync();
-        await _fixture.Page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("M32Want_Access");
-        await _fixture.Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        await _fixture.Pages[browser].GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+        await _fixture.Pages[browser].GetByRole(AriaRole.Textbox, new() { Name = "Email" }).ClickAsync();
+        await _fixture.Pages[browser].GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("adho@itu.dk");
+        await _fixture.Pages[browser].GetByRole(AriaRole.Textbox, new() { Name = "Password" }).ClickAsync();
+        await _fixture.Pages[browser].GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("M32Want_Access");
+        await _fixture.Pages[browser].GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
 
         //is able to post cheep
-        Assert.True(await _fixture.Page.Locator("#Message").IsVisibleAsync());
+        Assert.True(await _fixture.Pages[browser].Locator("#Message").IsVisibleAsync());
 
         //Shares cheep
-        await _fixture.Page.Locator("#Message").ClickAsync();
-        await _fixture.Page.Locator("#Message").FillAsync("PostingCheep");
-        await _fixture.Page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await _fixture.Pages[browser].Locator("#Message").ClickAsync();
+        await _fixture.Pages[browser].Locator("#Message").FillAsync("PostingCheep");
+        await _fixture.Pages[browser].GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
 
         //Checks that cheep is shared
-        Assert.Contains("PostingCheep", await _fixture.Page.GetByText("Adrian PostingCheep").InnerTextAsync());
+        Assert.Contains("PostingCheep", await _fixture.Pages[browser].GetByText("Adrian PostingCheep").First.InnerTextAsync());
 
         //logs out
-        await _fixture.Page.GetByRole(AriaRole.Button, new() { Name = "logout [Adrian]" }).ClickAsync();
+        await _fixture.Pages[browser].GetByRole(AriaRole.Button, new() { Name = "logout [Adrian]" }).ClickAsync();
 
         //can no longer post cheep 
-        Assert.False(await _fixture.Page.Locator("#Message").IsVisibleAsync());
+        Assert.False(await _fixture.Pages[browser].Locator("#Message").IsVisibleAsync());
     }
-    [Fact]
-    public async Task PageButtonsAndEdit()
+    [Theory]
+    [MemberData(nameof(BrowserTypes.Number), MemberType = typeof(BrowserTypes))]
+    public async Task PageButtonsAndEdit(int browser)
     {
         //resets to public timeline
-        await _fixture.Page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
+        await _fixture.Pages[browser].GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
 
         //Clicks next button
-        await _fixture.Page.GetByRole(AriaRole.Link, new() { Name = "Next" }).ClickAsync();
-        
+        await _fixture.Pages[browser].GetByRole(AriaRole.Link, new() { Name = "Next" }).ClickAsync();
+
         //Edit field agrees and we are on next page.
-        Assert.Equal("2", await _fixture.Page.GetByRole(AriaRole.Spinbutton).InputValueAsync());
-        Assert.True(await _fixture.Page.GetByText("Luanna Muro But now, tell me").IsVisibleAsync());
+        Assert.Equal("2", await _fixture.Pages[browser].GetByRole(AriaRole.Spinbutton).InputValueAsync());
+        Assert.True(await _fixture.Pages[browser].GetByText("Luanna Muro But now, tell me").IsVisibleAsync());
 
         //Click previous button
-        await _fixture.Page.GetByRole(AriaRole.Link, new() { Name = "Previous" }).ClickAsync();
+        await _fixture.Pages[browser].GetByRole(AriaRole.Link, new() { Name = "Previous" }).ClickAsync();
         //Page one agian
-        Assert.Equal("1", await _fixture.Page.GetByRole(AriaRole.Spinbutton).InputValueAsync());
+        Assert.Equal("1", await _fixture.Pages[browser].GetByRole(AriaRole.Spinbutton).InputValueAsync());
 
         //Use field edit to go to page 3
-        await _fixture.Page.GetByRole(AriaRole.Spinbutton).ClickAsync();
-        await _fixture.Page.GetByRole(AriaRole.Spinbutton).FillAsync("3");
-        await _fixture.Page.GetByRole(AriaRole.Spinbutton).PressAsync("Enter");
+        await _fixture.Pages[browser].GetByRole(AriaRole.Spinbutton).ClickAsync();
+        await _fixture.Pages[browser].GetByRole(AriaRole.Spinbutton).FillAsync("3");
+        await _fixture.Pages[browser].GetByRole(AriaRole.Spinbutton).PressAsync("Enter");
 
         //Field edit says 3 and you can click on Previous button 2 times. (page 1)
-        Assert.Equal("3", await _fixture.Page.GetByRole(AriaRole.Spinbutton).InputValueAsync());
-        await _fixture.Page.GetByRole(AriaRole.Link, new() { Name = "Previous" }).ClickAsync();
-        await _fixture.Page.GetByRole(AriaRole.Link, new() { Name = "Previous" }).ClickAsync();
+        Assert.Equal("3", await _fixture.Pages[browser].GetByRole(AriaRole.Spinbutton).InputValueAsync());
+        await _fixture.Pages[browser].GetByRole(AriaRole.Link, new() { Name = "Previous" }).ClickAsync();
+        await _fixture.Pages[browser].GetByRole(AriaRole.Link, new() { Name = "Previous" }).ClickAsync();
+    }
+}
+public static class BrowserTypes
+{
+    public static IEnumerable<object[]> Number()
+    {
+        yield return new object[] { 0 };
+        yield return new object[] { 1 };
+        yield return new object[] { 2 };
     }
 }

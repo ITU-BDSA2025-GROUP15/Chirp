@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-
+    timeout-minutes: 20
     runs-on: ubuntu-latest
 
     steps:
@@ -22,6 +22,8 @@ jobs:
         dotnet-version: 8.0.x
     - name: Restore dependencies
       run: dotnet restore
+    - name: Install PlayWright Browsers
+      run: pwsh test/Razor.Tests/bin/Debug/net8.0/playwright.ps1 install --with-deps
     - name: Build
       run: dotnet build --no-restore
     - name: Test
