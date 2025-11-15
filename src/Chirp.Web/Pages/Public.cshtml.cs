@@ -14,13 +14,19 @@ public class PublicModel(ICheepService service, UserManager<Author> userManager)
     [StringLength(cheepLength, ErrorMessage = "Maximum length is {1}")]
     public required string Message { get; set; }
 
-    public ActionResult OnGet(string author, [FromQuery] int page)
+    public ActionResult OnGet(string author, [FromQuery] string page)
     {
-        Cheeps = LoadCheeps(author, page);
-        if ((Cheeps.Count == 0 && CurrentPage != 1) || page < 0)
+        int _page = 1;
+        if (page != null)
         {
-            return RedirectToPage();
+            try { _page = int.Parse(page); }
+            catch (Exception) { return RedirectToPage(); }
+
+            if (_page <= 0) return RedirectToPage();
         }
+
+        Cheeps = LoadCheeps(author, _page);
+        if (Cheeps.Count == 0 && CurrentPage != 1) { return RedirectToPage(); }
         return Page();
     }
     public async Task<IActionResult> OnPostAsync()
