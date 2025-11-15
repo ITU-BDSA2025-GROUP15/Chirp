@@ -23,7 +23,9 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Install PlayWright Browsers
-      run: pwsh test/Razor.Tests/bin/Debug/net8.0/playwright.ps1 install --with-deps
+      run:
+        dotnet tool install -global Microsoft.PlayWright.CLI
+        playwright install --with-deps
     - name: Build
       run: dotnet build --no-restore
     - name: Test

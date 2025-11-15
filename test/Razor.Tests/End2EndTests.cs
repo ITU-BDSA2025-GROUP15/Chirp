@@ -233,12 +233,3 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         await _fixture.Pages[browser].GetByRole(AriaRole.Link, new() { Name = "Previous" }).ClickAsync();
     }
 }
-public static class BrowserTypes
-{
-    public static IEnumerable<object[]> Number()
-    {
-        yield return new object[] { 0 };
-        yield return new object[] { 1 };
-        yield return new object[] { 2 };
-    }
-}
