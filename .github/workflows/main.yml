@@ -22,12 +22,10 @@ jobs:
         dotnet-version: 8.0.x
     - name: Restore dependencies
       run: dotnet restore
-    - name: Install PlayWright Browsers
-      run:
-        dotnet tool install -global Microsoft.PlayWright.CLI
-        playwright install --with-deps
     - name: Build
       run: dotnet build --no-restore
+    - name: Ensure browsers are installed
+      run: pwsh test/Razor.Tests/bin/Debug/net8.0/playwright.ps1 install --with-deps
     - name: Test
       run: |
         export authentication__github__clientId="${{ secrets.GITHUBCLIENTID }}"
