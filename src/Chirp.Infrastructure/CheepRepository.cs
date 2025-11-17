@@ -58,8 +58,13 @@ public class CheepRepository : ICheepRepository
         int _limit = limit ?? defaultLimit;
         int _page = page ?? 1;
 
-        query = query.Skip((_page - 1) * _limit);
-        query = query.Take(_limit);
+        try
+        {
+            query = query.Skip(checked((_page - 1) * _limit));
+            query = query.Take(_limit);
+        } catch (OverflowException) {
+            return new List<CheepDTO>();
+        }
 
         var cheeps = await query.ToListAsync();
         var cheepdtos = new List<CheepDTO>();
