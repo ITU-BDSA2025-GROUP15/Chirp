@@ -31,16 +31,18 @@ public class PublicModel(ICheepService service, UserManager<Author> userManager)
     }
     public async Task<IActionResult> OnPostAsync()
     {
-        var userAuthor = await _userManager.GetUserAsync(User);
-        if (userAuthor == null) //Should not happen and probably won't
+        var author = await _userManager.GetUserAsync(User);
+        if (author == null) // Should not happen and probably won't
         {
             var routeName = RouteData.Values["author"]?.ToString();
             LoadCheeps(routeName!, CurrentPage);
             ViewData["Error"] = "Account not found";
             return Page();
         }
-        _service.PostCheep(userAuthor!, Message);
-        return Redirect("/" + userAuthor!.Name ?? "NameNotFound");
+
+        _service.PostCheep(author, Message);
+        string authorUrl = Uri.EscapeDataString(author.Name);
+        return Redirect("/" + authorUrl ?? "NameNotFound");
     }
     public List<CheepDTO> LoadCheeps(string author, int page)
     {
