@@ -36,6 +36,7 @@ if (ghClientId != null && ghClientSecret != null)
             o.ClientId = ghClientId;
             o.ClientSecret = ghClientSecret;
             o.CallbackPath = "/signin-github";
+            o.Scope.Add("user:email");
         });
 
     ghConfigured = true;
