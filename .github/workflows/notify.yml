@@ -15,4 +15,4 @@ jobs:
         DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
       uses: Ilshidur/action-discord@0.4.0
       with:
-        args: 'Pull Request ready for review: ${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.number }}'
+        args: '@everyone Pull Request ready for review: ${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.number }}'
