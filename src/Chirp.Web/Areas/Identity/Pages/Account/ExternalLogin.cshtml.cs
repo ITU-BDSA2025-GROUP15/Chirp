@@ -185,6 +185,14 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
             return Page();
         }
+        /// <summary>
+        /// Creates a new user and adds it to the DB through the DBContext
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="email"></param>
+        /// <param name="info"></param>
+        /// <param name="returnUrl"></param>
+        /// <returns> Returns the confirmation page on success. Redirects to the public timeline on failure with errors.</returns>
         private async Task<IActionResult> AddUser(string username, string email, ExternalLoginInfo info, string returnUrl)
         {
             var user = CreateUser();
