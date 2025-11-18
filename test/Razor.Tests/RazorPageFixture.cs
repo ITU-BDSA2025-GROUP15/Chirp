@@ -10,13 +10,7 @@ public class RazorPageFixture : IAsyncLifetime
 {
     Process? _razorPage;
     public required HttpClient Client;
-
-    readonly IBrowserContext[] _contexts = new IBrowserContext[3];
-
     IPlaywright? _playwright;
-
-    readonly IBrowser[] _browsers = new IBrowser[3];
-
     public required IPage[] Pages = new IPage[3];
     public async Task InitializeAsync()
     {
@@ -26,17 +20,20 @@ public class RazorPageFixture : IAsyncLifetime
         Client.BaseAddress = new Uri(baseURL);
 
         _playwright = await Playwright.CreateAsync();
-        int i = 0;
-        foreach (var browserName in new string[]{"Chromium", "Firefox", "Webkit"})
+
+        //Name of the three browsers types we test
+        string[] testBrowsers = {"Chromium", "Firefox", "Webkit"};
+
+        //Creates each browser to test on. (Mathces with enum)
+        for (int i = 0; i < testBrowsers.Length; i++)
         {
-            _browsers[i] = await _playwright[browserName].LaunchAsync(new BrowserTypeLaunchOptions
+            IBrowser _browser = await _playwright[testBrowsers[i]].LaunchAsync(new BrowserTypeLaunchOptions
             {
-                Headless = true
+                Headless = true //Set this to false to see what the test are doing.(Will open browser windows)
             });
-            _contexts[i] = await _browsers[i].NewContextAsync();
-            Pages[i] = await _contexts[i].NewPageAsync();
-            await Pages[i].GotoAsync("http://localhost:5273/");
-            i++;
+            IBrowserContext context = await _browser.NewContextAsync();
+            Pages[i] = await context.NewPageAsync();
+            await Pages[i].GotoAsync("http://localhost:5273/"); //Open our page on the browser.
         }
     }
     public Task DisposeAsync()

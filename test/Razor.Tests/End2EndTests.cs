@@ -10,9 +10,17 @@ using Xunit.Abstractions;
 [Collection("Sequential")]
 public class End2EndTests : IClassFixture<RazorPageFixture>
 {
-    public readonly string Razor_path = "src/Chirp.Razor/Chirp.Razor.csproj";
-
     readonly RazorPageFixture _fixture;
+    enum Browser
+    {
+        Chromium,
+        Firefox,
+        Webkit
+    }
+    public End2EndTests(RazorPageFixture fixture)
+    {
+        _fixture = fixture;
+    }
 
     //for debugging test
     /*
@@ -23,10 +31,6 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         _output = output;
     }
     */
-    public End2EndTests(RazorPageFixture fixture)
-    {
-        _fixture = fixture;
-    }
 
     [Fact]
     public async Task Page1AndDefaultEqual()
@@ -107,7 +111,9 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     }
 
     [Theory]
-    [MemberData(nameof(BrowserTypes.Number), MemberType = typeof(BrowserTypes))]
+    [InlineData((int)Browser.Chromium)]
+    [InlineData((int)Browser.Firefox)]
+    [InlineData((int)Browser.Webkit)]
     public async Task loginLogoutChirp(int browser)
     {
         //tries to login with incorrect password.
@@ -132,8 +138,11 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         //logs out
         await _fixture.Pages[browser].GetByRole(AriaRole.Button, new() { Name = "logout [Adrian]" }).ClickAsync();
     }
+
     [Theory]
-    [MemberData(nameof(BrowserTypes.Number), MemberType = typeof(BrowserTypes))]
+    [InlineData((int)Browser.Chromium)]
+    [InlineData((int)Browser.Firefox)]
+    [InlineData((int)Browser.Webkit)]
     public async Task PostCheep(int browser)
     {
         //logs in
@@ -161,8 +170,11 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         //can no longer post cheep 
         Assert.False(await _fixture.Pages[browser].Locator("#Message").IsVisibleAsync());
     }
+    
     [Theory]
-    [MemberData(nameof(BrowserTypes.Number), MemberType = typeof(BrowserTypes))]
+    [InlineData((int)Browser.Chromium)]
+    [InlineData((int)Browser.Firefox)]
+    [InlineData((int)Browser.Webkit)]
     public async Task PageButtonsAndEdit(int browser)
     {
         //resets to public timeline
