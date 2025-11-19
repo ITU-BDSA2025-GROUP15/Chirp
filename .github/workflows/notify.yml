@@ -19,4 +19,4 @@ jobs:
           ### PR \#${{ github.event.pull_request.number }} is ready for review @everyone
           📝 ${{ github.event.pull_request.title }}
           🔗 ${{ github.event.pull_request.html_url }}
-          -# ${{ github.event.pull_request.commits }} commits • ${{ github.event.pull_request.changed_files }} files changed • [+${{ github.event.pull_request.additions }} | -${{ github.event.pull_request.deletions }}]
+          -# ${{ github.event.pull_request.commits }} commits • ${{ github.event.pull_request.changed_files }} files changed • [+${{ github.event.pull_request.additions }} \| \-${{ github.event.pull_request.deletions }}]
