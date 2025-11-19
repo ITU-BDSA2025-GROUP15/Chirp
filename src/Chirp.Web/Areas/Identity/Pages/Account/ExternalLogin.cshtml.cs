@@ -176,6 +176,9 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
+            // Override email from external login provider (we do not use email provided by user)
+            Input.Email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            
             if (ModelState.IsValid)
             {
                 return await AddUser(Input.Name, Input.Email, info, returnUrl);
