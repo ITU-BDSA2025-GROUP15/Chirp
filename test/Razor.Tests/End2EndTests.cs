@@ -116,13 +116,15 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     [InlineData((int)Browser.Webkit)]
     public async Task loginLogoutChirp(int browser)
     {
+        var page = _fixture.Pages[browser];
+
         //tries to login with incorrect password.
-        await _fixture.Pages[browser].GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
-        await _fixture.Pages[browser].GetByRole(AriaRole.Textbox, new() { Name = "Email" }).ClickAsync();
-        await _fixture.Pages[browser].GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("adho@itu.dk");
-        await _fixture.Pages[browser].GetByRole(AriaRole.Textbox, new() { Name = "Password" }).ClickAsync();
-        await _fixture.Pages[browser].GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("LetM31n!");
-        await _fixture.Pages[browser].GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        await page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).ClickAsync();
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("adho@itu.dk");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).ClickAsync();
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("LetM31n!");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
 
         Assert.Equal("Invalid login attempt.", await _fixture.Pages[browser].GetByText("Invalid login attempt.").InnerTextAsync());
 
@@ -147,11 +149,12 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     {
         //logs in
         await _fixture.Pages[browser].GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
-        await _fixture.Pages[browser].GetByRole(AriaRole.Textbox, new() { Name = "Email" }).ClickAsync();
+        await _fixture.Pages[browser].WaitForURLAsync("**/Identity/Account/Login");
+
         await _fixture.Pages[browser].GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("adho@itu.dk");
-        await _fixture.Pages[browser].GetByRole(AriaRole.Textbox, new() { Name = "Password" }).ClickAsync();
         await _fixture.Pages[browser].GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("M32Want_Access");
         await _fixture.Pages[browser].GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        await _fixture.Pages[browser].WaitForURLAsync("**/");
 
         //is able to post cheep
         Assert.True(await _fixture.Pages[browser].Locator("#Message").IsVisibleAsync());
@@ -166,6 +169,11 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
 
         //logs out
         await _fixture.Pages[browser].GetByRole(AriaRole.Button, new() { Name = "logout [Adrian]" }).ClickAsync();
+        await _fixture.Pages[browser].WaitForURLAsync("**/Identity/Account/Logout");
+
+        //back to public timeline
+        await _fixture.Pages[browser].GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
+        await _fixture.Pages[browser].WaitForURLAsync("**/");
 
         //can no longer post cheep 
         Assert.False(await _fixture.Pages[browser].Locator("#Message").IsVisibleAsync());
