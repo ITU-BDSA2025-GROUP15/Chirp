@@ -236,7 +236,8 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
-            return RedirectToPage("/Public");
+            ProviderDisplayName = info.ProviderDisplayName;
+            return Page();
         }
 
         private Author CreateUser()
