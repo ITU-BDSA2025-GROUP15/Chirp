@@ -166,8 +166,10 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         await page.Locator("#Message").FillAsync("PostingCheep");
         await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
 
-        //Checks that cheep is shared
-        Assert.Contains("PostingCheep", await page.GetByText("Adrian PostingCheep").First.InnerTextAsync());
+        //Checks that cheep is shared - wait for the element to appear
+        var cheepLocator = page.GetByText("Adrian PostingCheep").First;
+        await cheepLocator.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
+        Assert.Contains("PostingCheep", await cheepLocator.InnerTextAsync());
 
         //logs out
         await page.GetByRole(AriaRole.Button, new() { Name = "logout [Adrian]" }).ClickAsync();
