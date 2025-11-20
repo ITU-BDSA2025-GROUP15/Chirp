@@ -6,7 +6,6 @@ using Microsoft.Playwright.Xunit;
 
 using Xunit.Abstractions;
 
-
 [Collection("Sequential")]
 public class End2EndTests : IClassFixture<RazorPageFixture>
 {
@@ -82,7 +81,6 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         //Page 2
         var HTTPResponsePage2 = await _fixture.Client.GetAsync("/?page=2");
         string responseBodyPage2 = await HTTPResponsePage2.Content.ReadAsStringAsync();
-
 
         //Assert
         // Page 1 and 2 not equal
