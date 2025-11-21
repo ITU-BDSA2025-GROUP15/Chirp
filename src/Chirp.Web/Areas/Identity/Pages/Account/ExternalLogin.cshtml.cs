@@ -90,7 +90,6 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
             [EmailAddress]
             public string Email { get; set; }
         }
@@ -140,7 +139,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
                 ProviderDisplayName = info.ProviderDisplayName;
                 string username;
                 string email;
-                if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
+                if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Email && false))
                 {
                     email = info.Principal.FindFirstValue(ClaimTypes.Email);
                     Input = new InputModel
@@ -161,7 +160,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
                 {
                     return Page();
                 }
-                return await AddUser(Input.Name, Input.Email, info, returnUrl);
+                return await AddUser(username, email, info, returnUrl);
             }
         }
 
@@ -182,11 +181,16 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 return await AddUser(Input.Name, Input.Email, info, returnUrl);
+            } else
+            {
+                ErrorMessage = "Error loading external login information during confirmation.";
+                System.Console.WriteLine("aaaaAaaaa");
+                return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
-            ProviderDisplayName = info.ProviderDisplayName;
+            /*ProviderDisplayName = info.ProviderDisplayName;
             ReturnUrl = returnUrl;
-            return Page();
+            return Page();*/
         }
         /// <summary>
         /// Creates a new user and adds it to the DB through the DBContext
