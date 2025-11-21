@@ -139,7 +139,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
                 ProviderDisplayName = info.ProviderDisplayName;
                 string username;
                 string email;
-                if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Email && false))
+                if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
                 {
                     email = info.Principal.FindFirstValue(ClaimTypes.Email);
                     Input = new InputModel

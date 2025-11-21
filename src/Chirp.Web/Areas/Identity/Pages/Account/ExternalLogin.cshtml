@@ -19,12 +19,7 @@
         <form asp-page-handler="Confirmation" asp-route-returnUrl="@Model.ReturnUrl" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <div class="form-floating mb-3">
-            @if (Model.nameShouldDisable) {
-                <input asp-for="Input.Name" class="form-control" autocomplete="name" aria-required="true" placeholder="Name" disabled/>
-            }
-            else {
                 <input asp-for="Input.Name" class="form-control" autocomplete="name" aria-required="true" placeholder="Name" />
-            }
                 <label asp-for="Input.Name">Name</label>
                 <span asp-validation-for="Input.Name" class="text-danger"></span>
             </div>
