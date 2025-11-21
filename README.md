@@ -58,7 +58,7 @@ You can now access the Chirp! service in your browser on the following link: htt
 ### How to run Chirp!
 1. Begin by navigating to the Chirp.Web folder found under src in the terminal.
 2. Now run the command `dotnet run`. This will start the server.
-3. In you Web browser open `localhost:5273`. This will also appear in the terminal.
+3. In your Web browser open `localhost:5273`. This will also appear in the terminal.
 4. You have now opened Chirp!
 ### How to run Chirp! tests
 Install playwright into the Razor.Tests project folder. 
