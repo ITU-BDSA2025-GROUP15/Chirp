@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-
+    timeout-minutes: 20
     runs-on: ubuntu-latest
 
     steps:
@@ -24,6 +24,8 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
+    - name: Ensure browsers are installed
+      run: pwsh test/Razor.Tests/bin/Debug/net8.0/playwright.ps1 install --with-deps
     - name: Test
       run: |
         export authentication__github__clientId="${{ secrets.GITHUBCLIENTID }}"
