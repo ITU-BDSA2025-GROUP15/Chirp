@@ -115,28 +115,40 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     public async Task loginLogoutChirp(int browser)
     {
         var page = _fixture.Pages[browser];
+        
+        // Navigate to home page to ensure clean state
+        await page.GotoAsync("http://localhost:5273/");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         //tries to login with incorrect password.
         await page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+        await page.WaitForURLAsync("**/Identity/Account/Login");
         await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).ClickAsync();
         await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("adho@itu.dk");
         await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).ClickAsync();
         await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("LetM31n!");
         await page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
+        await page.WaitForSelectorAsync("text=Invalid login attempt.", new() { Timeout = 5000 });
         Assert.Equal("Invalid login attempt.", await page.GetByText("Invalid login attempt.").InnerTextAsync());
 
         //Correct password
         await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).ClickAsync();
         await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("M32Want_Access");
         await page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+        await page.WaitForURLAsync("**/");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await page.GetByRole(AriaRole.Link, new() { Name = "my timeline" }).ClickAsync();
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         //My timeline is Adrian's Timeline
+        await page.WaitForSelectorAsync("text=Adrian's Timeline", new() { Timeout = 5000 });
         Assert.Equal("Adrian's Timeline", await page.GetByRole(AriaRole.Heading, new() { Name = "Adrian's Timeline" }).InnerTextAsync());
 
         //logs out
         await page.GetByRole(AriaRole.Button, new() { Name = "logout [Adrian]" }).ClickAsync();
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }
 
     [Theory]
@@ -146,34 +158,45 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     public async Task PostCheep(int browser)
     {
         var page = _fixture.Pages[browser];
+        
+        // Navigate to home page to ensure clean state
+        await page.GotoAsync("http://localhost:5273/");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         //logs in
         await page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
         await page.WaitForURLAsync("**/Identity/Account/Login");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("adho@itu.dk");
         await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("M32Want_Access");
         await page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
         await page.WaitForURLAsync("**/");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         //is able to post cheep
+        await page.WaitForSelectorAsync("#Message", new() { Timeout = 5000 });
         Assert.True(await page.Locator("#Message").IsVisibleAsync());
 
         //Shares cheep
         await page.Locator("#Message").ClickAsync();
         await page.Locator("#Message").FillAsync("PostingCheep");
         await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         //Checks that cheep is shared
+        await page.WaitForSelectorAsync("text=PostingCheep", new() { Timeout = 5000 });
         Assert.Contains("PostingCheep", await page.GetByText("Adrian PostingCheep").First.InnerTextAsync());
 
         //logs out
         await page.GetByRole(AriaRole.Button, new() { Name = "logout [Adrian]" }).ClickAsync();
         await page.WaitForURLAsync("**/Identity/Account/Logout");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         //back to public timeline
         await page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
         await page.WaitForURLAsync("**/");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         //can no longer post cheep 
         Assert.False(await page.Locator("#Message").IsVisibleAsync());
@@ -186,19 +209,27 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     public async Task PageButtonsAndEdit(int browser)
     {
         var page = _fixture.Pages[browser];
+        
+        // Navigate to home page to ensure clean state
+        await page.GotoAsync("http://localhost:5273/");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         //resets to public timeline
         await page.GetByRole(AriaRole.Link, new() { Name = "public timeline" }).ClickAsync();
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         //Clicks next button
         await page.GetByRole(AriaRole.Link, new() { Name = "Next" }).ClickAsync();
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         //Edit field agrees and we are on next page.
+        await page.WaitForSelectorAsync("text=Luanna Muro But now, tell me", new() { Timeout = 5000 });
         Assert.Equal("2", await page.GetByRole(AriaRole.Spinbutton).InputValueAsync());
         Assert.True(await page.GetByText("Luanna Muro But now, tell me").IsVisibleAsync());
 
         //Click previous button
         await page.GetByRole(AriaRole.Link, new() { Name = "Previous" }).ClickAsync();
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         //Page one agian
         Assert.Equal("1", await page.GetByRole(AriaRole.Spinbutton).InputValueAsync());
 
@@ -206,10 +237,13 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         await page.GetByRole(AriaRole.Spinbutton).ClickAsync();
         await page.GetByRole(AriaRole.Spinbutton).FillAsync("3");
         await page.GetByRole(AriaRole.Spinbutton).PressAsync("Enter");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         //Field edit says 3 and you can click on Previous button 2 times. (page 1)
         Assert.Equal("3", await page.GetByRole(AriaRole.Spinbutton).InputValueAsync());
         await page.GetByRole(AriaRole.Link, new() { Name = "Previous" }).ClickAsync();
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await page.GetByRole(AriaRole.Link, new() { Name = "Previous" }).ClickAsync();
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }
 }
