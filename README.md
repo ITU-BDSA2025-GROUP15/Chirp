@@ -51,7 +51,7 @@ info: Microsoft.Hosting.Lifetime[0]
 You can now access the Chirp! service in your browser on the following link: http://localhost:5000
 ## Running Chirp! from source code
 ### How to build Chirp!
-1. First of all, make sure you have installed .NET version 8.0. You can get it [here.](https://github.com/ITU-BDSA2025-GROUP15/Chirp/releases)
+1. First of all, make sure you have installed .NET version 8.0. You can get it [here.](https://dotnet.microsoft.com/download/dotnet/8.0)
 2. Open your terminal and navigate to the root folder of the project.
 3. Run the following command: `dotnet build ./src/Chirp.Web/Chirp.Web.csproj`
 4. You should now successfully have built the project.
