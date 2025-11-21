@@ -54,7 +54,7 @@ You can now access the Chirp! service in your browser on the following link: htt
 1. First of all, make sure you have installed .NET version 8.0. You can get it [here.](https://github.com/ITU-BDSA2025-GROUP15/Chirp/releases)
 2. Open your terminal and navigate to the root folder of the project.
 3. Run the following command: `dotnet build ./src/Chirp.Web/Chirp.Web.csproj`
-4. You should now successfully have build the project.
+4. You should now successfully have built the project.
 ### How to run Chirp!
 1. Begin by navigating to the Chirp.Web folder found under src in the terminal.
 2. Now run the command `dotnet run`. This will start the server.
