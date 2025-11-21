@@ -67,6 +67,6 @@ Navigate to the test project in your terminal and run the following:
 pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps
 ```
 
-Further issues with Playwright consult [Playwright.](https://playwright.dev/dotnet/docs/intro)
+For further issues with Playwright, consult [Playwright.](https://playwright.dev/dotnet/docs/intro)
 
 Now the tests can be run with the command `dotnet test`. 
