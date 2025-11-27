@@ -345,4 +345,86 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         await page.WaitForURLAsync("**/Identity/Account/Logout");
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }
+
+    [Theory]
+    [InlineData((int)Browser.Chromium)]
+    [InlineData((int)Browser.Firefox)]
+    [InlineData((int)Browser.Webkit)]
+    public async Task Security_CSRF_LoginFails(int browser)
+    {
+        var page = _fixture.Pages[browser];
+        
+        // Navigate to home page to ensure clean state
+        await page.GotoAsync("http://localhost:5273/");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Login to account
+        await page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+        await page.WaitForURLAsync("**/Identity/Account/Login");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Remove real CSRF token
+        bool tokenRemoveResult = await page.EvaluateAsync<bool>(@"() => {
+            var t = document.querySelector('form#account input[name=__RequestVerificationToken]');
+            if (t == null) return false;
+            t.value = 'Idk bro...';
+            return t.value == 'Idk bro...';
+        }");
+        Assert.True(tokenRemoveResult, "Could not remove token from login prompt!");
+
+        var res = page.WaitForResponseAsync("**/Identity/Account/Login");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync($"adho@itu.dk");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("M32Want_Access");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+
+        // Should be an error
+        Assert.Equal(400, (await res).Status);
+    }
+
+    [Theory]
+    [InlineData((int)Browser.Chromium)]
+    [InlineData((int)Browser.Firefox)]
+    [InlineData((int)Browser.Webkit)]
+    public async Task Security_CSRF_SendCheepFails(int browser)
+    {
+        var page = _fixture.Pages[browser];
+        
+        // Navigate to home page to ensure clean state
+        await page.GotoAsync("http://localhost:5273/");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Login to account
+        await page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+        await page.WaitForURLAsync("**/Identity/Account/Login");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync($"adho@itu.dk");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("M32Want_Access");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+
+        // Remove real CSRF token
+        bool tokenRemoveResult = await page.EvaluateAsync<bool>(@"() => {
+            var t = document.querySelector('.cheepbox form input[name=__RequestVerificationToken]');
+            if (t == null) return false;
+            t.value = 'Idk bro...';
+            return t.value == 'Idk bro...';
+        }");
+        Assert.True(tokenRemoveResult, "Could not remove token from login prompt!");
+
+        // Send cheep
+        var res = page.WaitForResponseAsync("**");
+        await page.Locator("#Message").FillAsync($"Testing CSRF protection.");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+
+        // Should be an error
+        Assert.Equal(400, (await res).Status);
+
+        // Logout
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await page.GotoAsync("http://localhost:5273/");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await page.GetByRole(AriaRole.Button, new() { Name = "logout [" }).ClickAsync();
+        await page.WaitForURLAsync("**/Identity/Account/Logout");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+    }
 }
