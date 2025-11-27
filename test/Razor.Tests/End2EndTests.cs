@@ -291,6 +291,11 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         // On cheep author link
         var cheepAuthor = page.GetByRole(AriaRole.Link, new() { Name = $"?page={pageNo}", Exact = true });
         await Assertions.Expect(cheepAuthor).ToHaveAttributeAsync("href", $"/%3Fpage%3D{pageNo}");
+
+        // Logout
+        await page.GetByRole(AriaRole.Button, new() { Name = "logout [" }).ClickAsync();
+        await page.WaitForURLAsync("**/Identity/Account/Logout");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }
 
     [Theory]
@@ -334,5 +339,10 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         await page.Locator("#Message").FillAsync($"Testing name and cheep with XSS script. {maliciousScript}");
         await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
         await Assertions.Expect(page).Not.ToHaveTitleAsync(message);
+
+        // Logout
+        await page.GetByRole(AriaRole.Button, new() { Name = "logout [" }).ClickAsync();
+        await page.WaitForURLAsync("**/Identity/Account/Logout");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }
 }
