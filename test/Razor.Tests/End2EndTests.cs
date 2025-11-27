@@ -292,4 +292,47 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         var cheepAuthor = page.GetByRole(AriaRole.Link, new() { Name = $"?page={pageNo}", Exact = true });
         await Assertions.Expect(cheepAuthor).ToHaveAttributeAsync("href", $"/%3Fpage%3D{pageNo}");
     }
+
+    [Theory]
+    [InlineData((int)Browser.Chromium)]
+    [InlineData((int)Browser.Firefox)]
+    [InlineData((int)Browser.Webkit)]
+    public async Task Security_XSS_ScriptTagsInNameOrCheep(int browser)
+    {
+        // Random page number without browsers overlapping
+        int randomNo = browser * 100 + new Random().Next(99);
+
+        string message = $"The XSS attack worked...";
+        string maliciousScript = $"<script>document.title = '{message}'</script>{randomNo}";
+
+        var page = _fixture.Pages[browser];
+        
+        // Navigate to home page to ensure clean state
+        await page.GotoAsync("http://localhost:5273/");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Register account
+        await page.GetByRole(AriaRole.Link, new() { Name = "register" }).ClickAsync();
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Name" }).FillAsync(maliciousScript);
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync($"script{randomNo}@test.xss");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Password", Exact = true }).FillAsync("Test1!");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Confirm Password" }).FillAsync("Test1!");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
+        await page.GetByRole(AriaRole.Link, new() { Name = "Click here to confirm your" }).ClickAsync();
+
+        // Login to account
+        await page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync($"script{randomNo}@test.xss");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("Test1!");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+
+        // Assert no XSS injection happened
+        // After login
+        await Assertions.Expect(page).Not.ToHaveTitleAsync(message);
+
+        // On new cheep
+        await page.Locator("#Message").FillAsync($"Testing name and cheep with XSS script. {maliciousScript}");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await Assertions.Expect(page).Not.ToHaveTitleAsync(message);
+    }
 }
