@@ -246,4 +246,50 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         await page.GetByRole(AriaRole.Link, new() { Name = "Previous" }).ClickAsync();
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }
+
+    [Theory]
+    [InlineData((int)Browser.Chromium)]
+    [InlineData((int)Browser.Firefox)]
+    [InlineData((int)Browser.Webkit)]
+    public async Task Security_XSS_UrlRedirectsInName(int browser)
+    {
+        // Random page number without browsers overlapping
+        int pageNo = browser * 100 + new Random().Next(99);
+
+        var page = _fixture.Pages[browser];
+        
+        // Navigate to home page to ensure clean state
+        await page.GotoAsync("http://localhost:5273/");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Register account
+        await page.GetByRole(AriaRole.Link, new() { Name = "register" }).ClickAsync();
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Name" }).FillAsync($"?page={pageNo}");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync($"page{pageNo}@test.xss");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Password", Exact = true }).FillAsync("Test1!");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Confirm Password" }).FillAsync("Test1!");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
+        await page.GetByRole(AriaRole.Link, new() { Name = "Click here to confirm your" }).ClickAsync();
+
+        // Login to account
+        await page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync($"page{pageNo}@test.xss");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("Test1!");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+
+        // Assert links are properly encoded
+        // On 'my timeline' link
+        var myTimeline = page.GetByRole(AriaRole.Link, new() { Name = "my timeline" });
+        await Assertions.Expect(myTimeline).ToHaveAttributeAsync("href", $"/%3Fpage%3D{pageNo}");
+        await myTimeline.ClickAsync();
+
+        // On new cheep
+        await page.Locator("#Message").FillAsync("Testing name with URL redirect.");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await Assertions.Expect(page).ToHaveURLAsync(new Regex($".*/%3Fpage%3D{pageNo}"));
+
+        // On cheep author link
+        var cheepAuthor = page.GetByRole(AriaRole.Link, new() { Name = $"?page={pageNo}", Exact = true });
+        await Assertions.Expect(cheepAuthor).ToHaveAttributeAsync("href", $"/%3Fpage%3D{pageNo}");
+    }
 }
