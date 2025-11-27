@@ -254,7 +254,7 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     public async Task Security_XSS_UrlRedirectsInName(int browser)
     {
         // Random page number without browsers overlapping
-        int pageNo = browser * 100 + new Random().Next(99);
+        int pageNo = (browser * 100) + new Random().Next(99);
 
         var page = _fixture.Pages[browser];
         
@@ -300,7 +300,7 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     public async Task Security_XSS_ScriptTagsInNameOrCheep(int browser)
     {
         // Random page number without browsers overlapping
-        int randomNo = browser * 100 + new Random().Next(99);
+        int randomNo = (browser * 100) + new Random().Next(99);
 
         string message = $"The XSS attack worked...";
         string maliciousScript = $"<script>document.title = '{message}'</script>{randomNo}";
