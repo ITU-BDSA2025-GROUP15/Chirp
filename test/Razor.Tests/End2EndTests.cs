@@ -51,6 +51,9 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     [Fact]
     public async Task CheepThatShouldBeOnPage1()
     {
+        // Ensure fresh server
+        await _fixture.RestartRazorPage();
+
         //Act
         var HTTPResponsePageDefault = await _fixture.Client.GetAsync("/");
         string responseBodyPageDefault = await HTTPResponsePageDefault.Content.ReadAsStringAsync();
@@ -63,6 +66,9 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     [Fact]
     public async Task CheepThatShouldBeOnPage2()
     {
+        // Ensure fresh server
+        await _fixture.RestartRazorPage();
+
         //Act
         //Page 2
         var HTTPResponsePage2 = await _fixture.Client.GetAsync("/?page=2");
@@ -123,9 +129,7 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         //tries to login with incorrect password.
         await page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
         await page.WaitForURLAsync("**/Identity/Account/Login");
-        await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).ClickAsync();
         await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("adho@itu.dk");
-        await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).ClickAsync();
         await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("LetM31n!");
         await page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
