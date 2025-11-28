@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Chirp.Web.Areas.Identity.Pages.Account
 {
@@ -89,11 +90,12 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
             [EmailAddress]
             public string Email { get; set; }
         }
         
+        public bool nameShouldDisable = false;
+
         public IActionResult OnGet() => RedirectToPage("./Login");
 
         public IActionResult OnPost(string provider, string returnUrl = null)
@@ -106,7 +108,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnGetCallbackAsync(string returnUrl = null, string remoteError = null)
         {
-            returnUrl = returnUrl ?? Url.Content("~/");
+            returnUrl ??= Url.Content("~/");
             if (remoteError != null)
             {
                 ErrorMessage = $"Error from external provider: {remoteError}";
@@ -135,20 +137,36 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
                 // If the user does not have an account, then ask the user to create an account.
                 ReturnUrl = returnUrl;
                 ProviderDisplayName = info.ProviderDisplayName;
+                string username;
+                string email;
                 if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
                 {
+                    email = info.Principal.FindFirstValue(ClaimTypes.Email);
                     Input = new InputModel
                     {
-                        Email = info.Principal.FindFirstValue(ClaimTypes.Email)
+                        Email = email
                     };
+                } else
+                {
+                    ErrorMessage = "Error loading external login information during confirmation. (Missing email)";
+                    return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
                 }
-                return Page();
+                if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Name))
+                {
+                    username = info.Principal.FindFirstValue(ClaimTypes.Name);
+                    Input.Name = username;
+                    nameShouldDisable = true;
+                    return await AddUser(username, email, info, returnUrl);
+                } else
+                {
+                    return Page();
+                }
             }
         }
 
         public async Task<IActionResult> OnPostConfirmationAsync(string returnUrl = null)
         {
-            returnUrl = returnUrl ?? Url.Content("~/");
+            returnUrl ??= Url.Content("~/");
             // Get the information about the user from the external login provider
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
@@ -157,53 +175,75 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
+            // Override email from external login provider (we do not use email provided by user)
+            Input.Email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
-
-                user.Name = Input.Name;
-
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-
-                var result = await _userManager.CreateAsync(user);
-                if (result.Succeeded)
-                {
-                    result = await _userManager.AddLoginAsync(user, info);
-                    if (result.Succeeded)
-                    {
-                        _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
-
-                        var userId = await _userManager.GetUserIdAsync(user);
-                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                        var callbackUrl = Url.Page(
-                            "/Account/ConfirmEmail",
-                            pageHandler: null,
-                            values: new { area = "Identity", userId = userId, code = code },
-                            protocol: Request.Scheme);
-
-                        await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                        // If account confirmation is required, we need to show the link if we don't have a real email sender
-                        if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                        {
-                            return RedirectToPage("./RegisterConfirmation", new { Email = Input.Email });
-                        }
-
-                        await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
-                        return LocalRedirect(returnUrl);
-                    }
-                }
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+                return await AddUser(Input.Name, Input.Email, info, returnUrl);
+            } else
+            {
+                ErrorMessage = "Error loading external login information during confirmation.";
+                System.Console.WriteLine("aaaaAaaaa");
+                return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
-            ProviderDisplayName = info.ProviderDisplayName;
+            /*ProviderDisplayName = info.ProviderDisplayName;
             ReturnUrl = returnUrl;
+            return Page();*/
+        }
+        /// <summary>
+        /// Creates a new user and adds it to the DB through the DBContext
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="email"></param>
+        /// <param name="info"></param>
+        /// <param name="returnUrl"></param>
+        /// <returns> Returns the confirmation page on success. Redirects to the public timeline on failure with errors.</returns>
+        private async Task<IActionResult> AddUser(string username, string email, ExternalLoginInfo info, string returnUrl)
+        {
+            var user = CreateUser();
+
+            user.Name = username;
+
+            await _userStore.SetUserNameAsync(user, email, CancellationToken.None);
+            await _emailStore.SetEmailAsync(user, email, CancellationToken.None);
+
+            var result = await _userManager.CreateAsync(user);
+            if (result.Succeeded)
+            {
+                result = await _userManager.AddLoginAsync(user, info);
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
+
+                    var userId = await _userManager.GetUserIdAsync(user);
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                    var callbackUrl = Url.Page(
+                        "/Account/ConfirmEmail",
+                        pageHandler: null,
+                        values: new { area = "Identity", userId = userId, code = code },
+                        protocol: Request.Scheme);
+
+                    await _emailSender.SendEmailAsync(email, "Confirm your email",
+                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                    // If account confirmation is required, we need to show the link if we don't have a real email sender
+                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    {
+                        return RedirectToPage("./RegisterConfirmation", new { Email = email });
+                    }
+
+                    await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
+                    return LocalRedirect(returnUrl);
+                }
+            }
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+            ProviderDisplayName = info.ProviderDisplayName;
             return Page();
         }
 
