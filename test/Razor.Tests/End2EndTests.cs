@@ -208,6 +208,9 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     [InlineData((int)Browser.Webkit)]
     public async Task PageButtonsAndEdit(int browser)
     {
+        // Ensure fresh server
+        await _fixture.RestartRazorPage();
+
         var page = _fixture.Pages[browser];
         
         // Navigate to home page to ensure clean state
