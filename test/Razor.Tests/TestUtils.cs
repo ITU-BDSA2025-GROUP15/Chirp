@@ -47,7 +47,6 @@ public static class TestUtils
         return process;
     }
 
-
     public static void AssertCheepListsEqual(List<Cheep> expected, List<Cheep> actual)
     {
         Assert.Equal(expected.Count, actual.Count);
@@ -92,6 +91,5 @@ public static class TestUtils
         }
 
         return provider;
-
     }
 }
