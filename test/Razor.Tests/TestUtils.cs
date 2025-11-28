@@ -29,7 +29,7 @@ public static class TestUtils
         using HttpClient client = new();
         client.BaseAddress = new Uri(baseURL);
 
-        int maxRetries = 10;
+        int maxRetries = 30;
         for (int i = 0; i < maxRetries; i++)
         {
             try
@@ -40,7 +40,7 @@ public static class TestUtils
             catch (Exception)
             {
                 if (process.HasExited) Assert.Fail($"Razor process exited. {process.StandardError.ReadToEnd()}");
-                Thread.Sleep(10000);
+                Thread.Sleep(1000);
             }
         }
 
