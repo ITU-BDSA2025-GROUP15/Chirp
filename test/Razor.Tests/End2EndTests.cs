@@ -379,6 +379,7 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
 
         // Should be an error
         Assert.Equal(400, (await res).Status);
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }
 
     [Theory]
