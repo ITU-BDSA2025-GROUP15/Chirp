@@ -379,6 +379,7 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
 
         // Should be an error
         Assert.Equal(400, (await res).Status);
+        Thread.Sleep(1000);
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }
 
@@ -437,19 +438,22 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     {
         var sqlAttacks = new string[] {
             "Robert{0}'); DROP TABLE Students;--",
-            "Adrian{0}'); DROP TABLE Cheeps;--",
+            "User{0}' OR '1'='1';--",
+            "Test{0}'; DELETE FROM Users WHERE '1'='1';--",
+            "Inject{0}' UNION SELECT NULL, NULL, NULL;--",
+            "AspNet{0}'); DROP TABLE AspNetUsers;--",
         };
 
+        var i = 0;
         foreach (var attack in sqlAttacks)
         {
-            await ExecuteSQLInjectionAttackTest(browser, attack);
+            await ExecuteSQLInjectionAttackTest(browser, i++, attack);
         }
     }
 
-    private async Task ExecuteSQLInjectionAttackTest(int browser, string attack)
+    private async Task ExecuteSQLInjectionAttackTest(int browser, int id, string attack)
     {
-        // Random page number without browsers overlapping
-        int randomNo = (browser * 100) + new Random().Next(99);
+        string randomNo = $"{browser}{id}";
         string attackUnique = string.Format(attack, randomNo);
 
         var page = _fixture.Pages[browser];
