@@ -156,11 +156,11 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
                     username = info.Principal.FindFirstValue(ClaimTypes.Name);
                     Input.Name = username;
                     nameShouldDisable = true;
+                    return await AddUser(username, email, info, returnUrl);
                 } else
                 {
                     return Page();
                 }
-                return await AddUser(username, email, info, returnUrl);
             }
         }
 
