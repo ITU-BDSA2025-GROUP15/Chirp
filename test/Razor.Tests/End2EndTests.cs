@@ -409,7 +409,7 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
             t.value = 'Idk bro...';
             return t.value == 'Idk bro...';
         }");
-        Assert.True(tokenRemoveResult, "Could not remove token from login prompt!");
+        Assert.True(tokenRemoveResult, "Could not remove token from cheepbox!");
 
         // Send cheep
         var res = page.WaitForResponseAsync("**");
@@ -427,4 +427,70 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         await page.WaitForURLAsync("**/Identity/Account/Logout");
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }
+
+    [Theory]
+    [InlineData((int)Browser.Chromium)]
+    [InlineData((int)Browser.Firefox)]
+    [InlineData((int)Browser.Webkit)]
+    public async Task Security_SQLInjection_NameAndCheep(int browser)
+    {
+        var sqlAttacks = new string[] {
+            "Robert{0}'); DROP TABLE Students;--",
+            "Adrian{0}'); DROP TABLE Cheeps;--",
+        };
+
+        foreach (var attack in sqlAttacks)
+        {
+            await ExecuteSQLInjectionAttackTest(browser, attack);
+        }
+    }
+
+    private async Task ExecuteSQLInjectionAttackTest(int browser, string attack)
+    {
+        // Random page number without browsers overlapping
+        int randomNo = (browser * 100) + new Random().Next(99);
+        string attackUnique = string.Format(attack, randomNo);
+
+        var page = _fixture.Pages[browser];
+        
+        // Navigate to home page to ensure clean state
+        await page.GotoAsync("http://localhost:5273/");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Register account
+        await page.GetByRole(AriaRole.Link, new() { Name = "register" }).ClickAsync();
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Name" }).FillAsync(attackUnique);
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync($"inject{randomNo}@test.sql");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Password", Exact = true }).FillAsync("Test1!");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Confirm Password" }).FillAsync("Test1!");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
+        await page.GetByRole(AriaRole.Link, new() { Name = "Click here to confirm your" }).ClickAsync();
+
+        // Login to account
+        await page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync($"inject{randomNo}@test.sql");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("Test1!");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+
+        // New cheep
+        await page.Locator("#Message").FillAsync(attackUnique);
+        await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+
+        // Assert
+        // Home page is still full of cheeps
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await page.GotoAsync("http://localhost:5273/");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        int count = await page.GetByRole(AriaRole.Listitem).CountAsync();
+        Assert.Equal(32, count);
+
+        // Cheep with the SQL attack exists
+        await page.GetByRole(AriaRole.Listitem, new() { Name = attackUnique }).IsVisibleAsync();
+
+        // Logout
+        await page.GetByRole(AriaRole.Button, new() { Name = "logout [" }).ClickAsync();
+        await page.WaitForURLAsync("**/Identity/Account/Logout");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+    } 
 }
