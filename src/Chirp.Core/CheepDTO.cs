@@ -9,4 +9,6 @@ public class CheepDTO
 
     /// <include file="../../docs/CheepDTODocs.xml" path="/doc/members/member[@name='P:CheepDTO.Timestamp']/*" />
     public required string Timestamp { get; set; }
+
+    public required int like_counter { get; set; }
 }
