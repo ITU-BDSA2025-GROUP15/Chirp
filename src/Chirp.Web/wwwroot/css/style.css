@@ -310,7 +310,7 @@ table#personal-data {
     border: 1px solid #DBF3F1;
     border-radius: 5px;
     border-spacing: 0px;
-    padding: 8px 8px;
+    padding: 8px;
 }
 
 table#personal-data tr * {
