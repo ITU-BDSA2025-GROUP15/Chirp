@@ -6,26 +6,31 @@
 
 @{
     var routeName = ViewContext.HttpContext.GetRouteValue("author");
-    
 }
+
 @if (SignInManager.IsSignedIn(User))
 {
     Author? author = await UserManager.GetUserAsync(User);
     string authorName = author!.Name;
-    if (author != null && authorName != null)
-    {
-        <div class="cheepbox">
-            <h3>What's on your mind @authorName?</h3>
-            <form method="post">
-                <input style="float: left" type="text" asp-for="Message" asp-for="routeName">
-                <input type="submit" value="Share">
-            </form>
-        </div>
-    }
-    else
-    {
-        <div>
-            <p>Account or name not found!</p> @*this will most likely never happen*@
-        </div>
-    }
+
+    <div class="cheepbox">
+        <h3>What's on your mind @authorName?</h3>
+
+        <form method="post">
+            <!-- Playwright expects THIS element -->
+            <textarea id="post-input"
+                      name="Message"
+                      style="width: 100%; height: 60px;"></textarea>
+
+            <!-- Playwright expects THIS button -->
+            <button id="post-button" type="submit">Share</button>
+
+            <!-- routeName if needed by your handler -->
+            <input type="hidden" name="routeName" value="@routeName" />
+        </form>
+    </div>
+}
+else
+{
+    <p>You must be logged in to post.</p>
 }
