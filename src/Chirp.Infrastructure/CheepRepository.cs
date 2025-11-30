@@ -37,6 +37,14 @@ public class CheepRepository : ICheepRepository
     /// <include file="../../docs/CheepRepositoryDocs.xml" path="/doc/members/member[@name='M:CheepRepository.ReadMessages(System.String,System.Nullable{System.Int32},System.Nullable{System.Int32})']/*" />
     public async Task<List<CheepDTO>> ReadMessages(string? author, int? page, int? limit)
     {
+        if (author == null)
+        {
+            return await ReadMessages([], page, limit);
+        }
+        return await ReadMessages([author], page, limit);
+    }
+    public async Task<List<CheepDTO>> ReadMessages(string[]? author, int? page, int? limit)
+    {
         var query = _context.Cheeps
             .Join(_context.Authors,
                 Cheeps => Cheeps.AuthorId,
@@ -49,7 +57,10 @@ public class CheepRepository : ICheepRepository
                 });
         if (author != null)
         {
-            query = query.Where(Cheep => Cheep.Author == author);
+            if (author.Count() > 0)
+            {
+                query = query.Where(Cheep => author.Contains<string>(Cheep.Author));
+            }
         }
 
         query = query.OrderByDescending(Cheep => Cheep.Timestamp);

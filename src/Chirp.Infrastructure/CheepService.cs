@@ -13,14 +13,14 @@ public class CheepService : ICheepService
     /// <include file="../../docs/CheepServiceDocs.xml" path="/doc/members/member[@name='M:CheepService.GetCheeps']/*" />
     public List<CheepDTO> GetCheeps()
     {
-        var messages = _repository.ReadMessages(null, null, null);
+        var messages = _repository.ReadMessages([], null, null);
         return messages.GetAwaiter().GetResult();
     }
 
     /// <include file="../../docs/CheepServiceDocs.xml" path="/doc/members/member[@name='M:CheepService.GetCheeps(System.Int32)']/*" />
     public List<CheepDTO> GetCheeps(int page)
     {
-        var messages = _repository.ReadMessages(null, page, null);
+        var messages = _repository.ReadMessages([], page, null);
         return messages.GetAwaiter().GetResult();
     }
 
@@ -33,6 +33,12 @@ public class CheepService : ICheepService
 
     /// <include file="../../docs/CheepServiceDocs.xml" path="/doc/members/member[@name='M:CheepService.GetCheepsFromAuthor(System.String,System.Int32)']/*" />
     public List<CheepDTO> GetCheepsFromAuthor(string author, int page)
+    {
+        var messages = _repository.ReadMessages(author, page, null);
+        return messages.GetAwaiter().GetResult();
+    }
+
+    public List<CheepDTO> GetCheepsFromAuthors(string[] author, int page)
     {
         var messages = _repository.ReadMessages(author, page, null);
         return messages.GetAwaiter().GetResult();
