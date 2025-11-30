@@ -5,7 +5,8 @@ namespace Chirp.Razor.Pages;
 
 public class PaginationModel : PageModel
 {
-    protected readonly ICheepService _service;
+    protected readonly ICheepService _cheepservice;
+    protected readonly IAuthorService _authorservice;
     public required List<CheepDTO> Cheeps { get; set; }
 
 
@@ -41,8 +42,9 @@ public class PaginationModel : PageModel
         }
     }
 
-    public PaginationModel(ICheepService service)
+    public PaginationModel(ICheepService cheepService, IAuthorService authorService)
     {
-        _service = service;
+        _cheepservice = cheepService;
+        _authorservice = authorService;
     }
 }

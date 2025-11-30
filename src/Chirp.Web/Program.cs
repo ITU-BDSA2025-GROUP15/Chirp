@@ -19,6 +19,8 @@ builder.Services.AddDefaultIdentity<Author>(options => options.SignIn.RequireCon
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<ICheepRepository, CheepRepository>();
 builder.Services.AddScoped<ICheepService, CheepService>();
+builder.Services.AddScoped<IAuthorService, AuthorService>();
+builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 
 string? ghClientId = builder.Configuration["authentication:github:clientId"];
 string? ghClientSecret = builder.Configuration["authentication:github:clientSecret"];

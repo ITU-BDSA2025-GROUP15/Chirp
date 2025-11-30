@@ -8,19 +8,19 @@
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_PaginationLayout";
     var routeName = ViewContext.HttpContext.GetRouteValue("author");
-    var user = await UserManager.GetUserAsync(User);
+    Author? user = await UserManager.GetUserAsync(User);
 }
 
 <div>
     <h2> @routeName's Timeline </h2>
     <partial name="_SubmitMessage"/>
     <p>@ViewData["Error"]</p>
-    @if (!user.Name.Equals(routeName)) {
+    @if (user != null && !user.Name.Equals(routeName)) {
         <form method="post">
-            <input type="submit" value="Follow">
+            <input type="submit" value="Follow/Unfollow" asp-page-handler="follow">
         </form>
     }
-    @if (Model.Cheeps.Any())
+    @if (Model.Cheeps != null && Model.Cheeps.Any())
     {
         <ul id="messagelist" class="cheeps">
             @foreach (var cheep in Model.Cheeps)

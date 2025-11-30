@@ -12,5 +12,7 @@ public interface ICheepService
 
     /// <include file="../../docs/ICheepServiceDocs.xml" path="/doc/members/member[@name='M:ICheepService.GetCheepsFromAuthor(System.String,System.Int32)']/*" />
     public List<CheepDTO> GetCheepsFromAuthor(string author, int page);
+
+    public List<CheepDTO> GetCheepsFromAuthors(string[] author, int page);
     public void PostCheep(Author author, string message);
 }

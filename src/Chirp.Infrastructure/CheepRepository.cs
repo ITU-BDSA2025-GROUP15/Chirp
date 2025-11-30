@@ -59,7 +59,7 @@ public class CheepRepository : ICheepRepository
         {
             if (author.Count() > 0)
             {
-                query = query.Where(Cheep => author.Contains<string>(Cheep.Author));
+                query = query.Where(Cheep => author.Contains(Cheep.Author));
             }
         }
 
