@@ -411,6 +411,9 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("M32Want_Access");
         await page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
 
+        await page.WaitForURLAsync("**/");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
         // Remove real CSRF token
         bool tokenRemoveResult = await page.EvaluateAsync<bool>(@"() => {
             var t = document.querySelector('.cheepbox form input[name=__RequestVerificationToken]');
@@ -427,9 +430,10 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
 
         // Should be an error
         Assert.Equal(400, (await res).Status);
+        Thread.Sleep(1000);
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         // Logout
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await page.GotoAsync("http://localhost:5273/");
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await page.GetByRole(AriaRole.Button, new() { Name = "logout [" }).ClickAsync();
