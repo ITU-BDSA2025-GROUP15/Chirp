@@ -52,14 +52,11 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
     DbInitializer.SeedDatabase(db);
 
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Author>>();
-    var userStore = scope.ServiceProvider.GetRequiredService<IUserStore<Author>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<Microsoft.AspNetCore.Identity.UserManager<Author>>();
+    var userStore = scope.ServiceProvider.GetRequiredService<Microsoft.AspNetCore.Identity.IUserStore<Author>>();
     var emailStore = (IUserEmailStore<Author>)userStore;
-
-    var accountsInitializer = new AccountsInitializer(userManager, userStore, emailStore, db);
-    await accountsInitializer.SeedAccountsAsync();  // <-- use await
+    new AccountsInitializer(userManager, userStore, emailStore, db).SeedAccounts();
 }
-
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
