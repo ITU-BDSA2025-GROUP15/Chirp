@@ -13,17 +13,22 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
+using NuGet.Protocol;
+
 namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
 {
     public class DownloadPersonalDataModel : PageModel
     {
+        private readonly ICheepService _service;
         private readonly UserManager<Author> _userManager;
         private readonly ILogger<DownloadPersonalDataModel> _logger;
 
         public DownloadPersonalDataModel(
+            ICheepService service,
             UserManager<Author> userManager,
             ILogger<DownloadPersonalDataModel> logger)
         {
+            _service = service;
             _userManager = userManager;
             _logger = logger;
         }
@@ -44,7 +49,7 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
             _logger.LogInformation("User with ID '{UserId}' asked for their personal data.", _userManager.GetUserId(User));
 
             // Only include personal data for download
-            var personalData = new Dictionary<string, string>();
+            var personalData = new Dictionary<string, object>();
             var personalDataProps = typeof(Author).GetProperties().Where(
                             prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));
             
@@ -53,6 +58,8 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
                 personalData.Add(p.Name, p.GetValue(user)?.ToString() ?? "null");
             }
 
+            IEnumerable<CheepDTO> cheeps = _service.GetAllCheepsFromAuthor(user.Name);
+            personalData.Add("Cheeps", cheeps);
 
             var logins = await _userManager.GetLoginsAsync(user);
             foreach (var l in logins)
