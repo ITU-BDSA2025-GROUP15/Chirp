@@ -12,4 +12,6 @@ public class CheepDTO
     public required string Timestamp { get; set; }
 
     public required int LikeCounter { get; set; }
+
+    public bool UserHasLiked { get; set; }
 }

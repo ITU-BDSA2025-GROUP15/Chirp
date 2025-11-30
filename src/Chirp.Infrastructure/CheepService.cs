@@ -1,5 +1,7 @@
 //public record CheepViewModel(string Author, string Message, string Timestamp);
 
+using System.Threading.Tasks;
+
 /// <include file="../../docs/CheepServiceDocs.xml" path="/doc/members/member[@name='T:CheepService']/*" />
 public class CheepService : ICheepService
 {
@@ -48,7 +50,7 @@ public class CheepService : ICheepService
     // {
     //     UpdateCheep(id, null, like);
     // }
-    public void UpdateCheep(int id, string? message, bool? like)
+    public async Task<int> UpdateCheep(int id, string? message, bool? like)
     {
         var cheep = GetCheepFromID(id);
         if (message != null)
@@ -63,7 +65,27 @@ public class CheepService : ICheepService
             cheep.LikeCounter--;
         }
         Console.WriteLine("This is the likes after the change: " + cheep.LikeCounter);
-        _repository.UpdateMessage(cheep);
+        await _repository.UpdateMessage(cheep);
+        return cheep.LikeCounter;
+    }
+
+    public async Task<int> Likes(int authorId, int cheepId, bool likes)
+    {
+        var likeStored = await _repository.Likes(authorId, cheepId, likes);
+        int AmountOfLikes;
+        if (likeStored)
+        {
+            AmountOfLikes = await UpdateCheep(cheepId, null, likes);
+        } else
+        {
+            AmountOfLikes = -1;
+        }
+        return AmountOfLikes;
+    }
+
+    public async Task<bool> HasUserLiked(int authorId, int cheepId)
+    {
+       return await _repository.OpinionExist(authorId, cheepId);
     }
 
     /// <include file="../../docs/CheepServiceDocs.xml" path="/doc/members/member[@name='M:CheepService.CheepListToCheepDTOList(System.Collections.Generic.List{Cheep})']/*" />

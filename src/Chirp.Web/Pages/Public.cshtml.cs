@@ -16,8 +16,9 @@ public class PublicModel(ICheepService service, UserManager<Author> userManager)
     [StringLength(cheepLength, ErrorMessage = "Maximum length is {1}")]
     public required string Message { get; set; }
 
-    public ActionResult OnGet(string author, [FromQuery] string page)
+    public async Task<IActionResult> OnGet(string authorName, [FromQuery] string page)
     {
+        var author = await _userManager.GetUserAsync(User);
         int _page = 1;
         if (page != null)
         {
@@ -27,7 +28,11 @@ public class PublicModel(ICheepService service, UserManager<Author> userManager)
             if (_page <= 0) return RedirectToPage();
         }
 
-        Cheeps = LoadCheeps(author, _page);
+        Cheeps = LoadCheeps(authorName, _page);
+        foreach (var cheep in Cheeps)
+        {
+            cheep.UserHasLiked = await _service.HasUserLiked(author.Id, cheep.CheepId);
+        }
         if (Cheeps.Count == 0 && CurrentPage != 1) { return RedirectToPage(); }
         return Page();
     }
@@ -48,11 +53,12 @@ public class PublicModel(ICheepService service, UserManager<Author> userManager)
     }
     public async Task<IActionResult> OnPostLike(int id)
     {
-        Console.WriteLine("This is the id" + id);
-        _service.UpdateCheep(id, null, true);
+        var author = await _userManager.GetUserAsync(User);
+        var updatedCount = await _service.Likes(author.Id, id, true);
 
-        return RedirectToPage();
+        return new JsonResult(new { likeCount = updatedCount });
     }
+
     public List<CheepDTO> LoadCheeps(string author, int page)
     {
         CurrentPage = page == 0 ? 1 : page;

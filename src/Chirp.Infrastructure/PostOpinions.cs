@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 [PrimaryKey(nameof(CheepId), nameof(AuthorId))]
-public class Postopinions
+public class PostOpinions
 {
     public int CheepId { get; set; }
     public int AuthorId { get; set; }

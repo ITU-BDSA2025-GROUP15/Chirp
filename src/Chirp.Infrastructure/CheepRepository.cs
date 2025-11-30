@@ -98,6 +98,43 @@ public class CheepRepository : ICheepRepository
         return;
     }
 
+        public async Task<bool> Likes(int authorId, int postId, bool likes)
+    {
+        try
+        {
+            if (likes)
+            {
+                PostOpinions postOpinion = new PostOpinions
+                {
+                    CheepId = postId,
+                    AuthorId = authorId
+                };
+                var query = _context.PostOpinions.Add(postOpinion);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                PostOpinions postOpinion = new PostOpinions
+                {
+                    CheepId = postId,
+                    AuthorId = authorId
+                };
+                var query = _context.PostOpinions.Remove(postOpinion);
+                await _context.SaveChangesAsync();
+            }
+            return true;
+        } catch
+        {
+            return false;
+        }
+    }
+
+    public async Task<bool> OpinionExist(int auhorId, int cheepId)
+    {
+        return await _context.PostOpinions
+            .AnyAsync(l => l.AuthorId == auhorId && l.CheepId == cheepId);
+    }
+
     ///<include file="../../docs/CheepRepositoryDocs.xml" path="/doc/members/member[@name='M:CheepRepository.FindMessage(System.Int32)']/*" />
     public async Task<CheepDTO> FindMessage(int cheepId)
     {

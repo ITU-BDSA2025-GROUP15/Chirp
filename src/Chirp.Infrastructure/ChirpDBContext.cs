@@ -16,5 +16,5 @@ public class ChirpDBContext : IdentityDbContext<Author, IdentityRole<int>, int>
     /// <include file="../../docs/ChirpDBContextDocs.xml" path="/doc/members/member[@name='P:ChirpDBContext.Cheeps']/*" />
     public DbSet<Cheep> Cheeps { get; set; }
 
-    public DbSet<Postopinions> Postopinions { get; set; } 
+    public DbSet<PostOpinions> PostOpinions { get; set; } 
 }

@@ -15,6 +15,10 @@ public interface ICheepService
 
     public CheepDTO GetCheepFromID(int id);
 
-    public void UpdateCheep(int id, string? message, bool? likes); //add dislikes?
+    public Task<int> UpdateCheep(int id, string? message, bool? like); //add dislikes?
+
+    public Task<int> Likes(int authorId, int cheepId, bool likes);
+
+    public Task<bool> HasUserLiked(int authorId, int cheepId);
     public void PostCheep(Author author, string message);
 }

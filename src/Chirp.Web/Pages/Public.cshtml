@@ -28,10 +28,13 @@
                         @cheep.Message
                         <small>&mdash; @cheep.Timestamp</small>
                         <small>Likes @cheep.LikeCounter</small> <!-- Change this to someting better later. -->
-                    <form method="post">
-                        <button asp-page-handler="Like" asp-route-id="@cheep.CheepId">Like</button>
-                        <span id="likeCount">@cheep.LikeCounter</span>
-                    </form>
+                        <button type="button" class="like-btn @(cheep.UserHasLiked ? "liked" : "")" data-id="@cheep.CheepId">
+                            @(cheep.UserHasLiked ? "Unlike" : "Like")
+                        </button>
+
+                        <span id="likeCount-@cheep.CheepId">@cheep.LikeCounter</span>
+
+
                     </p>
                 </li>
             }
@@ -42,3 +45,27 @@
         <em>There are no cheeps so far.</em>
     }
 </div>
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".like-btn").forEach(btn => {
+                btn.addEventListener("click", function () {
+                    let id = this.dataset.id;
+
+                    fetch(`?handler=Like&id=${id}`, {
+                        method: "POST",
+                        headers: {
+                            "RequestVerificationToken":
+                                document.querySelector('input[name="__RequestVerificationToken"]').value
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            // update like count in UI
+                            document.getElementById("likeCount-" + id).textContent = data.likeCount;
+                        });
+                });
+            });
+        });
+    </script>
+}
