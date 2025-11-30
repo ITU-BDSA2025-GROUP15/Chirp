@@ -3,6 +3,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
+using SQLitePCL;
+
 namespace Chirp.Razor.Pages;
 
 public class PublicModel(ICheepService service, UserManager<Author> userManager) : PaginationModel(service)
@@ -43,6 +45,13 @@ public class PublicModel(ICheepService service, UserManager<Author> userManager)
         _service.PostCheep(author, Message);
         string authorUrl = Uri.EscapeDataString(author.Name);
         return Redirect("/" + authorUrl ?? "NameNotFound");
+    }
+    public async Task<IActionResult> OnPostLike(int id)
+    {
+        Console.WriteLine("This is the id" + id);
+        _service.UpdateCheep(id, null, true);
+
+        return RedirectToPage();
     }
     public List<CheepDTO> LoadCheeps(string author, int page)
     {

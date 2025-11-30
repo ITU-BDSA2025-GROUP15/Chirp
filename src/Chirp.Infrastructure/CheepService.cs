@@ -38,8 +38,36 @@ public class CheepService : ICheepService
         return messages.GetAwaiter().GetResult();
     }
 
+    public CheepDTO GetCheepFromID(int id)
+    {
+        //Console.WriteLine("This is what is returned " + _repository.FindMessage(id).GetAwaiter().GetResult().CheepId);
+        return _repository.FindMessage(id).GetAwaiter().GetResult();
+    }
+
+    // public void UpdateCheep(int id, bool like)
+    // {
+    //     UpdateCheep(id, null, like);
+    // }
+    public void UpdateCheep(int id, string? message, bool? like)
+    {
+        var cheep = GetCheepFromID(id);
+        if (message != null)
+        {
+            cheep.Message = message;
+        }
+        if (like != null && like == true)
+        {
+            cheep.LikeCounter++;
+        } else
+        {
+            cheep.LikeCounter--;
+        }
+        Console.WriteLine("This is the likes after the change: " + cheep.LikeCounter);
+        _repository.UpdateMessage(cheep);
+    }
+
     /// <include file="../../docs/CheepServiceDocs.xml" path="/doc/members/member[@name='M:CheepService.CheepListToCheepDTOList(System.Collections.Generic.List{Cheep})']/*" />
-    public static List<CheepDTO> CheepListToCheepDTOList(List<Cheep> cheeps)
+    public static List<CheepDTO> CheepListToCheepDTOList(List<Cheep> cheeps) //Do we even use this functions anymore??? The repository also has this logic
     {
         var modelMessages = new List<CheepDTO>();
 
@@ -47,9 +75,11 @@ public class CheepService : ICheepService
         {
             var modelCheep = new CheepDTO()
             {
+                CheepId = 0,
                 Author = cheep.Author.Name,
                 Message = cheep.Text,
-                Timestamp = DateTimeToDateTimeString(cheep.TimeStamp)
+                Timestamp = DateTimeToDateTimeString(cheep.TimeStamp),
+                LikeCounter = 0
             };
             modelMessages.Add(modelCheep);
         }

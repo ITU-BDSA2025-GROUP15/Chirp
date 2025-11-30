@@ -13,7 +13,7 @@
 
 <div>
     <h2> Public Timeline </h2>
-    <partial name="_SubmitMessage"/>
+    <partial name="_SubmitMessage" />
     <p>@ViewData["Error"]</p>
     @if (Model.Cheeps.Any())
     {
@@ -27,6 +27,11 @@
                         </strong>
                         @cheep.Message
                         <small>&mdash; @cheep.Timestamp</small>
+                        <small>Likes @cheep.LikeCounter</small> <!-- Change this to someting better later. -->
+                    <form method="post">
+                        <button asp-page-handler="Like" asp-route-id="@cheep.CheepId">Like</button>
+                        <span id="likeCount">@cheep.LikeCounter</span>
+                    </form>
                     </p>
                 </li>
             }

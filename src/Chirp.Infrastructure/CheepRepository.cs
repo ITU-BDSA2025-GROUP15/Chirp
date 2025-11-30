@@ -43,9 +43,11 @@ public class CheepRepository : ICheepRepository
                 Authors => Authors.Id,
                 (Cheeps, Authors) => new
                 {
+                    CheepId = Cheeps.CheepId,
                     Author = Authors.Name,
                     Message = Cheeps.Text,
-                    Timestamp = Cheeps.TimeStamp
+                    Timestamp = Cheeps.TimeStamp,
+                    LikeCounter = Cheeps.LikeCounter
                 });
         if (author != null)
         {
@@ -62,7 +64,9 @@ public class CheepRepository : ICheepRepository
         {
             query = query.Skip(checked((_page - 1) * _limit));
             query = query.Take(_limit);
-        } catch (OverflowException) {
+        }
+        catch (OverflowException)
+        {
             return new List<CheepDTO>();
         }
 
@@ -73,9 +77,11 @@ public class CheepRepository : ICheepRepository
         {
             cheepdtos.Add(new CheepDTO
             {
+                CheepId = cheep.CheepId,
                 Author = cheep.Author,
                 Message = cheep.Message,
-                Timestamp = CheepService.DateTimeToDateTimeString(cheep.Timestamp)
+                Timestamp = CheepService.DateTimeToDateTimeString(cheep.Timestamp),
+                LikeCounter = cheep.LikeCounter
             });
         }
 
@@ -83,14 +89,49 @@ public class CheepRepository : ICheepRepository
     }
 
     /// <include file="../../docs/CheepRepositoryDocs.xml" path="/doc/members/member[@name='M:CheepRepository.UpdateMessage(CheepDTO)']/*" />
-    public Task UpdateMessage(CheepDTO alteredMessage)
+    public async Task UpdateMessage(CheepDTO alteredMessage)
     {
-        return Task.Run(() => 0); //does nothing
+        var cheep = await _context.Cheeps.Where(a => a.CheepId.Equals(alteredMessage.CheepId)).Select(a => a).FirstAsync();
+        cheep.LikeCounter = alteredMessage.LikeCounter;
+        cheep.Text = alteredMessage.Message;
+        await _context.SaveChangesAsync();
+        return;
     }
-    
+
     ///<include file="../../docs/CheepRepositoryDocs.xml" path="/doc/members/member[@name='M:CheepRepository.FindMessage(System.Int32)']/*" />
-    public async Task<Cheep> FindMessage(int cheepId)
+    public async Task<CheepDTO> FindMessage(int cheepId)
     {
-        return await Task.Run(() =>_context.Cheeps.Where(a => a.CheepId.Equals(cheepId)).First());
+        var query = _context.Cheeps
+            .Join(_context.Authors,
+            Cheeps => Cheeps.AuthorId,
+            Authors => Authors.Id,
+            (Cheeps, Authors) => new
+            {
+                CheepId = Cheeps.CheepId,
+                Author = Authors.Name,
+                Message = Cheeps.Text,
+                Timestamp = Cheeps.TimeStamp,
+                LikeCounter = Cheeps.LikeCounter
+            });
+        query = query.Where(a => a.CheepId.Equals(cheepId));
+
+        var cheep = await query.FirstAsync();
+
+        Console.WriteLine("This is the id :" + cheep.CheepId);
+        Console.WriteLine("This is cheep Author: " + cheep.Author);
+        Console.WriteLine("This is cheep message: " + cheep.Message);
+        Console.WriteLine("This is cheep Timestamp: " + CheepService.DateTimeToDateTimeString(cheep.Timestamp));
+        Console.WriteLine("This is cheep likes: " + cheep.LikeCounter);
+
+        var cheepDTO = new CheepDTO
+        {
+            CheepId = cheep.CheepId,
+            Author = cheep.Author,
+            Message = cheep.Message,
+            Timestamp = CheepService.DateTimeToDateTimeString(cheep.Timestamp),
+            LikeCounter = cheep.LikeCounter
+        };
+
+        return cheepDTO;
     }
 }
