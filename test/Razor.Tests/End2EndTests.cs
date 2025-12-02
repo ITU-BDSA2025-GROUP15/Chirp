@@ -16,6 +16,26 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         Firefox,
         Webkit
     }
+
+    public static IEnumerable<object[]> Browsers
+    {
+        get
+        {
+            var browsers = new List<object[]>();
+
+            foreach (var browser in new Browser[]
+            {
+                Browser.Chromium,
+                Browser.Firefox,
+                Browser.Webkit
+            })
+            {
+                browsers.Add([(int)browser]);
+            }
+
+            return browsers;
+        }
+    }
     public End2EndTests(RazorPageFixture fixture)
     {
         _fixture = fixture;
@@ -114,10 +134,10 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         Assert.DoesNotContain("Jacqualine Gilcoine", responseBodyUser);
     }
 
+    // Playwright tests below this point
+
     [Theory]
-    [InlineData((int)Browser.Chromium)]
-    [InlineData((int)Browser.Firefox)]
-    [InlineData((int)Browser.Webkit)]
+    [MemberData(nameof(Browsers))]
     public async Task loginLogoutChirp(int browser)
     {
         var page = _fixture.Pages[browser];
@@ -156,11 +176,10 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     }
 
     [Theory]
-    [InlineData((int)Browser.Chromium)]
-    [InlineData((int)Browser.Firefox)]
-    [InlineData((int)Browser.Webkit)]
+    [MemberData(nameof(Browsers))]
     public async Task PostCheep(int browser)
     {
+        var message = "PostingCheep" + browser.ToString();
         var page = _fixture.Pages[browser];
         
         // Navigate to home page to ensure clean state
@@ -184,13 +203,13 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
 
         //Shares cheep
         await page.Locator("#Message").ClickAsync();
-        await page.Locator("#Message").FillAsync("PostingCheep" + browser.ToString());
+        await page.Locator("#Message").FillAsync(message);
         await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         //Checks that cheep is shared
-        await page.WaitForSelectorAsync("text=PostingCheep", new() { Timeout = 5000 });
-        Assert.Contains("PostingCheep" + browser.ToString(), await page.GetByText("Adrian PostingCheep").First.InnerTextAsync());
+        await page.WaitForSelectorAsync($"text={message}", new() { Timeout = 5000 });
+        Assert.Contains(message, await page.GetByText($"Adrian {message}").First.InnerTextAsync());
 
         //logs out
         await page.GetByRole(AriaRole.Button, new() { Name = "logout [Adrian]" }).ClickAsync();
@@ -207,9 +226,7 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     }
     
     [Theory]
-    [InlineData((int)Browser.Chromium)]
-    [InlineData((int)Browser.Firefox)]
-    [InlineData((int)Browser.Webkit)]
+    [MemberData(nameof(Browsers))]
     public async Task PageButtonsAndEdit(int browser)
     {
         // Ensure fresh server
@@ -255,9 +272,7 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     }
 
     [Theory]
-    [InlineData((int)Browser.Chromium)]
-    [InlineData((int)Browser.Firefox)]
-    [InlineData((int)Browser.Webkit)]
+    [MemberData(nameof(Browsers))]
     public async Task Security_XSS_UrlRedirectsInName(int browser)
     {
         // Random page number without browsers overlapping
@@ -306,9 +321,7 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     }
 
     [Theory]
-    [InlineData((int)Browser.Chromium)]
-    [InlineData((int)Browser.Firefox)]
-    [InlineData((int)Browser.Webkit)]
+    [MemberData(nameof(Browsers))]
     public async Task Security_XSS_ScriptTagsInNameOrCheep(int browser)
     {
         // Random page number without browsers overlapping
@@ -354,9 +367,7 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     }
 
     [Theory]
-    [InlineData((int)Browser.Chromium)]
-    [InlineData((int)Browser.Firefox)]
-    [InlineData((int)Browser.Webkit)]
+    [MemberData(nameof(Browsers))]
     public async Task Security_CSRF_LoginFails(int browser)
     {
         var page = _fixture.Pages[browser];
@@ -391,9 +402,7 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     }
 
     [Theory]
-    [InlineData((int)Browser.Chromium)]
-    [InlineData((int)Browser.Firefox)]
-    [InlineData((int)Browser.Webkit)]
+    [MemberData(nameof(Browsers))]
     public async Task Security_CSRF_SendCheepFails(int browser)
     {
         var page = _fixture.Pages[browser];
@@ -442,9 +451,7 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     }
 
     [Theory]
-    [InlineData((int)Browser.Chromium)]
-    [InlineData((int)Browser.Firefox)]
-    [InlineData((int)Browser.Webkit)]
+    [MemberData(nameof(Browsers))]
     public async Task Security_SQLInjection_NameAndCheep(int browser)
     {
         var sqlAttacks = new string[] {
