@@ -11,7 +11,6 @@ public class CheepRepository : ICheepRepository
     private readonly int defaultLimit = 32;
     private readonly ChirpDBContext _context;
 
-
     /// <include file="../../docs/CheepRepositoryDocs.xml" path="/doc/members/member[@name='M:CheepRepository.#ctor(ChirpDBContext)']/*" />
     public CheepRepository(ChirpDBContext context)
     {
