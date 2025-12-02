@@ -27,14 +27,14 @@ public class CheepService : ICheepService
     /// <include file="../../docs/CheepServiceDocs.xml" path="/doc/members/member[@name='M:CheepService.GetCheepsFromAuthor(System.String)']/*" />
     public List<CheepDTO> GetCheepsFromAuthor(string author)
     {
-        var messages = _repository.ReadMessages(author, null, null);
+        var messages = _repository.ReadMessages(new[] {author}, null, null);
         return messages.GetAwaiter().GetResult();
     }
 
     /// <include file="../../docs/CheepServiceDocs.xml" path="/doc/members/member[@name='M:CheepService.GetCheepsFromAuthor(System.String,System.Int32)']/*" />
     public List<CheepDTO> GetCheepsFromAuthor(string author, int page)
     {
-        var messages = _repository.ReadMessages(author, page, null);
+        var messages = _repository.ReadMessages(new[] {author}, page, null);
         return messages.GetAwaiter().GetResult();
     }
 
