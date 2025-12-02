@@ -140,6 +140,7 @@ div.page ul.cheeps li {
 
 div.page ul.cheeps p {
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
 div.page ul.cheeps li img {
@@ -321,4 +322,5 @@ table#personal-data tr * {
 
 table#personal-data tr *:last-child {
     text-align: right;
+    overflow-wrap: anywhere;
 }
