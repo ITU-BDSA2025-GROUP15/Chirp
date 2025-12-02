@@ -37,7 +37,7 @@ public class AuthorService : IAuthorService
     {
         Author author = await _repository.FindAuthorByName(name);
 
-        if (author.Follows == null || !author.Follows.Any())
+        if (author.Follows == null || author.Follows.Count == 0)
         {
             return Array.Empty<string>();
         }
