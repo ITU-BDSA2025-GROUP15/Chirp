@@ -10,7 +10,7 @@ using Xunit.Abstractions;
 public class End2EndTests : IClassFixture<RazorPageFixture>
 {
     readonly RazorPageFixture _fixture;
-    enum Browser
+    public enum Browser
     {
         Chromium,
         Firefox,
@@ -30,7 +30,7 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
                 Browser.Webkit
             })
             {
-                browsers.Add([(int)browser]);
+                browsers.Add([browser]);
             }
 
             return browsers;
@@ -138,9 +138,9 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
 
     [Theory]
     [MemberData(nameof(Browsers))]
-    public async Task loginLogoutChirp(int browser)
+    public async Task loginLogoutChirp(Browser browser)
     {
-        var page = _fixture.Pages[browser];
+        var page = await GetCleanPage(browser);
         
         // Navigate to home page to ensure clean state
         await page.GotoAsync("http://localhost:5273/");
@@ -177,10 +177,10 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
 
     [Theory]
     [MemberData(nameof(Browsers))]
-    public async Task PostCheep(int browser)
+    public async Task PostCheep(Browser browser)
     {
         var message = "PostingCheep" + browser.ToString();
-        var page = _fixture.Pages[browser];
+        var page = await GetCleanPage(browser);
         
         // Navigate to home page to ensure clean state
         await page.GotoAsync("http://localhost:5273/");
@@ -227,12 +227,12 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     
     [Theory]
     [MemberData(nameof(Browsers))]
-    public async Task PageButtonsAndEdit(int browser)
+    public async Task PageButtonsAndEdit(Browser browser)
     {
         // Ensure fresh server
         await _fixture.RestartRazorPage();
 
-        var page = _fixture.Pages[browser];
+        var page = await GetCleanPage(browser);
         
         // Navigate to home page to ensure clean state
         await page.GotoAsync("http://localhost:5273/");
@@ -273,12 +273,12 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
 
     [Theory]
     [MemberData(nameof(Browsers))]
-    public async Task Security_XSS_UrlRedirectsInName(int browser)
+    public async Task Security_XSS_UrlRedirectsInName(Browser browser)
     {
         // Random page number without browsers overlapping
-        int pageNo = (browser * 100) + new Random().Next(99);
+        int pageNo = ((int)browser * 100) + new Random().Next(99);
 
-        var page = _fixture.Pages[browser];
+        var page = await GetCleanPage(browser);
         
         // Navigate to home page to ensure clean state
         await page.GotoAsync("http://localhost:5273/");
@@ -313,24 +313,19 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         // On cheep author link
         var cheepAuthor = page.GetByRole(AriaRole.Link, new() { Name = $"?page={pageNo}", Exact = true });
         await Assertions.Expect(cheepAuthor).ToHaveAttributeAsync("href", $"/%3Fpage%3D{pageNo}");
-
-        // Logout
-        await page.GetByRole(AriaRole.Button, new() { Name = "logout [" }).ClickAsync();
-        await page.WaitForURLAsync("**/Identity/Account/Logout");
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }
 
     [Theory]
     [MemberData(nameof(Browsers))]
-    public async Task Security_XSS_ScriptTagsInNameOrCheep(int browser)
+    public async Task Security_XSS_ScriptTagsInNameOrCheep(Browser browser)
     {
         // Random page number without browsers overlapping
-        int randomNo = (browser * 100) + new Random().Next(99);
+        int randomNo = ((int)browser * 100) + new Random().Next(99);
 
         string message = $"The XSS attack worked...";
         string maliciousScript = $"<script>document.title = '{message}'</script>{randomNo}";
 
-        var page = _fixture.Pages[browser];
+        var page = await GetCleanPage(browser);
         
         // Navigate to home page to ensure clean state
         await page.GotoAsync("http://localhost:5273/");
@@ -359,18 +354,13 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         await page.Locator("#Message").FillAsync($"Testing name and cheep with XSS script. {maliciousScript}");
         await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
         await Assertions.Expect(page).Not.ToHaveTitleAsync(message);
-
-        // Logout
-        await page.GetByRole(AriaRole.Button, new() { Name = "logout [" }).ClickAsync();
-        await page.WaitForURLAsync("**/Identity/Account/Logout");
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }
 
     [Theory]
     [MemberData(nameof(Browsers))]
-    public async Task Security_CSRF_LoginFails(int browser)
+    public async Task Security_CSRF_LoginFails(Browser browser)
     {
-        var page = _fixture.Pages[browser];
+        var page = await GetCleanPage(browser);
         
         // Navigate to home page to ensure clean state
         await page.GotoAsync("http://localhost:5273/");
@@ -403,9 +393,9 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
 
     [Theory]
     [MemberData(nameof(Browsers))]
-    public async Task Security_CSRF_SendCheepFails(int browser)
+    public async Task Security_CSRF_SendCheepFails(Browser browser)
     {
-        var page = _fixture.Pages[browser];
+        var page = await GetCleanPage(browser);
         
         // Navigate to home page to ensure clean state
         await page.GotoAsync("http://localhost:5273/");
@@ -441,18 +431,11 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         Assert.Equal(400, (await res).Status);
         Thread.Sleep(1000);
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-
-        // Logout
-        await page.GotoAsync("http://localhost:5273/");
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await page.GetByRole(AriaRole.Button, new() { Name = "logout [" }).ClickAsync();
-        await page.WaitForURLAsync("**/Identity/Account/Logout");
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }
 
     [Theory]
     [MemberData(nameof(Browsers))]
-    public async Task Security_SQLInjection_NameAndCheep(int browser)
+    public async Task Security_SQLInjection_NameAndCheep(Browser browser)
     {
         var sqlAttacks = new string[] {
             "Robert{0}'); DROP TABLE Students;--",
@@ -469,12 +452,12 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         }
     }
 
-    private async Task ExecuteSQLInjectionAttackTest(int browser, int id, string attack)
+    private async Task ExecuteSQLInjectionAttackTest(Browser browser, int id, string attack)
     {
         string randomNo = $"{browser}{id}";
         string attackUnique = string.Format(attack, randomNo);
 
-        var page = _fixture.Pages[browser];
+        var page = await GetCleanPage(browser);
         
         // Navigate to home page to ensure clean state
         await page.GotoAsync("http://localhost:5273/");
@@ -510,61 +493,81 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
 
         // Cheep with the SQL attack exists
         await page.GetByRole(AriaRole.Listitem, new() { Name = attackUnique }).IsVisibleAsync();
-
-        // Logout
-        await page.GetByRole(AriaRole.Button, new() { Name = "logout [" }).ClickAsync();
-        await page.WaitForURLAsync("**/Identity/Account/Logout");
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     } 
 
     // UI tests
+
     private async Task LoginAsync(IPage page)
     {
-        await page.GotoAsync($"{_fixture.BaseUrl}/login");
+        string email = "adho@itu.dk";
+        string password = "M32Want_Access";
 
-        await page.FillAsync("input[name='Input.UserName']", "test");
-        await page.FillAsync("input[name='Input.Password']", "Password123!");
-        await page.ClickAsync("button[type='submit']");
+        await page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync(email);
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync(password);
+
+        await page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
     }
 
     [Theory]
     [MemberData(nameof(Browsers))]
-    public async Task PostInputVisibleOnlyAfterLogin(int browser)
+    public async Task UI_PostInputVisibleOnlyAfterLogin(Browser browser)
     {
-        var page = _fixture.Pages[browser];
+        var page = await GetCleanPage(browser);
         await page.GotoAsync(_fixture.BaseUrl);
 
-        Assert.False(await page.IsVisibleAsync("#post-input"));
-
+        Assert.False(await page.Locator("#Message").IsVisibleAsync());
+        
         await LoginAsync(page);
 
-        Assert.True(await page.IsVisibleAsync("#post-input"));
+        await page.WaitForSelectorAsync("#Message", new() { Timeout = 5000 });
+        Assert.True(await page.Locator("#Message").IsVisibleAsync());
     }
 
     [Theory]
     [MemberData(nameof(Browsers))]
-    public async Task CheepsDisplayedAfterPosting(int browser)
+    public async Task UI_CheepsDisplayedAfterPosting(Browser browser)
     {
-        var page = _fixture.Pages[browser];
+        var page = await GetCleanPage(browser);
         await LoginAsync(page);
 
-        await page.FillAsync("#post-input", "Hello from Playwright!");
-        await page.ClickAsync("#post-button");
+        await page.Locator("#Message").FillAsync("Hello from Playwright!");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         Assert.True(await page.IsVisibleAsync("text=Hello from Playwright!"));
     }
 
     [Theory]
     [MemberData(nameof(Browsers))]
-    public async Task CannotPostCheepLongerThan160Chars(int browser)
+    public async Task UI_CannotPostCheepLongerThan160Chars(Browser browser)
     {
-        var page = _fixture.Pages[browser];
+        var page = await GetCleanPage(browser);
         await LoginAsync(page);
 
         string longText = new string('a', 200);
-        await page.FillAsync("#post-input", longText);
-        await page.ClickAsync("#post-button");
+        await page.Locator("#Message").FillAsync(longText);
+        await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         Assert.True(await page.IsVisibleAsync("text=Cheep cannot be longer than 160 characters"));
+    }
+
+    /// <summary>
+    /// Logs out of Chirp! and navigates to front page, ensuring a clean slate for tests.
+    /// </summary>
+    /// <returns>The page for given browser, after being cleaned up.</returns>
+    private async Task<IPage> GetCleanPage(Browser browser)
+    {
+        var page = _fixture.Pages[(int)browser];
+
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await page.Context.ClearCookiesAsync();
+
+        await page.GotoAsync(_fixture.BaseUrl);
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        return page;
     }
 }
