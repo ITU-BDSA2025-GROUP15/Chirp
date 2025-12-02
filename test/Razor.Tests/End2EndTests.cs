@@ -546,12 +546,21 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         var page = await GetCleanPage(browser);
         await LoginAsync(page);
 
-        string longText = new string('a', 200);
+        char letter = browser.ToString()[0]; // The first letter in the browser name.
+        string longCheepIntro = new string(letter, 160);
+
+        string longText = longCheepIntro + "This comes after the first 160 characters so it should not be included.";
         await page.Locator("#Message").FillAsync(longText);
+    
+        string filledText = await page.Locator("#Message").InputValueAsync();
+        Assert.Contains(longCheepIntro, filledText);
+        Assert.DoesNotContain("T", filledText);
+
         await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
-        Assert.True(await page.IsVisibleAsync("text=Cheep cannot be longer than 160 characters"));
+        Assert.True(await page.IsVisibleAsync($"text={longCheepIntro}"));
+        Assert.True(await page.IsHiddenAsync("text=This comes after the first 160 characters so it should not be included."));
     }
 
     /// <summary>
