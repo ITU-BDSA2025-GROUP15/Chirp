@@ -36,17 +36,14 @@ public class AuthorService : IAuthorService
     public async Task<string[]> GetFollowingByName(string name)
     {
         Author author = await _repository.FindAuthorByName(name);
-        if (author.Follows == null)
+
+        if (author.Follows == null || !author.Follows.Any())
         {
-            return [];
+            return Array.Empty<string>();
         }
-        string[] follows = [];
-        foreach (Author item in author.Follows)
-        {
-            follows = (string[])follows.Append(item.Name);
-        }
-        return follows;
+        return author.Follows.Select(f => f.Name).ToArray();
     }
+
     private AuthorDTO AuthorToDTO(Author author)
     {
         return new AuthorDTO()

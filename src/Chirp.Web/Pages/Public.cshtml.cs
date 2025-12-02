@@ -32,7 +32,7 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
             Cheeps = await LoadCheepsMyTimeline(author, _page);
         } else
         {
-            Cheeps = LoadCheeps(author, _page);
+            Cheeps = LoadCheeps(author!, _page);
         }
         if (Cheeps.Count == 0 && CurrentPage != 1) { return RedirectToPage(); }
         return Page();
@@ -56,8 +56,9 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
     {
         var author = await _userManager.GetUserAsync(User);
         // converting the Author to an AuthorDTO for some reason
-        var authorDTO = new AuthorDTO() {Name = author!.Name};
-        var idol = await _authorservice.GetAuthorByName(RouteData.Values["author"]?.ToString()!);
+        var authorDTO = await _authorservice.GetAuthorByName(author!.Name);
+        var idol   = await _authorservice.GetAuthorByName(RouteData.Values["author"]!.ToString()!);
+
         if (!await _authorservice.IsAuthorFollowingAuthor(authorDTO,idol))
         {
             await _authorservice.FollowAuthor(authorDTO,idol);

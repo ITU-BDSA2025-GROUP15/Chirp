@@ -24,9 +24,12 @@ public class AuthorRepository : IAuthorRepository
 
     /// <include file="../../docs/AuthorRepositoryDocs.xml" path="/doc/members/member[@name='M:AuthorRepository.FindAuthorByName(System.String)']/*" />
     public async Task<Author> FindAuthorByName(string name)
-    {
-        return await _context.Authors.FirstAsync(a => a.Name.Equals(name));
-    }
+{
+    return await _context.Authors
+        .Include(a => a.Follows)
+        .FirstAsync(a => a.Name == name);
+}
+
 
     /// <include file="../../docs/AuthorRepositoryDocs.xml" path="/doc/members/member[@name='M:AuthorRepository.FindAuthorByEmail(System.String)']/*" />
     public async Task<Author> FindAuthorByEmail(string email)
@@ -45,7 +48,6 @@ public class AuthorRepository : IAuthorRepository
     {
         author.Follows ??= new List<Author>();
         author.Follows.Add(toFollow);
-        _context.Authors.Update(author);
         await _context.SaveChangesAsync();
     }
 
@@ -54,7 +56,6 @@ public class AuthorRepository : IAuthorRepository
         if (author.Follows != null)
         {
             author.Follows.Remove(toUnfollow);
-            _context.Authors.Update(author);
             await _context.SaveChangesAsync();
         }
     }
