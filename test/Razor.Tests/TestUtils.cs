@@ -17,6 +17,18 @@ public static class TestUtils
         var dbPath = Path.GetTempFileName();
         Environment.SetEnvironmentVariable("CHIRPDBPATH", dbPath);
 
+        var baseURL = "http://localhost:5273";
+        using HttpClient client = new();
+        client.BaseAddress = new Uri(baseURL);
+
+        // Check if another is running
+        try
+        {
+            var HTTPResponse = await client.GetAsync("");
+            Assert.Fail("Another Razor process may be running! Please kill any running Razor process before running tests.");
+        }
+        catch (HttpRequestException) {} // All good
+
         Process process = new Process();
         process.StartInfo.FileName = "dotnet";
         process.StartInfo.Arguments = $"run --project ../../../../../{RazorPath}";
@@ -25,11 +37,7 @@ public static class TestUtils
         process.StartInfo.RedirectStandardError = true;
         process.Start();
 
-        var baseURL = "http://localhost:5273";
-        using HttpClient client = new();
-        client.BaseAddress = new Uri(baseURL);
-
-        int maxRetries = 10;
+        int maxRetries = 30;
         for (int i = 0; i < maxRetries; i++)
         {
             try
@@ -40,13 +48,12 @@ public static class TestUtils
             catch (Exception)
             {
                 if (process.HasExited) Assert.Fail($"Razor process exited. {process.StandardError.ReadToEnd()}");
-                Thread.Sleep(10000);
+                Thread.Sleep(1000);
             }
         }
 
         return process;
     }
-
 
     public static void AssertCheepListsEqual(List<Cheep> expected, List<Cheep> actual)
     {
@@ -92,6 +99,5 @@ public static class TestUtils
         }
 
         return provider;
-
     }
 }

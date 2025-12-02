@@ -36,6 +36,13 @@ public class RazorPageFixture : IAsyncLifetime
             await Pages[i].GotoAsync("http://localhost:5273/"); //Open our page on the browser.
         }
     }
+    public async Task RestartRazorPage()
+    {
+        _razorPage!.Kill(true);
+        _razorPage.WaitForExit();
+        _razorPage.Dispose();
+        _razorPage = await TestUtils.StartRazorPage();
+    }
     public Task DisposeAsync()
     {
         _playwright!.Dispose();
