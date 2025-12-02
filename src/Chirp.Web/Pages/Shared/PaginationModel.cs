@@ -9,7 +9,6 @@ public class PaginationModel : PageModel
     protected readonly IAuthorService _authorservice;
     public required List<CheepDTO> Cheeps { get; set; }
 
-
     public int CurrentPage { get; set; }
 
     public int PreviousPage
