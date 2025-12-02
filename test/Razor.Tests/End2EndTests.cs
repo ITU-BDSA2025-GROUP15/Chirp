@@ -516,4 +516,55 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         await page.WaitForURLAsync("**/Identity/Account/Logout");
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     } 
+
+    // UI tests
+    private async Task LoginAsync(IPage page)
+    {
+        await page.GotoAsync($"{_fixture.BaseUrl}/login");
+
+        await page.FillAsync("input[name='Input.UserName']", "test");
+        await page.FillAsync("input[name='Input.Password']", "Password123!");
+        await page.ClickAsync("button[type='submit']");
+    }
+
+    [Theory]
+    [MemberData(nameof(Browsers))]
+    public async Task PostInputVisibleOnlyAfterLogin(int browser)
+    {
+        var page = _fixture.Pages[browser];
+        await page.GotoAsync(_fixture.BaseUrl);
+
+        Assert.False(await page.IsVisibleAsync("#post-input"));
+
+        await LoginAsync(page);
+
+        Assert.True(await page.IsVisibleAsync("#post-input"));
+    }
+
+    [Theory]
+    [MemberData(nameof(Browsers))]
+    public async Task CheepsDisplayedAfterPosting(int browser)
+    {
+        var page = _fixture.Pages[browser];
+        await LoginAsync(page);
+
+        await page.FillAsync("#post-input", "Hello from Playwright!");
+        await page.ClickAsync("#post-button");
+
+        Assert.True(await page.IsVisibleAsync("text=Hello from Playwright!"));
+    }
+
+    [Theory]
+    [MemberData(nameof(Browsers))]
+    public async Task CannotPostCheepLongerThan160Chars(int browser)
+    {
+        var page = _fixture.Pages[browser];
+        await LoginAsync(page);
+
+        string longText = new string('a', 200);
+        await page.FillAsync("#post-input", longText);
+        await page.ClickAsync("#post-button");
+
+        Assert.True(await page.IsVisibleAsync("text=Cheep cannot be longer than 160 characters"));
+    }
 }
