@@ -15,28 +15,40 @@ public class CheepService : ICheepService
     /// <include file="../../docs/CheepServiceDocs.xml" path="/doc/members/member[@name='M:CheepService.GetCheeps']/*" />
     public List<CheepDTO> GetCheeps()
     {
-        var messages = _repository.ReadMessages(null, null, null);
+        var messages = _repository.ReadMessages(null, null, null, null);
         return messages.GetAwaiter().GetResult();
     }
 
     /// <include file="../../docs/CheepServiceDocs.xml" path="/doc/members/member[@name='M:CheepService.GetCheeps(System.Int32)']/*" />
     public List<CheepDTO> GetCheeps(int page)
     {
-        var messages = _repository.ReadMessages(null, page, null);
+        var messages = _repository.ReadMessages(null, page, null, null);
+        return messages.GetAwaiter().GetResult();
+    }
+
+    public List<CheepDTO> GetCheeps(int page, string sorting)
+    {
+        var messages = _repository.ReadMessages(null, page, null, sorting);
         return messages.GetAwaiter().GetResult();
     }
 
     /// <include file="../../docs/CheepServiceDocs.xml" path="/doc/members/member[@name='M:CheepService.GetCheepsFromAuthor(System.String)']/*" />
     public List<CheepDTO> GetCheepsFromAuthor(string author)
     {
-        var messages = _repository.ReadMessages(author, null, null);
+        var messages = _repository.ReadMessages(author, null, null, null);
         return messages.GetAwaiter().GetResult();
     }
 
     /// <include file="../../docs/CheepServiceDocs.xml" path="/doc/members/member[@name='M:CheepService.GetCheepsFromAuthor(System.String,System.Int32)']/*" />
     public List<CheepDTO> GetCheepsFromAuthor(string author, int page)
     {
-        var messages = _repository.ReadMessages(author, page, null);
+        var messages = _repository.ReadMessages(author, page, null, null);
+        return messages.GetAwaiter().GetResult();
+    }
+
+    public List<CheepDTO> GetCheepsFromAuthor(string author, int page, string sorting)
+    {
+        var messages = _repository.ReadMessages(author, page, null, sorting);
         return messages.GetAwaiter().GetResult();
     }
 
@@ -50,35 +62,35 @@ public class CheepService : ICheepService
     // {
     //     UpdateCheep(id, null, like);
     // }
-    public async Task<int> UpdateCheep(int id, string? message, bool? like)
+    public async Task<int> UpdateCheep(int id, string? message, bool hasLiked)
     {
         var cheep = GetCheepFromID(id);
         if (message != null)
         {
             cheep.Message = message;
         }
-        if (like != null && like == true)
-        {
-            cheep.LikeCounter++;
-        } else
+        if (hasLiked)
         {
             cheep.LikeCounter--;
+        } else
+        {
+            cheep.LikeCounter++;
         }
         Console.WriteLine("This is the likes after the change: " + cheep.LikeCounter);
         await _repository.UpdateMessage(cheep);
         return cheep.LikeCounter;
     }
 
-    public async Task<int> Likes(int authorId, int cheepId, bool likes)
+    public async Task<int> Likes(int authorId, int cheepId)
     {
-        var likeStored = await _repository.Likes(authorId, cheepId, likes);
+        var hasLiked = await HasUserLiked(authorId, cheepId);
+        var likeStored = await _repository.Likes(authorId, cheepId, hasLiked);
         int AmountOfLikes;
-        if (likeStored)
-        {
-            AmountOfLikes = await UpdateCheep(cheepId, null, likes);
+        if(likeStored){
+            AmountOfLikes = await UpdateCheep(cheepId, null, hasLiked);
         } else
         {
-            AmountOfLikes = -1;
+            AmountOfLikes = 0;
         }
         return AmountOfLikes;
     }
@@ -92,7 +104,6 @@ public class CheepService : ICheepService
     public static List<CheepDTO> CheepListToCheepDTOList(List<Cheep> cheeps) //Do we even use this functions anymore??? The repository also has this logic
     {
         var modelMessages = new List<CheepDTO>();
-
         foreach (var cheep in cheeps)
         {
             var modelCheep = new CheepDTO()

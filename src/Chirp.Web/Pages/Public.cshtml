@@ -14,6 +14,15 @@
 <div>
     <h2> Public Timeline </h2>
     <partial name="_SubmitMessage" />
+
+    <form method="get">
+        <label for="sorting">Sort by</label>
+        <select name="sorting" id="sorting" onchange="this.form.submit()">
+            <option value="Newest" selected="@("Newest" == Model.Sorting)">Newest</option>
+            <option value="MostLiked" selected="@("MostLiked" == Model.Sorting)">Most liked</option>
+        </select>
+    </form>
+
     <p>@ViewData["Error"]</p>
     @if (Model.Cheeps.Any())
     {
@@ -27,14 +36,14 @@
                         </strong>
                         @cheep.Message
                         <small>&mdash; @cheep.Timestamp</small>
-                        <small>Likes @cheep.LikeCounter</small> <!-- Change this to someting better later. -->
-                        <button type="button" class="like-btn @(cheep.UserHasLiked ? "liked" : "")" data-id="@cheep.CheepId">
-                            @(cheep.UserHasLiked ? "Unlike" : "Like")
-                        </button>
-
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <button id="likeBtn-@cheep.CheepId" type="button" class="like-btn @(cheep.UserHasLiked ? "liked" : "")"
+                                data-id="@cheep.CheepId" data-hasLiked="@cheep.UserHasLiked">
+                                @(cheep.UserHasLiked ? "Unlike" : "Like")
+                            </button>
+                        }
                         <span id="likeCount-@cheep.CheepId">@cheep.LikeCounter</span>
-
-
                     </p>
                 </li>
             }
@@ -51,6 +60,7 @@
             document.querySelectorAll(".like-btn").forEach(btn => {
                 btn.addEventListener("click", function () {
                     let id = this.dataset.id;
+                    let currentText = document.getElementById("likeBtn-" + id).textContent
 
                     fetch(`?handler=Like&id=${id}`, {
                         method: "POST",
@@ -63,7 +73,9 @@
                         .then(data => {
                             // update like count in UI
                             document.getElementById("likeCount-" + id).textContent = data.likeCount;
+                            document.getElementById("likeBtn-" + id).textContent = (currentText.includes("Like", 0) ? "Unlike" : "Like"); //inverses what current state is
                         });
+                    //document.getElementById("likeBtn-" + id).textContent = (currentText.includes("Like", 0) ? "Unlike" : "Like"); //inverses what current state is 
                 });
             });
         });

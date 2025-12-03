@@ -35,8 +35,11 @@ public class CheepRepository : ICheepRepository
     }
 
     /// <include file="../../docs/CheepRepositoryDocs.xml" path="/doc/members/member[@name='M:CheepRepository.ReadMessages(System.String,System.Nullable{System.Int32},System.Nullable{System.Int32})']/*" />
-    public async Task<List<CheepDTO>> ReadMessages(string? author, int? page, int? limit)
+    public async Task<List<CheepDTO>> ReadMessages(string? author, int? page, int? limit, string? sorting)
     {
+        if(sorting == null)
+            sorting = "Newest";
+        
         var query = _context.Cheeps
             .Join(_context.Authors,
                 Cheeps => Cheeps.AuthorId,
@@ -53,9 +56,12 @@ public class CheepRepository : ICheepRepository
         {
             query = query.Where(Cheep => Cheep.Author == author);
         }
-
-        query = query.OrderByDescending(Cheep => Cheep.Timestamp);
-
+        if(sorting == "Newest"){
+            query = query.OrderByDescending(Cheep => Cheep.Timestamp);
+        } else
+        {
+            query = query.OrderByDescending(Cheep => Cheep.LikeCounter);
+        }
         // Use default values for limit/page if any null
         int _limit = limit ?? defaultLimit;
         int _page = page ?? 1;
@@ -98,32 +104,28 @@ public class CheepRepository : ICheepRepository
         return;
     }
 
-        public async Task<bool> Likes(int authorId, int postId, bool likes)
+    public async Task<bool> Likes(int authorId, int postId, bool hasLiked)
     {
         try
         {
-            if (likes)
+            PostOpinions postOpinion = new PostOpinions
             {
-                PostOpinions postOpinion = new PostOpinions
-                {
-                    CheepId = postId,
-                    AuthorId = authorId
-                };
-                var query = _context.PostOpinions.Add(postOpinion);
+                CheepId = postId,
+                AuthorId = authorId
+            };
+            if (hasLiked)
+            {
+                var query = _context.PostOpinions.Remove(postOpinion);
                 await _context.SaveChangesAsync();
             }
             else
             {
-                PostOpinions postOpinion = new PostOpinions
-                {
-                    CheepId = postId,
-                    AuthorId = authorId
-                };
-                var query = _context.PostOpinions.Remove(postOpinion);
+                var query = _context.PostOpinions.Add(postOpinion);
                 await _context.SaveChangesAsync();
             }
             return true;
-        } catch
+        }
+        catch
         {
             return false;
         }

@@ -16,9 +16,18 @@ public class PublicModel(ICheepService service, UserManager<Author> userManager)
     [StringLength(cheepLength, ErrorMessage = "Maximum length is {1}")]
     public required string Message { get; set; }
 
-    public async Task<IActionResult> OnGet(string authorName, [FromQuery] string page)
+    [BindProperty(SupportsGet = true)]
+    public string Sorting { get; set; }
+
+
+    public async Task<IActionResult> OnGet(string author, [FromQuery] string page)
     {
-        var author = await _userManager.GetUserAsync(User);
+        if (string.IsNullOrEmpty(Sorting))
+        Sorting = "Newest"; // default
+
+        Console.WriteLine("Sorting is " + Sorting);
+
+        var authorObj = await _userManager.GetUserAsync(User);
         int _page = 1;
         if (page != null)
         {
@@ -27,11 +36,14 @@ public class PublicModel(ICheepService service, UserManager<Author> userManager)
 
             if (_page <= 0) return RedirectToPage();
         }
-
-        Cheeps = LoadCheeps(authorName, _page);
-        foreach (var cheep in Cheeps)
+        //Console.WriteLine("this is author name: " + author + " and this is page " + page);
+        Cheeps = LoadCheeps(author, _page, Sorting);
+        if (authorObj != null)
         {
-            cheep.UserHasLiked = await _service.HasUserLiked(author.Id, cheep.CheepId);
+            foreach (var cheep in Cheeps)
+            {
+                cheep.UserHasLiked = await _service.HasUserLiked(authorObj.Id, cheep.CheepId);
+            }
         }
         if (Cheeps.Count == 0 && CurrentPage != 1) { return RedirectToPage(); }
         return Page();
@@ -42,7 +54,7 @@ public class PublicModel(ICheepService service, UserManager<Author> userManager)
         if (author == null) // Should not happen and probably won't
         {
             var routeName = RouteData.Values["author"]?.ToString();
-            LoadCheeps(routeName!, CurrentPage);
+            LoadCheeps(routeName!, CurrentPage, "Newest");
             ViewData["Error"] = "Account not found";
             return Page();
         }
@@ -54,21 +66,21 @@ public class PublicModel(ICheepService service, UserManager<Author> userManager)
     public async Task<IActionResult> OnPostLike(int id)
     {
         var author = await _userManager.GetUserAsync(User);
-        var updatedCount = await _service.Likes(author.Id, id, true);
+        var updatedCount = await _service.Likes(author.Id, id);
 
         return new JsonResult(new { likeCount = updatedCount });
     }
 
-    public List<CheepDTO> LoadCheeps(string author, int page)
+    public List<CheepDTO> LoadCheeps(string author, int page, string sorting)
     {
         CurrentPage = page == 0 ? 1 : page;
         if (author != null)
         {
-            Cheeps = _service.GetCheepsFromAuthor(author, page);
+            Cheeps = _service.GetCheepsFromAuthor(author, page, sorting);
         }
         else
         {
-            Cheeps = _service.GetCheeps(page);
+            Cheeps = _service.GetCheeps(page, sorting);
         }
         return Cheeps;
     }

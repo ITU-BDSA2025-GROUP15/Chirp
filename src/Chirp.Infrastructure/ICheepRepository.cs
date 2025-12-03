@@ -5,7 +5,7 @@ public interface ICheepRepository
     public Task CreateMessage(Cheep newMessage);
 
     /// <include file="../../docs/ICheepRepositoryDocs.xml" path="/doc/members/member[@name='M:ICheepRepository.ReadMessages(System.String,System.Nullable{System.Int32},System.Nullable{System.Int32})']/*" />
-    public Task<List<CheepDTO>> ReadMessages(string? author, int? page, int? limit);
+    public Task<List<CheepDTO>> ReadMessages(string? author, int? page, int? limit, string? sorting);
 
     /// <include file="../../docs/ICheepRepositoryDocs.xml" path="/doc/members/member[@name='M:ICheepRepository.UpdateMessage(CheepDTO)']/*" />
     public Task UpdateMessage(CheepDTO alteredMessage);
