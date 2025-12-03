@@ -9,6 +9,7 @@
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_PaginationLayout";
     var routeName = ViewContext.HttpContext.GetRouteValue("author");
+     var i = 0; 
 }
 
 <div>
@@ -29,6 +30,9 @@
         <ul id="messagelist" class="cheeps">
             @foreach (var cheep in Model.Cheeps)
             {
+                @if(Model.Sorting == "MostLiked" && i < 3 && Model.CurrentPage == 1){
+                    <h1><img src="/images/icon1.png" alt="Icon1"/>Chirp!</h1>
+                }
                 <li>
                     <p>
                         <strong>
@@ -46,6 +50,7 @@
                         <span id="likeCount-@cheep.CheepId">@cheep.LikeCounter</span>
                     </p>
                 </li>
+                i++;
             }
         </ul>
     }

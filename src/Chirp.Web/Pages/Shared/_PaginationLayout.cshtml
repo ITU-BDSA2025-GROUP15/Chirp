@@ -6,7 +6,7 @@
 <center>
             @if (Model.HasPreviousPage) 
             {
-                <a href="@path?page=@Model.PreviousPage" class="btn">Previous</a>
+                <a href="@path?page=@Model.PreviousPage&sorting=@Model.Sorting" class="btn">Previous</a>
             }
             else 
             {
@@ -23,7 +23,7 @@
             </form>
             @if (Model.HasNextPage) 
             {
-                <a href="@path?page=@Model.NextPage" class="btn">Next</a>
+                <a href="@path?page=@Model.NextPage&sorting=@Model.Sorting" class="btn">Next</a>
             }
             else
             {
