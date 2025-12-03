@@ -11,9 +11,9 @@
 @if (SignInManager.IsSignedIn(User))
 {
     Author? author = await UserManager.GetUserAsync(User);
-    string authorName = author!.Name;
-    if (author != null && authorName != null)
+    if (author != null && author.Name != null)
     {
+        string authorName = author!.Name;
         <div class="cheepbox">
             <h3>What's on your mind @authorName?</h3>
             <form method="post">
@@ -24,8 +24,6 @@
     }
     else
     {
-        <div>
-            <p>Account or name not found!</p> @*this will most likely never happen*@
-        </div>
+        await SignInManager.SignOutAsync();
     }
 }
