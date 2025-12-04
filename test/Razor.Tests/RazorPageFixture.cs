@@ -10,6 +10,7 @@ public class RazorPageFixture : IAsyncLifetime
 {
     Process? _razorPage;
     public required HttpClient Client;
+    public readonly string BaseUrl = "http://localhost:5273/";
     IPlaywright? _playwright;
     public required IPage[] Pages = new IPage[3];
     public async Task InitializeAsync()
