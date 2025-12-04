@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +18,6 @@ public class PublicModel(ICheepService service, UserManager<Author> userManager)
 
     [BindProperty(SupportsGet = true)]
     public string? Sorting { get; set; }
-
 
     public async Task<IActionResult> OnGet(string author, [FromQuery] string page)
     {
