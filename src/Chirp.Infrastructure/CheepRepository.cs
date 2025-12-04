@@ -1,3 +1,4 @@
+using Microsoft.Build.Framework;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
@@ -107,42 +108,35 @@ public class CheepRepository : ICheepRepository
 
     public async Task<int> Likes(int authorId, int postId, bool hasLiked)
     {
-        try
+        PostOpinions postOpinion = new PostOpinions
         {
-            PostOpinions postOpinion = new PostOpinions
-            {
-                CheepId = postId,
-                AuthorId = authorId
-            };
-            int likes = 0;
-            if (OpinionExist(authorId, postId).Result)
-            {
-                var query = _context.PostOpinions.Remove(postOpinion);
-                var cheep = await FindMessage(postId);
-                likes = cheep.LikeCounter--;
-                await UpdateMessage(cheep);
-                await _context.SaveChangesAsync();
-            }
-            else
-            {
-                var query = _context.PostOpinions.Add(postOpinion);
-                var cheep = await FindMessage(postId);
-                likes = cheep.LikeCounter++;
-                await UpdateMessage(cheep);
-                await _context.SaveChangesAsync();
-            }
-            return likes;
-        }
-        catch
+            CheepId = postId,
+            AuthorId = authorId
+        };
+        int likes;
+        if (OpinionExist(authorId, postId).Result)
         {
-            return -1;
+            var query = _context.PostOpinions.Remove(postOpinion);
+            var cheep = await FindMessage(postId);
+            likes = --cheep.LikeCounter;
+            await UpdateMessage(cheep);
+            await _context.SaveChangesAsync();
         }
+        else
+        {
+            var query = _context.PostOpinions.Add(postOpinion);
+            var cheep = await FindMessage(postId);
+            likes = ++cheep.LikeCounter;
+            await UpdateMessage(cheep);
+            await _context.SaveChangesAsync();
+        }
+        return likes;
     }
 
-    public async Task<bool> OpinionExist(int auhorId, int cheepId)
+    public async Task<bool> OpinionExist(int authorId, int cheepId)
     {
         return await _context.PostOpinions
-            .AnyAsync(l => l.AuthorId == auhorId && l.CheepId == cheepId);
+            .AnyAsync(l => l.AuthorId == authorId && l.CheepId == cheepId);
     }
 
     ///<include file="../../docs/CheepRepositoryDocs.xml" path="/doc/members/member[@name='M:CheepRepository.FindMessage(System.Int32)']/*" />
