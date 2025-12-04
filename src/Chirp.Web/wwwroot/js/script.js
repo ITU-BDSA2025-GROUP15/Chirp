@@ -5,6 +5,7 @@
 const onLikeSubmit = function(event) {
     event.preventDefault()
     let formEl = event.target;
+    let btnEl = formEl.querySelector(".cool-btn");
     let textEl = formEl.querySelector(".like-btn-text");
     let counterEl = formEl.querySelector(".like-btn-counter");
 
@@ -21,6 +22,9 @@ const onLikeSubmit = function(event) {
         console.log(data);
         counterEl.textContent = data.likeCount;
         textEl.textContent = data.hasLiked ? "liked!" : "like";
+
+        if (data.hasLiked) btnEl.classList.add("liked");
+        else btnEl.classList.remove("liked");
     });
 }
 

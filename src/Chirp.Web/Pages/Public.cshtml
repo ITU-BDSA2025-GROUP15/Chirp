@@ -29,29 +29,31 @@
                     <h1><img src="/images/icon1.png" alt="Icon1" />Chirp!</h1>
                 }
                 <li>
+                    <strong>
+                        <a href="/@Uri.EscapeDataString(cheep.Author)">@cheep.Author</a>
+                    </strong>
                     <p>
-                        <strong>
-                            <a href="/@Uri.EscapeDataString(cheep.Author)">@cheep.Author</a>
-                        </strong>
-                        @if (SignInManager.IsSignedIn(User) && !cheep.Author.Equals(author!.Name))
-                        {
-                            var IsFollowing = await Model.IsFollowing(author!.Name, cheep.Author) ? "Unfollow" : "Follow";
-                            <form class="form-inline" asp-page-handler="ToggleFollow" asp-route-idol="@cheep.Author" method="post">
-                                <button style="margin: 0;" type="submit">@IsFollowing</button>
-                            </form>
-                        }
-                    
-                        <p>@cheep.Message <small>&mdash; @cheep.Timestamp</small></p>
-                        @if (SignInManager.IsSignedIn(User))
-                        {
-                            <form class="form-inline like-btn-form" asp-page-handler="Like" asp-route-id="@cheep.CheepId" method="post">
-                                <button style="margin: 0;" type="submit">
-                                    <span class="like-btn-text">@(cheep.UserHasLiked ? "liked!" : "like")</span> |
-                                    <span class="like-btn-counter">@cheep.LikeCounter</span>
-                                </button>
-                            </form>
-                        }
+                        @cheep.Message
+                        <small>&mdash; @cheep.Timestamp</small>
                     </p>
+                    @if (SignInManager.IsSignedIn(User) && !cheep.Author.Equals(author!.Name))
+                    {
+                        bool isFollowing = await Model.IsFollowing(author!.Name, cheep.Author);
+                        var followStr = isFollowing ? "unfollow" : "follow";
+                        <form class="form-inline" asp-page-handler="ToggleFollow" asp-route-idol="@cheep.Author" method="post">
+                            <button class="cool-btn @(isFollowing ? "following" : "")" type="submit">@followStr</button>
+                        </form>
+                    }
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        bool hasLiked = cheep.UserHasLiked;
+                        <form class="form-inline like-btn-form" asp-page-handler="Like" asp-route-id="@cheep.CheepId" method="post">
+                            <button class="cool-btn @(hasLiked ? "liked" : "")" type="submit">
+                                <span class="like-btn-text">@(hasLiked ? "liked!" : "like")</span> |
+                                <span class="like-btn-counter">@cheep.LikeCounter</span>
+                            </button>
+                        </form>
+                    }
                 </li>
                 i++;
             }

@@ -324,3 +324,35 @@ table#personal-data tr *:last-child {
     text-align: right;
     overflow-wrap: anywhere;
 }
+
+/* Cool btns */
+form.form-inline {
+  display: inline;
+}
+
+.cool-btn {
+  padding: 2px 6px;
+  border-radius: 2px;
+  background: linear-gradient(#e4f8f7, #caebe9);
+  border: 1px solid #26776F;
+  color: #26776F;
+  font-family: sans-serif;
+}
+
+.cool-btn.following {
+  background: linear-gradient(#d46060, #993e3e);
+  border: 1px solid #670909;
+  color: white;
+}
+
+.like-btn-form .cool-btn {
+  background: linear-gradient(#fafafa, #d0d0d0);
+  border: 1px solid #575757;
+  color: #575757;
+}
+
+.like-btn-form .cool-btn.liked {
+  background: linear-gradient(#68be7c, #327741);
+  border: 1px solid #223621;
+  color: #ffffff;
+}
