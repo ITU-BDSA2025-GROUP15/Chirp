@@ -37,6 +37,8 @@ public static class TestUtils
         process.StartInfo.RedirectStandardError = true;
         process.Start();
 
+        var x = process.StandardOutput.ReadToEndAsync();
+
         int maxRetries = 30;
         for (int i = 0; i < maxRetries; i++)
         {
