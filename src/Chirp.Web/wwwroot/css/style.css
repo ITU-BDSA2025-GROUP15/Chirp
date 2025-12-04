@@ -339,10 +339,18 @@ form.form-inline {
   font-family: sans-serif;
 }
 
+.cool-btn:hover {
+  background: linear-gradient(#d1f4f3, #96ede7);
+}
+
 .cool-btn.following {
   background: linear-gradient(#d46060, #993e3e);
   border: 1px solid #670909;
   color: white;
+}
+
+.cool-btn.following:hover {
+  background: linear-gradient(#e96d6d, #bd3d3d);
 }
 
 .like-btn-form .cool-btn {
@@ -351,8 +359,18 @@ form.form-inline {
   color: #575757;
 }
 
+.like-btn-form .cool-btn:hover {
+  background: linear-gradient(#def0e2, #9adca8);
+  border: 1px solid #223621;
+  color: #223621;
+}
+
 .like-btn-form .cool-btn.liked {
   background: linear-gradient(#68be7c, #327741);
   border: 1px solid #223621;
   color: #ffffff;
+}
+
+.like-btn-form .cool-btn.liked:hover {
+  background: linear-gradient(#77b086, #3a6043);
 }
