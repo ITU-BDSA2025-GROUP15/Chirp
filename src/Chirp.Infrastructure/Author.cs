@@ -20,4 +20,6 @@ public class Author : IdentityUser<int>
 
     /// <include file="../../docs/AuthorDocs.xml" path="/doc/members/class/member[@name='P:Author.Cheeps']/*" />
     public List<Cheep>? Cheeps { get; set; }
+
+    public List<Author>? Follows { get; set; }
 }

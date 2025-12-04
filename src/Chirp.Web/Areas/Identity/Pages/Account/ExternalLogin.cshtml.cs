@@ -184,7 +184,6 @@ namespace Chirp.Web.Areas.Identity.Pages.Account
             } else
             {
                 ErrorMessage = "Error loading external login information during confirmation.";
-                System.Console.WriteLine("aaaaAaaaa");
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 

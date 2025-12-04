@@ -35,12 +35,18 @@ public class CheepService : ICheepService
     /// <include file="../../docs/CheepServiceDocs.xml" path="/doc/members/member[@name='M:CheepService.GetCheepsFromAuthor(System.String)']/*" />
     public List<CheepDTO> GetCheepsFromAuthor(string author)
     {
-        var messages = _repository.ReadMessages(author, null, null, null);
+        var messages = _repository.ReadMessages([author], null, null, null);
         return messages.GetAwaiter().GetResult();
     }
 
     /// <include file="../../docs/CheepServiceDocs.xml" path="/doc/members/member[@name='M:CheepService.GetCheepsFromAuthor(System.String,System.Int32)']/*" />
     public List<CheepDTO> GetCheepsFromAuthor(string author, int page)
+    {
+        var messages = _repository.ReadMessages([author], page, null, null);
+        return messages.GetAwaiter().GetResult();
+    }
+
+    public List<CheepDTO> GetCheepsFromAuthors(string[] author, int page)
     {
         var messages = _repository.ReadMessages(author, page, null, null);
         return messages.GetAwaiter().GetResult();
@@ -48,7 +54,19 @@ public class CheepService : ICheepService
 
     public List<CheepDTO> GetCheepsFromAuthor(string author, int page, string sorting)
     {
-        var messages = _repository.ReadMessages(author, page, null, sorting);
+        var messages = _repository.ReadMessages([author], page, null, sorting);
+        return messages.GetAwaiter().GetResult();
+    }
+
+    public List<CheepDTO> GetAllCheeps()
+    {
+        var messages = _repository.ReadMessages(null, null, -1, null);
+        return messages.GetAwaiter().GetResult();
+    }
+
+    public List<CheepDTO> GetAllCheepsFromAuthor(string author)
+    {
+        var messages = _repository.ReadMessages([author], null, -1, null);
         return messages.GetAwaiter().GetResult();
     }
 
@@ -57,10 +75,6 @@ public class CheepService : ICheepService
         return _repository.FindMessage(id).GetAwaiter().GetResult();
     }
 
-    public void UpdateCheep(int id, bool like)
-    {
-        UpdateCheep(id, null, like);
-    }
     public async Task<int> UpdateCheep(int id, string? message, bool hasLiked)
     {
         var cheep = GetCheepFromID(id);

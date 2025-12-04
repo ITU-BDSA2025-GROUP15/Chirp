@@ -10,6 +10,7 @@ public class RazorPageFixture : IAsyncLifetime
 {
     Process? _razorPage;
     public required HttpClient Client;
+    public readonly string BaseUrl = "http://localhost:5273/";
     IPlaywright? _playwright;
     public required IPage[] Pages = new IPage[3];
     public async Task InitializeAsync()
@@ -35,6 +36,13 @@ public class RazorPageFixture : IAsyncLifetime
             Pages[i] = await context.NewPageAsync();
             await Pages[i].GotoAsync("http://localhost:5273/"); //Open our page on the browser.
         }
+    }
+    public async Task RestartRazorPage()
+    {
+        _razorPage!.Kill(true);
+        _razorPage.WaitForExit();
+        _razorPage.Dispose();
+        _razorPage = await TestUtils.StartRazorPage();
     }
     public Task DisposeAsync()
     {

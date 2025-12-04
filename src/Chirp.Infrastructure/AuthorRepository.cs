@@ -25,13 +25,13 @@ public class AuthorRepository : IAuthorRepository
     /// <include file="../../docs/AuthorRepositoryDocs.xml" path="/doc/members/member[@name='M:AuthorRepository.FindAuthorByName(System.String)']/*" />
     public async Task<Author> FindAuthorByName(string name)
     {
-        return await _context.Authors.FirstAsync(a => a.Name.Equals(name));
+        return await _context.Authors.Include(a => a.Follows).FirstAsync(a => a.Name == name);
     }
 
     /// <include file="../../docs/AuthorRepositoryDocs.xml" path="/doc/members/member[@name='M:AuthorRepository.FindAuthorByEmail(System.String)']/*" />
     public async Task<Author> FindAuthorByEmail(string email)
     {
-        return await Task.Run(()=>_context.Authors.Where(e => e.Email!.Equals(email)).First()); 
+        return await Task.Run(()=>_context.Authors.Where(e => e.Email!.Equals(email)).First());
     }
 
     /// <include file="../../docs/AuthorRepositoryDocs.xml" path="/doc/members/member[@name='M:AuthorRepository.RemoveAuthor(Author)']/*" />
@@ -39,5 +39,21 @@ public class AuthorRepository : IAuthorRepository
     {
         _context.Authors.Remove(author);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task AddFollow(Author author, Author toFollow)
+    {
+        author.Follows ??= new List<Author>();
+        author.Follows.Add(toFollow);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task RemoveFollow(Author author, Author toUnfollow)
+    {
+        if (author.Follows != null)
+        {
+            author.Follows.Remove(toUnfollow);
+            await _context.SaveChangesAsync();
+        }
     }
 }

@@ -10,11 +10,31 @@ using Xunit.Abstractions;
 public class End2EndTests : IClassFixture<RazorPageFixture>
 {
     readonly RazorPageFixture _fixture;
-    enum Browser
+    public enum Browser
     {
         Chromium,
         Firefox,
         Webkit
+    }
+
+    public static IEnumerable<object[]> Browsers
+    {
+        get
+        {
+            var browsers = new List<object[]>();
+
+            foreach (var browser in new Browser[]
+            {
+                Browser.Chromium,
+                Browser.Firefox,
+                Browser.Webkit
+            })
+            {
+                browsers.Add([browser]);
+            }
+
+            return browsers;
+        }
     }
     public End2EndTests(RazorPageFixture fixture)
     {
@@ -51,6 +71,9 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     [Fact]
     public async Task CheepThatShouldBeOnPage1()
     {
+        // Ensure fresh server
+        await _fixture.RestartRazorPage();
+
         //Act
         var HTTPResponsePageDefault = await _fixture.Client.GetAsync("/");
         string responseBodyPageDefault = await HTTPResponsePageDefault.Content.ReadAsStringAsync();
@@ -63,6 +86,9 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     [Fact]
     public async Task CheepThatShouldBeOnPage2()
     {
+        // Ensure fresh server
+        await _fixture.RestartRazorPage();
+
         //Act
         //Page 2
         var HTTPResponsePage2 = await _fixture.Client.GetAsync("/?page=2");
@@ -108,13 +134,13 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         Assert.DoesNotContain("Jacqualine Gilcoine", responseBodyUser);
     }
 
+    // Playwright tests below this point
+
     [Theory]
-    [InlineData((int)Browser.Chromium)]
-    [InlineData((int)Browser.Firefox)]
-    [InlineData((int)Browser.Webkit)]
-    public async Task loginLogoutChirp(int browser)
+    [MemberData(nameof(Browsers))]
+    public async Task loginLogoutChirp(Browser browser)
     {
-        var page = _fixture.Pages[browser];
+        var page = await GetCleanPage(browser);
         
         // Navigate to home page to ensure clean state
         await page.GotoAsync("http://localhost:5273/");
@@ -123,9 +149,7 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         //tries to login with incorrect password.
         await page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
         await page.WaitForURLAsync("**/Identity/Account/Login");
-        await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).ClickAsync();
         await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync("adho@itu.dk");
-        await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).ClickAsync();
         await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("LetM31n!");
         await page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
@@ -152,12 +176,11 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     }
 
     [Theory]
-    [InlineData((int)Browser.Chromium)]
-    [InlineData((int)Browser.Firefox)]
-    [InlineData((int)Browser.Webkit)]
-    public async Task PostCheep(int browser)
+    [MemberData(nameof(Browsers))]
+    public async Task PostCheep(Browser browser)
     {
-        var page = _fixture.Pages[browser];
+        var message = "PostingCheep" + browser.ToString();
+        var page = await GetCleanPage(browser);
         
         // Navigate to home page to ensure clean state
         await page.GotoAsync("http://localhost:5273/");
@@ -180,13 +203,13 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
 
         //Shares cheep
         await page.Locator("#Message").ClickAsync();
-        await page.Locator("#Message").FillAsync("PostingCheep");
+        await page.Locator("#Message").FillAsync(message);
         await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         //Checks that cheep is shared
-        await page.WaitForSelectorAsync("text=PostingCheep", new() { Timeout = 5000 });
-        Assert.Contains("PostingCheep", await page.GetByText("Adrian PostingCheep").First.InnerTextAsync());
+        await page.WaitForSelectorAsync($"text={message}", new() { Timeout = 5000 });
+        Assert.Contains(message, await page.GetByText($"Adrian {message}").First.InnerTextAsync());
 
         //logs out
         await page.GetByRole(AriaRole.Button, new() { Name = "logout [Adrian]" }).ClickAsync();
@@ -203,12 +226,13 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     }
     
     [Theory]
-    [InlineData((int)Browser.Chromium)]
-    [InlineData((int)Browser.Firefox)]
-    [InlineData((int)Browser.Webkit)]
-    public async Task PageButtonsAndEdit(int browser)
+    [MemberData(nameof(Browsers))]
+    public async Task PageButtonsAndEdit(Browser browser)
     {
-        var page = _fixture.Pages[browser];
+        // Ensure fresh server
+        await _fixture.RestartRazorPage();
+
+        var page = await GetCleanPage(browser);
         
         // Navigate to home page to ensure clean state
         await page.GotoAsync("http://localhost:5273/");
@@ -245,5 +269,314 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await page.GetByRole(AriaRole.Link, new() { Name = "Previous" }).ClickAsync();
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+    }
+
+    [Theory]
+    [MemberData(nameof(Browsers))]
+    public async Task Security_XSS_UrlRedirectsInName(Browser browser)
+    {
+        // Random page number without browsers overlapping
+        int pageNo = ((int)browser * 100) + new Random().Next(99);
+
+        var page = await GetCleanPage(browser);
+        
+        // Navigate to home page to ensure clean state
+        await page.GotoAsync("http://localhost:5273/");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Register account
+        await page.GetByRole(AriaRole.Link, new() { Name = "register" }).ClickAsync();
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Name" }).FillAsync($"?page={pageNo}");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync($"page{pageNo}@test.xss");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Password", Exact = true }).FillAsync("Test1!");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Confirm Password" }).FillAsync("Test1!");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
+        await page.GetByRole(AriaRole.Link, new() { Name = "Click here to confirm your" }).ClickAsync();
+
+        // Login to account
+        await page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync($"page{pageNo}@test.xss");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("Test1!");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+
+        // Assert links are properly encoded
+        // On 'my timeline' link
+        var myTimeline = page.GetByRole(AriaRole.Link, new() { Name = "my timeline" });
+        await Assertions.Expect(myTimeline).ToHaveAttributeAsync("href", $"/%3Fpage%3D{pageNo}");
+        await myTimeline.ClickAsync();
+
+        // On new cheep
+        await page.Locator("#Message").FillAsync("Testing name with URL redirect.");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await Assertions.Expect(page).ToHaveURLAsync(new Regex($".*/%3Fpage%3D{pageNo}"));
+
+        // On cheep author link
+        var cheepAuthor = page.GetByRole(AriaRole.Link, new() { Name = $"?page={pageNo}", Exact = true });
+        await Assertions.Expect(cheepAuthor).ToHaveAttributeAsync("href", $"/%3Fpage%3D{pageNo}");
+    }
+
+    [Theory]
+    [MemberData(nameof(Browsers))]
+    public async Task Security_XSS_ScriptTagsInNameOrCheep(Browser browser)
+    {
+        // Random page number without browsers overlapping
+        int randomNo = ((int)browser * 100) + new Random().Next(99);
+
+        string message = $"The XSS attack worked...";
+        string maliciousScript = $"<script>document.title = '{message}'</script>{randomNo}";
+
+        var page = await GetCleanPage(browser);
+        
+        // Navigate to home page to ensure clean state
+        await page.GotoAsync("http://localhost:5273/");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Register account
+        await page.GetByRole(AriaRole.Link, new() { Name = "register" }).ClickAsync();
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Name" }).FillAsync(maliciousScript);
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync($"script{randomNo}@test.xss");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Password", Exact = true }).FillAsync("Test1!");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Confirm Password" }).FillAsync("Test1!");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
+        await page.GetByRole(AriaRole.Link, new() { Name = "Click here to confirm your" }).ClickAsync();
+
+        // Login to account
+        await page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync($"script{randomNo}@test.xss");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("Test1!");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+
+        // Assert no XSS injection happened
+        // After login
+        await Assertions.Expect(page).Not.ToHaveTitleAsync(message);
+
+        // On new cheep
+        await page.Locator("#Message").FillAsync($"Testing name and cheep with XSS script. {maliciousScript}");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await Assertions.Expect(page).Not.ToHaveTitleAsync(message);
+    }
+
+    [Theory]
+    [MemberData(nameof(Browsers))]
+    public async Task Security_CSRF_LoginFails(Browser browser)
+    {
+        var page = await GetCleanPage(browser);
+        
+        // Navigate to home page to ensure clean state
+        await page.GotoAsync("http://localhost:5273/");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Login to account
+        await page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+        await page.WaitForURLAsync("**/Identity/Account/Login");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Remove real CSRF token
+        bool tokenRemoveResult = await page.EvaluateAsync<bool>(@"() => {
+            var t = document.querySelector('form#account input[name=__RequestVerificationToken]');
+            if (t == null) return false;
+            t.value = 'Idk bro...';
+            return t.value == 'Idk bro...';
+        }");
+        Assert.True(tokenRemoveResult, "Could not remove token from login prompt!");
+
+        var res = page.WaitForResponseAsync("**/Identity/Account/Login");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync($"adho@itu.dk");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("M32Want_Access");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+
+        // Should be an error
+        Assert.Equal(400, (await res).Status);
+        Thread.Sleep(1000);
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+    }
+
+    [Theory]
+    [MemberData(nameof(Browsers))]
+    public async Task Security_CSRF_SendCheepFails(Browser browser)
+    {
+        var page = await GetCleanPage(browser);
+        
+        // Navigate to home page to ensure clean state
+        await page.GotoAsync("http://localhost:5273/");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Login to account
+        await page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+        await page.WaitForURLAsync("**/Identity/Account/Login");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync($"adho@itu.dk");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("M32Want_Access");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+
+        await page.WaitForURLAsync("**/");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Remove real CSRF token
+        bool tokenRemoveResult = await page.EvaluateAsync<bool>(@"() => {
+            var t = document.querySelector('.cheepbox form input[name=__RequestVerificationToken]');
+            if (t == null) return false;
+            t.value = 'Idk bro...';
+            return t.value == 'Idk bro...';
+        }");
+        Assert.True(tokenRemoveResult, "Could not remove token from cheepbox!");
+
+        // Send cheep
+        var res = page.WaitForResponseAsync("**");
+        await page.Locator("#Message").FillAsync($"Testing CSRF protection.");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+
+        // Should be an error
+        Assert.Equal(400, (await res).Status);
+        Thread.Sleep(1000);
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+    }
+
+    [Theory]
+    [MemberData(nameof(Browsers))]
+    public async Task Security_SQLInjection_NameAndCheep(Browser browser)
+    {
+        var sqlAttacks = new string[] {
+            "Robert{0}'); DROP TABLE Students;--",
+            "User{0}' OR '1'='1';--",
+            "Test{0}'; DELETE FROM Users WHERE '1'='1';--",
+            "Inject{0}' UNION SELECT NULL, NULL, NULL;--",
+            "AspNet{0}'); DROP TABLE AspNetUsers;--",
+        };
+
+        var i = 0;
+        foreach (var attack in sqlAttacks)
+        {
+            await ExecuteSQLInjectionAttackTest(browser, i++, attack);
+        }
+    }
+
+    private async Task ExecuteSQLInjectionAttackTest(Browser browser, int id, string attack)
+    {
+        string randomNo = $"{browser}{id}";
+        string attackUnique = string.Format(attack, randomNo);
+
+        var page = await GetCleanPage(browser);
+        
+        // Navigate to home page to ensure clean state
+        await page.GotoAsync("http://localhost:5273/");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Register account
+        await page.GetByRole(AriaRole.Link, new() { Name = "register" }).ClickAsync();
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Name" }).FillAsync(attackUnique);
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync($"inject{randomNo}@test.sql");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Password", Exact = true }).FillAsync("Test1!");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Confirm Password" }).FillAsync("Test1!");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
+        await page.GetByRole(AriaRole.Link, new() { Name = "Click here to confirm your" }).ClickAsync();
+
+        // Login to account
+        await page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync($"inject{randomNo}@test.sql");
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync("Test1!");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+
+        // New cheep
+        await page.Locator("#Message").FillAsync(attackUnique);
+        await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+
+        // Assert
+        // Home page is still full of cheeps
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await page.GotoAsync("http://localhost:5273/");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        int count = await page.GetByRole(AriaRole.Listitem).CountAsync();
+        Assert.Equal(32, count);
+
+        // Cheep with the SQL attack exists
+        await page.GetByRole(AriaRole.Listitem, new() { Name = attackUnique }).IsVisibleAsync();
+    } 
+
+    // UI tests
+
+    private async Task LoginAsync(IPage page)
+    {
+        string email = "adho@itu.dk";
+        string password = "M32Want_Access";
+
+        await page.GetByRole(AriaRole.Link, new() { Name = "login" }).ClickAsync();
+
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Email" }).FillAsync(email);
+        await page.GetByRole(AriaRole.Textbox, new() { Name = "Password" }).FillAsync(password);
+
+        await page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
+    }
+
+    [Theory]
+    [MemberData(nameof(Browsers))]
+    public async Task UI_PostInputVisibleOnlyAfterLogin(Browser browser)
+    {
+        var page = await GetCleanPage(browser);
+        await page.GotoAsync(_fixture.BaseUrl);
+
+        Assert.False(await page.Locator("#Message").IsVisibleAsync());
+        
+        await LoginAsync(page);
+
+        await page.WaitForSelectorAsync("#Message", new() { Timeout = 5000 });
+        Assert.True(await page.Locator("#Message").IsVisibleAsync());
+    }
+
+    [Theory]
+    [MemberData(nameof(Browsers))]
+    public async Task UI_CheepsDisplayedAfterPosting(Browser browser)
+    {
+        var page = await GetCleanPage(browser);
+        await LoginAsync(page);
+
+        await page.Locator("#Message").FillAsync("Hello from Playwright!");
+        await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        Assert.True(await page.IsVisibleAsync("text=Hello from Playwright!"));
+    }
+
+    [Theory]
+    [MemberData(nameof(Browsers))]
+    public async Task UI_CannotPostCheepLongerThan160Chars(Browser browser)
+    {
+        var page = await GetCleanPage(browser);
+        await LoginAsync(page);
+
+        char letter = browser.ToString()[0]; // The first letter in the browser name.
+        string longCheepIntro = new string(letter, 160);
+
+        string longText = longCheepIntro + "This comes after the first 160 characters so it should not be included.";
+        await page.Locator("#Message").FillAsync(longText);
+    
+        string filledText = await page.Locator("#Message").InputValueAsync();
+        Assert.Contains(longCheepIntro, filledText);
+        Assert.DoesNotContain("T", filledText);
+
+        await page.GetByRole(AriaRole.Button, new() { Name = "Share" }).ClickAsync();
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        Assert.True(await page.IsVisibleAsync($"text={longCheepIntro}"));
+        Assert.True(await page.IsHiddenAsync("text=This comes after the first 160 characters so it should not be included."));
+    }
+
+    /// <summary>
+    /// Logs out of Chirp! and navigates to front page, ensuring a clean slate for tests.
+    /// </summary>
+    /// <returns>The page for given browser, after being cleaned up.</returns>
+    private async Task<IPage> GetCleanPage(Browser browser)
+    {
+        var page = _fixture.Pages[(int)browser];
+
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await page.Context.ClearCookiesAsync();
+
+        await page.GotoAsync(_fixture.BaseUrl);
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        return page;
     }
 }
