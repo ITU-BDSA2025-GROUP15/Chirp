@@ -52,7 +52,7 @@ public class CheepService : ICheepService
 
     public List<CheepDTO> GetAllCheepsFromAuthor(string author)
     {
-        var messages = _repository.ReadMessages(author, null, -1);
+        var messages = _repository.ReadMessages([author], null, -1);
         return messages.GetAwaiter().GetResult();
     }
 
