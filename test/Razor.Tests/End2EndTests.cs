@@ -124,7 +124,7 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         // Arrange
         var expectedDateTime = DateTime.Parse("2023-08-01 13:08:28");
         var expectedDateTimeStr = expectedDateTime.ToString("MM/dd/yy H:mm:ss");
-        var expectedFullStr = $"<strong><a href=\"/Adrian\">Adrian</a></strong>Hej, velkommen til kurset.<small>&mdash; {expectedDateTimeStr}";
+        var expectedFullStr = $"<strong><a href=\"/Adrian\">Adrian</a></strong><p>Hej, velkommen til kurset.<small>&mdash; {expectedDateTimeStr}</small></p>";
 
         // User page Adrian
         var HTTPResponseUser = await _fixture.Client.GetAsync("/Adrian");
