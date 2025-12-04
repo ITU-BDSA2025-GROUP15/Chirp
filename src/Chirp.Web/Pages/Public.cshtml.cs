@@ -102,13 +102,14 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
         }
         return Cheeps;
     }
-    public async Task<IActionResult> OnPostLike(int id)
+    public async Task<IActionResult> OnPostLike(int id, bool json)
     {
         Author author = (await _userManager.GetUserAsync(User))!;
         var updatedCount = await _cheepservice.Likes(author.Id, id);
         bool hasLiked = await _cheepservice.HasUserLiked(author.Id, id);
 
-        return new JsonResult(new { hasLiked = hasLiked, likeCount = updatedCount });
+        if (json) return new JsonResult(new { hasLiked = hasLiked, likeCount = updatedCount });
+        else return RedirectToPage();
     }
 
     public List<CheepDTO> LoadCheeps(string author, int page, string? sorting)
@@ -125,7 +126,7 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
         return Cheeps;
     }
 
-    public async Task<IActionResult> OnGetToggleFollowAsync(string idol)
+    public async Task<IActionResult> OnPostToggleFollowAsync(string idol)
     {
         var author = await _userManager.GetUserAsync(User);
         if (author == null)
