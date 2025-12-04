@@ -41,7 +41,7 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
             Cheeps = await LoadCheepsMyTimeline(author, _page);
         } else
         {
-            Cheeps = LoadCheeps(author!, _page);
+            Cheeps = LoadCheeps(author!, _page, null);
         }
         if (Cheeps.Count == 0 && CurrentPage != 1) { return RedirectToPage(); }
         return Page();
@@ -90,25 +90,25 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
         }
         else
         {
-            Cheeps = _cheepservice.GetCheeps(page);
+            Cheeps = _cheepservice.GetCheeps(page, null);
         }
         return Cheeps;
     }
     public async Task<IActionResult> OnPostLike(int id)
     {
         Author author = (await _userManager.GetUserAsync(User))!;
-        var updatedCount = await _service.Likes(author.Id, id);
-        bool hasLiked = await _service.HasUserLiked(author.Id, id);
+        var updatedCount = await _cheepservice.Likes(author.Id, id);
+        bool hasLiked = await _cheepservice.HasUserLiked(author.Id, id);
 
         return new JsonResult(new { hasLiked = hasLiked, likeCount = updatedCount });
     }
 
-    public List<CheepDTO> LoadCheeps(string author, int page, string sorting)
+    public List<CheepDTO> LoadCheeps(string author, int page, string? sorting)
     {
         CurrentPage = page == 0 ? 1 : page;
         if (author != null)
         {
-            Cheeps = _cheepservice.GetCheepsFromAuthor(author, page);
+            Cheeps = _cheepservice.GetCheepsFromAuthor(author, page, sorting);
         }
         else
         {
