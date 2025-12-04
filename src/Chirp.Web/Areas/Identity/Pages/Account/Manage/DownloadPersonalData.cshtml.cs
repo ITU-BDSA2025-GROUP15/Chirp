@@ -19,16 +19,19 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
 {
     public class DownloadPersonalDataModel : PageModel
     {
-        private readonly ICheepService _service;
+        private readonly IAuthorService _authorService;
+        private readonly ICheepService _cheepService;
         private readonly UserManager<Author> _userManager;
         private readonly ILogger<DownloadPersonalDataModel> _logger;
 
         public DownloadPersonalDataModel(
-            ICheepService service,
+            IAuthorService authorService,
+            ICheepService cheepService,
             UserManager<Author> userManager,
             ILogger<DownloadPersonalDataModel> logger)
         {
-            _service = service;
+            _authorService = authorService;
+            _cheepService = cheepService;
             _userManager = userManager;
             _logger = logger;
         }
@@ -58,8 +61,11 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
                 personalData.Add(p.Name, p.GetValue(user)?.ToString() ?? "null");
             }
 
-            IEnumerable<CheepDTO> cheeps = _service.GetAllCheepsFromAuthor(user.Name);
+            IEnumerable<CheepDTO> cheeps = _cheepService.GetAllCheepsFromAuthor(user.Name);
             personalData.Add("Cheeps", cheeps);
+
+            var following = await _authorService.GetFollowingByName(user.Name);
+            personalData.Add("Follows", following);
 
             var logins = await _userManager.GetLoginsAsync(user);
             foreach (var l in logins)
