@@ -15,11 +15,6 @@
     <h2> @routeName's Timeline </h2>
     <partial name="_SubmitMessage"/>
     <p>@ViewData["Error"]</p>
-    @if (user != null && !user.Name.Equals(routeName)) {
-        <form method="post">
-            <input type="submit" value="Follow/Unfollow" asp-page-handler="follow">
-        </form>
-    }
     @if (Model.Cheeps != null && Model.Cheeps.Any())
     {
         <ul id="messagelist" class="cheeps">
@@ -30,6 +25,11 @@
                         <strong>
                             <a href="/@Uri.EscapeDataString(cheep.Author)">@cheep.Author</a>
                         </strong>
+                        @if (SignInManager.IsSignedIn(User) && !cheep.Author.Equals(user!.Name))
+                        {
+                        var IsFollowing = await Model.IsFollowing(user!.Name, cheep.Author) ? "Unfollow" : "Follow";
+                        <a asp-page-handler="ToggleFollow" asp-route-idol="@cheep.Author">[@IsFollowing]</a>
+                        }
                         @cheep.Message
                         <small>&mdash; @cheep.Timestamp</small>
                     </p>

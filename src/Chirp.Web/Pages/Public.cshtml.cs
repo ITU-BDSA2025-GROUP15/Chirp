@@ -52,13 +52,13 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
         string authorUrl = Uri.EscapeDataString(author.Name);
         return Redirect("/" + (authorUrl ?? "NameNotFound"));
     }
-    public async Task<IActionResult> OnPostFollowAsync()
+    public async Task<IActionResult> OnPostFollowAsync([FromQuery] string? user)
     {
         var author = await _userManager.GetUserAsync(User);
         // converting the Author to an AuthorDTO for some reason
         var authorDTO = await _authorservice.GetAuthorByName(author!.Name);
-        var idol   = await _authorservice.GetAuthorByName(RouteData.Values["author"]!.ToString()!);
-
+        AuthorDTO idol = await _authorservice.GetAuthorByName(RouteData.Values["author"]!.ToString()!);
+        
         if (!await _authorservice.IsAuthorFollowingAuthor(authorDTO,idol))
         {
             await _authorservice.FollowAuthor(authorDTO,idol);
@@ -69,6 +69,7 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
         string authorUrl = Uri.EscapeDataString(idol.Name);
         return Redirect("/" + authorUrl ?? "NameNotFound");
     }
+    
     public async Task<List<CheepDTO>> LoadCheepsMyTimeline(string author, int page)
     {
         CurrentPage = page == 0 ? 1 : page;
@@ -97,4 +98,39 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
         }
         return Cheeps;
     }
+
+    public async Task<IActionResult> OnGetToggleFollowAsync(string idol)
+{
+    var author = await _userManager.GetUserAsync(User);
+    if (author == null)
+        return RedirectToPage("/Login");
+
+    var authorDTO = await _authorservice.GetAuthorByName(author.Name);
+    var idolDTO   = await _authorservice.GetAuthorByName(idol);
+
+    if (idolDTO == null)
+        return RedirectToPage(); // user not found
+        
+    var isFollowing = await IsFollowing(authorDTO.Name, idolDTO.Name);
+
+    if (isFollowing)
+    {
+        await _authorservice.UnFollowAuthor(authorDTO, idolDTO);
+    }
+    else
+    {
+        await _authorservice.FollowAuthor(authorDTO, idolDTO);  
+    }
+
+    return RedirectToPage();
+}
+
+    public async Task<bool> IsFollowing(string author, string idol)
+{
+    var authorDTO = await _authorservice.GetAuthorByName(author);
+    var idolDTO   = await _authorservice.GetAuthorByName(idol);
+
+    return await _authorservice.IsAuthorFollowingAuthor(authorDTO, idolDTO);
+}
+
 }
