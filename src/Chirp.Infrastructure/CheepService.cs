@@ -1,5 +1,7 @@
 //public record CheepViewModel(string Author, string Message, string Timestamp);
 
+using System.Threading.Tasks;
+
 /// <include file="../../docs/CheepServiceDocs.xml" path="/doc/members/member[@name='T:CheepService']/*" />
 public class CheepService : ICheepService
 {
@@ -13,61 +15,101 @@ public class CheepService : ICheepService
     /// <include file="../../docs/CheepServiceDocs.xml" path="/doc/members/member[@name='M:CheepService.GetCheeps']/*" />
     public List<CheepDTO> GetCheeps()
     {
-        var messages = _repository.ReadMessages([], null, null);
+        var messages = _repository.ReadMessages(null, null, null, null);
         return messages.GetAwaiter().GetResult();
     }
 
     /// <include file="../../docs/CheepServiceDocs.xml" path="/doc/members/member[@name='M:CheepService.GetCheeps(System.Int32)']/*" />
     public List<CheepDTO> GetCheeps(int page)
     {
-        var messages = _repository.ReadMessages([], page, null);
+        var messages = _repository.ReadMessages(null, page, null, null);
+        return messages.GetAwaiter().GetResult();
+    }
+
+    public List<CheepDTO> GetCheeps(int page, string sorting)
+    {
+        var messages = _repository.ReadMessages(null, page, null, sorting);
         return messages.GetAwaiter().GetResult();
     }
 
     /// <include file="../../docs/CheepServiceDocs.xml" path="/doc/members/member[@name='M:CheepService.GetCheepsFromAuthor(System.String)']/*" />
     public List<CheepDTO> GetCheepsFromAuthor(string author)
     {
-        var messages = _repository.ReadMessages(new[] {author}, null, null);
+        var messages = _repository.ReadMessages([author], null, null, null);
         return messages.GetAwaiter().GetResult();
     }
 
     /// <include file="../../docs/CheepServiceDocs.xml" path="/doc/members/member[@name='M:CheepService.GetCheepsFromAuthor(System.String,System.Int32)']/*" />
     public List<CheepDTO> GetCheepsFromAuthor(string author, int page)
     {
-        var messages = _repository.ReadMessages(new[] {author}, page, null);
+        var messages = _repository.ReadMessages([author], page, null, null);
         return messages.GetAwaiter().GetResult();
     }
 
     public List<CheepDTO> GetCheepsFromAuthors(string[] author, int page)
     {
-        var messages = _repository.ReadMessages(author, page, null);
+        var messages = _repository.ReadMessages(author, page, null, null);
+        return messages.GetAwaiter().GetResult();
+    }
+
+    public List<CheepDTO> GetCheepsFromAuthor(string author, int page, string sorting)
+    {
+        var messages = _repository.ReadMessages([author], page, null, sorting);
         return messages.GetAwaiter().GetResult();
     }
 
     public List<CheepDTO> GetAllCheeps()
     {
-        var messages = _repository.ReadMessages(null, null, -1);
+        var messages = _repository.ReadMessages(null, null, -1, null);
         return messages.GetAwaiter().GetResult();
     }
 
     public List<CheepDTO> GetAllCheepsFromAuthor(string author)
     {
-        var messages = _repository.ReadMessages([author], null, -1);
+        var messages = _repository.ReadMessages([author], null, -1, null);
         return messages.GetAwaiter().GetResult();
     }
 
+    public CheepDTO GetCheepFromID(int id)
+    {
+        return _repository.FindMessage(id).GetAwaiter().GetResult();
+    }
+
+    public async Task<int> UpdateCheep(int id, string? message) //for updating message text
+    {
+        var cheep = GetCheepFromID(id);
+        if (message != null)
+        {
+            cheep.Message = message;
+        }
+        await _repository.UpdateMessage(cheep);
+        return cheep.LikeCounter;
+    }
+
+    public async Task<int> Likes(int authorId, int cheepId)
+    {
+        var AmountOfLikes = await _repository.Likes(authorId, cheepId, true);
+        return AmountOfLikes;
+    }
+
+    public async Task<bool> HasUserLiked(int authorId, int cheepId)
+    {
+       return await _repository.OpinionExist(authorId, cheepId);
+    }
+
     /// <include file="../../docs/CheepServiceDocs.xml" path="/doc/members/member[@name='M:CheepService.CheepListToCheepDTOList(System.Collections.Generic.List{Cheep})']/*" />
-    public static List<CheepDTO> CheepListToCheepDTOList(List<Cheep> cheeps)
+    public static List<CheepDTO> CheepListToCheepDTOList(List<Cheep> cheeps) //Do we even use this functions anymore??? The repository also has this logic
     {
         var modelMessages = new List<CheepDTO>();
-
         foreach (var cheep in cheeps)
         {
             var modelCheep = new CheepDTO()
             {
+                CheepId = 0,
                 Author = cheep.Author.Name,
                 Message = cheep.Text,
-                Timestamp = DateTimeToDateTimeString(cheep.TimeStamp)
+                Timestamp = DateTimeToDateTimeString(cheep.TimeStamp),
+                LikeCounter = 0
             };
             modelMessages.Add(modelCheep);
         }

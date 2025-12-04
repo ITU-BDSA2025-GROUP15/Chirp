@@ -13,7 +13,8 @@
 
 <div>
     <h2> @routeName's Timeline </h2>
-    <partial name="_SubmitMessage"/>
+    <partial name="_SubmitMessage" />
+    <partial name="_sortingDropdown" />
     <p>@ViewData["Error"]</p>
     @if (Model.Cheeps != null && Model.Cheeps.Any())
     {
@@ -32,6 +33,18 @@
                         }
                         @cheep.Message
                         <small>&mdash; @cheep.Timestamp</small>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <button id="likeBtn-@cheep.CheepId" type="button" class="like-btn @(cheep.UserHasLiked ? "liked" : "")"
+                                data-id="@cheep.CheepId" data-url="?handler=Like">
+                                @(cheep.UserHasLiked ? "Unlike" : "Like")
+                            </button>
+                        }
+                        <span id="likeCount-@cheep.CheepId">@cheep.LikeCounter</span>
+                        <span>Likes</span>
+                    <form method="post">
+                        @Html.AntiForgeryToken() <!--honestly not sure if i do this right-->
+                    </form>
                     </p>
                 </li>
             }
@@ -42,3 +55,6 @@
         <em>There are no cheeps so far.</em>
     }
 </div>
+@section Scripts {
+    <script src="~/js/script.js"></script>
+}

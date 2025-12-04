@@ -1,7 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-
  /// <include file="../../docs/CheepDocs.xml" path="/doc/members/member[@name='T:Cheep']/*" />
 public class Cheep
 {
@@ -15,6 +14,8 @@ public class Cheep
 
     /// <include file="../../docs/CheepDocs.xml" path="/doc/members/member[@name='P:Cheep.TimeStamp']/*" />
     public DateTime TimeStamp { get; set; }
+
+    public int LikeCounter { get; set; } = 0;
 
     /// <include file="../../docs/CheepDocs.xml" path="/doc/members/member[@name='P:Cheep.AuthorId']/*" />
     [Required]

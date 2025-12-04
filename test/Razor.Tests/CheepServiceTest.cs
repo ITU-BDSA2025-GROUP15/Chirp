@@ -23,6 +23,8 @@ public class CheepServiceTest
         Assert.Equal(answer, result);
     }
 
+    //We don't even use this also fix later
+
     [Theory]
     [InlineData("test", "testing", 100)]
     public void CheepListToCheepDTOListTest(string a, string b, int c)
@@ -43,14 +45,18 @@ public class CheepServiceTest
             }];
         List<CheepDTO> expectedDTO = [
             new CheepDTO() {
+                CheepId = 0,
                 Author = a,
                 Message = b,
-                Timestamp = CheepService.DateTimeToDateTimeString(DateTimeOffset.FromUnixTimeSeconds(c).DateTime)
+                Timestamp = CheepService.DateTimeToDateTimeString(DateTimeOffset.FromUnixTimeSeconds(c).DateTime),
+                LikeCounter = 0
             },
             new CheepDTO() {
+                CheepId = 0,
                 Author = b,
                 Message = a,
-                Timestamp = CheepService.DateTimeToDateTimeString(DateTimeOffset.FromUnixTimeSeconds(c).DateTime)
+                Timestamp = CheepService.DateTimeToDateTimeString(DateTimeOffset.FromUnixTimeSeconds(c).DateTime),
+                LikeCounter = 0
             }
             ];
 

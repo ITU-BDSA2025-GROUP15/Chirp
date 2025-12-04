@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chirp.Web.Migrations
 {
     [DbContext(typeof(ChirpDBContext))]
-    [Migration("20251105134612_IdentitySchema3")]
-    partial class IdentitySchema3
+    [Migration("20251204151444_FollowsAndLikesSchema")]
+    partial class FollowsAndLikesSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,6 +26,9 @@ namespace Chirp.Web.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("AccessFailedCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("AuthorId1")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -78,6 +81,8 @@ namespace Chirp.Web.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AuthorId1");
+
                     b.HasIndex("Name")
                         .IsUnique();
 
@@ -100,8 +105,12 @@ namespace Chirp.Web.Migrations
                     b.Property<int>("AuthorId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("LikeCounter")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Text")
                         .IsRequired()
+                        .HasMaxLength(160)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("TimeStamp")
@@ -244,6 +253,26 @@ namespace Chirp.Web.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("PostOpinions", b =>
+                {
+                    b.Property<int>("CheepId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("CheepId", "AuthorId");
+
+                    b.ToTable("PostOpinions");
+                });
+
+            modelBuilder.Entity("Author", b =>
+                {
+                    b.HasOne("Author", null)
+                        .WithMany("Follows")
+                        .HasForeignKey("AuthorId1");
+                });
+
             modelBuilder.Entity("Cheep", b =>
                 {
                     b.HasOne("Author", "Author")
@@ -309,6 +338,8 @@ namespace Chirp.Web.Migrations
             modelBuilder.Entity("Author", b =>
                 {
                     b.Navigation("Cheeps");
+
+                    b.Navigation("Follows");
                 });
 #pragma warning restore 612, 618
         }

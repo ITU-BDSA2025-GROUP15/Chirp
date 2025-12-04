@@ -102,6 +102,9 @@ namespace Chirp.Web.Migrations
                     b.Property<int>("AuthorId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("LikeCounter")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasMaxLength(160)
@@ -245,6 +248,19 @@ namespace Chirp.Web.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("PostOpinions", b =>
+                {
+                    b.Property<int>("CheepId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("CheepId", "AuthorId");
+
+                    b.ToTable("PostOpinions");
                 });
 
             modelBuilder.Entity("Author", b =>
