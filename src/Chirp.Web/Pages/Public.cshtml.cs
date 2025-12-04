@@ -37,7 +37,7 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
 
         if (authorObj != null && author != null && author.Equals(authorObj.Name, StringComparison.OrdinalIgnoreCase))
         {
-            Cheeps = await LoadCheepsMyTimeline(author, _page);
+            Cheeps = await LoadCheepsMyTimeline(author, _page, Sorting);
         }
         else
         {
@@ -87,18 +87,18 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
         return Redirect("/" + authorUrl ?? "NameNotFound");
     }
 
-    public async Task<List<CheepDTO>> LoadCheepsMyTimeline(string author, int page)
+    public async Task<List<CheepDTO>> LoadCheepsMyTimeline(string author, int page, string sorting)
     {
         CurrentPage = page == 0 ? 1 : page;
         var authorAndFollowing = await _authorservice.GetFollowingByName(author);
         authorAndFollowing = [.. authorAndFollowing, author];
         if (author != null)
         {
-            Cheeps = _cheepservice.GetCheepsFromAuthors(authorAndFollowing, page);
+            Cheeps = _cheepservice.GetCheepsFromAuthors(authorAndFollowing, page, sorting);
         }
         else
         {
-            Cheeps = _cheepservice.GetCheeps(page, null);
+            Cheeps = _cheepservice.GetCheeps(page, sorting);
         }
         return Cheeps;
     }

@@ -22,6 +22,8 @@ public interface ICheepService
     public Task<bool> HasUserLiked(int authorId, int cheepId);
 
     public List<CheepDTO> GetCheepsFromAuthors(string[] author, int page);
+
+    public List<CheepDTO> GetCheepsFromAuthors(string[] author, int page, string sorting);
     
     public void PostCheep(Author author, string message);
   

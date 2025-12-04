@@ -48,7 +48,12 @@ public class CheepService : ICheepService
 
     public List<CheepDTO> GetCheepsFromAuthors(string[] author, int page)
     {
-        var messages = _repository.ReadMessages(author, page, null, null);
+        return GetCheepsFromAuthors(author, page, null);
+    }
+
+    public List<CheepDTO> GetCheepsFromAuthors(string[] author, int page, string? sorting)
+    {
+        var messages = _repository.ReadMessages(author, page, null, sorting);
         return messages.GetAwaiter().GetResult();
     }
 
