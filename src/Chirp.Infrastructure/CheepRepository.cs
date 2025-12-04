@@ -156,12 +156,6 @@ public class CheepRepository : ICheepRepository
 
         var cheep = await query.FirstAsync();
 
-        Console.WriteLine("This is the id :" + cheep.CheepId);
-        Console.WriteLine("This is cheep Author: " + cheep.Author);
-        Console.WriteLine("This is cheep message: " + cheep.Message);
-        Console.WriteLine("This is cheep Timestamp: " + CheepService.DateTimeToDateTimeString(cheep.Timestamp));
-        Console.WriteLine("This is cheep likes: " + cheep.LikeCounter);
-
         var cheepDTO = new CheepDTO
         {
             CheepId = cheep.CheepId,

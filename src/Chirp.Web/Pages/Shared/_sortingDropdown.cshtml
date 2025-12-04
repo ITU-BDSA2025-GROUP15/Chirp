@@ -1,0 +1,10 @@
+@model Chirp.Razor.Pages.PublicModel
+@using Chirp.Razor.Pages
+
+<form method="get">
+    <label for="sorting">Sort by</label>
+    <select name="sorting" id="sorting" onchange="this.form.submit()">
+        <option value="Newest" selected="@("Newest" == Model.Sorting)">Newest</option>
+        <option value="MostLiked" selected="@("MostLiked" == Model.Sorting)">Most liked</option>
+    </select>
+</form>

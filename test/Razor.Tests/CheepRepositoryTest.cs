@@ -103,9 +103,9 @@ public class CheepRepositoryUnitTest
 
         // Act
         await repository.CreateMessage(cheepExpected);
-        //Cheep cheepFound = await repository.FindMessage(676767);
+        CheepDTO cheepFound = await repository.FindMessage(676767);
 
         // Assert
-        //Assert.Equal(cheepExpected,cheepFound);
+        Assert.Equal(cheepExpected.CheepId,cheepFound.CheepId);
     }
 }

@@ -54,7 +54,6 @@ public class CheepService : ICheepService
 
     public CheepDTO GetCheepFromID(int id)
     {
-        //Console.WriteLine("This is what is returned " + _repository.FindMessage(id).GetAwaiter().GetResult().CheepId);
         return _repository.FindMessage(id).GetAwaiter().GetResult();
     }
 
@@ -76,7 +75,6 @@ public class CheepService : ICheepService
         {
             cheep.LikeCounter++;
         }
-        Console.WriteLine("This is the likes after the change: " + cheep.LikeCounter);
         await _repository.UpdateMessage(cheep);
         return cheep.LikeCounter;
     }

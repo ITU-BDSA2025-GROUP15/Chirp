@@ -9,20 +9,13 @@
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_PaginationLayout";
     var routeName = ViewContext.HttpContext.GetRouteValue("author");
-     var i = 0; 
+    var i = 0;
 }
 
 <div>
     <h2> Public Timeline </h2>
     <partial name="_SubmitMessage" />
-
-    <form method="get">
-        <label for="sorting">Sort by</label>
-        <select name="sorting" id="sorting" onchange="this.form.submit()">
-            <option value="Newest" selected="@("Newest" == Model.Sorting)">Newest</option>
-            <option value="MostLiked" selected="@("MostLiked" == Model.Sorting)">Most liked</option>
-        </select>
-    </form>
+    <partial name="_sortingDropdown" />
 
     <p>@ViewData["Error"]</p>
     @if (Model.Cheeps.Any())
@@ -30,8 +23,9 @@
         <ul id="messagelist" class="cheeps">
             @foreach (var cheep in Model.Cheeps)
             {
-                @if(Model.Sorting == "MostLiked" && i < 3 && Model.CurrentPage == 1){
-                    <h1><img src="/images/icon1.png" alt="Icon1"/>Chirp!</h1>
+                @if (Model.Sorting == "MostLiked" && i < 3 && Model.CurrentPage == 1)
+                {
+                    <h1><img src="/images/icon1.png" alt="Icon1" />Chirp!</h1>
                 }
                 <li>
                     <p>
@@ -43,11 +37,15 @@
                         @if (SignInManager.IsSignedIn(User))
                         {
                             <button id="likeBtn-@cheep.CheepId" type="button" class="like-btn @(cheep.UserHasLiked ? "liked" : "")"
-                                data-id="@cheep.CheepId" data-hasLiked="@cheep.UserHasLiked">
+                                data-id="@cheep.CheepId" data-url="?handler=Like">
                                 @(cheep.UserHasLiked ? "Unlike" : "Like")
                             </button>
                         }
                         <span id="likeCount-@cheep.CheepId">@cheep.LikeCounter</span>
+                        <span>Likes</span>
+                    <form method="post">
+                        @Html.AntiForgeryToken() <!--honestly not sure if i do this right-->
+                    </form>
                     </p>
                 </li>
                 i++;
@@ -60,29 +58,5 @@
     }
 </div>
 @section Scripts {
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll(".like-btn").forEach(btn => {
-                btn.addEventListener("click", function () {
-                    let id = this.dataset.id;
-                    let currentText = document.getElementById("likeBtn-" + id).textContent
-
-                    fetch(`?handler=Like&id=${id}`, {
-                        method: "POST",
-                        headers: {
-                            "RequestVerificationToken":
-                                document.querySelector('input[name="__RequestVerificationToken"]').value
-                        }
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            // update like count in UI
-                            document.getElementById("likeCount-" + id).textContent = data.likeCount;
-                            document.getElementById("likeBtn-" + id).textContent = (currentText.includes("Like", 0) ? "Unlike" : "Like"); //inverses what current state is
-                        });
-                    //document.getElementById("likeBtn-" + id).textContent = (currentText.includes("Like", 0) ? "Unlike" : "Like"); //inverses what current state is 
-                });
-            });
-        });
-    </script>
+    <script src="~/js/script.js"></script>
 }

@@ -25,8 +25,6 @@ public class PublicModel(ICheepService service, UserManager<Author> userManager)
         if (string.IsNullOrEmpty(Sorting))
         Sorting = "Newest"; // default
 
-        Console.WriteLine("Sorting is " + Sorting);
-
         var authorObj = await _userManager.GetUserAsync(User);
         int _page = 1;
         if (page != null)
@@ -36,7 +34,6 @@ public class PublicModel(ICheepService service, UserManager<Author> userManager)
 
             if (_page <= 0) return RedirectToPage();
         }
-        //Console.WriteLine("this is author name: " + author + " and this is page " + page);
         Cheeps = LoadCheeps(author, _page, Sorting);
         if (authorObj != null)
         {
