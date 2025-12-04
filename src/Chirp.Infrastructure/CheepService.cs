@@ -57,10 +57,10 @@ public class CheepService : ICheepService
         return _repository.FindMessage(id).GetAwaiter().GetResult();
     }
 
-    // public void UpdateCheep(int id, bool like)
-    // {
-    //     UpdateCheep(id, null, like);
-    // }
+    public void UpdateCheep(int id, bool like)
+    {
+        UpdateCheep(id, null, like);
+    }
     public async Task<int> UpdateCheep(int id, string? message, bool hasLiked)
     {
         var cheep = GetCheepFromID(id);
@@ -81,15 +81,15 @@ public class CheepService : ICheepService
 
     public async Task<int> Likes(int authorId, int cheepId)
     {
-        var hasLiked = await HasUserLiked(authorId, cheepId);
-        var likeStored = await _repository.Likes(authorId, cheepId, hasLiked);
-        int AmountOfLikes;
-        if(likeStored){
-            AmountOfLikes = await UpdateCheep(cheepId, null, hasLiked);
-        } else
-        {
-            AmountOfLikes = 0;
-        }
+        //var hasLiked = await HasUserLiked(authorId, cheepId);
+        var AmountOfLikes = await _repository.Likes(authorId, cheepId, true);
+        //int AmountOfLikes;
+        // if(likeStored){
+        //     AmountOfLikes = await UpdateCheep(cheepId, null, hasLiked);
+        // } else
+        // {
+        //     AmountOfLikes = 0;
+        // }
         return AmountOfLikes;
     }
 

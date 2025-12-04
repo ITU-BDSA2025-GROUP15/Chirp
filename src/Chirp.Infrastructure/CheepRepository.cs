@@ -37,9 +37,9 @@ public class CheepRepository : ICheepRepository
     /// <include file="../../docs/CheepRepositoryDocs.xml" path="/doc/members/member[@name='M:CheepRepository.ReadMessages(System.String,System.Nullable{System.Int32},System.Nullable{System.Int32})']/*" />
     public async Task<List<CheepDTO>> ReadMessages(string? author, int? page, int? limit, string? sorting)
     {
-        if(sorting == null)
+        if (sorting == null)
             sorting = "Newest";
-        
+
         var query = _context.Cheeps
             .Join(_context.Authors,
                 Cheeps => Cheeps.AuthorId,
@@ -56,9 +56,11 @@ public class CheepRepository : ICheepRepository
         {
             query = query.Where(Cheep => Cheep.Author == author);
         }
-        if(sorting == "Newest"){
+        if (sorting == "Newest")
+        {
             query = query.OrderByDescending(Cheep => Cheep.Timestamp);
-        } else
+        }
+        else
         {
             query = query.OrderByDescending(Cheep => Cheep.LikeCounter);
         }
@@ -100,11 +102,10 @@ public class CheepRepository : ICheepRepository
         var cheep = await _context.Cheeps.Where(a => a.CheepId.Equals(alteredMessage.CheepId)).Select(a => a).FirstAsync();
         cheep.LikeCounter = alteredMessage.LikeCounter;
         cheep.Text = alteredMessage.Message;
-        await _context.SaveChangesAsync();
         return;
     }
 
-    public async Task<bool> Likes(int authorId, int postId, bool hasLiked)
+    public async Task<int> Likes(int authorId, int postId, bool hasLiked)
     {
         try
         {
@@ -113,21 +114,28 @@ public class CheepRepository : ICheepRepository
                 CheepId = postId,
                 AuthorId = authorId
             };
-            if (hasLiked)
+            int likes = 0;
+            if (OpinionExist(authorId, postId).Result)
             {
                 var query = _context.PostOpinions.Remove(postOpinion);
+                var cheep = await FindMessage(postId);
+                likes = cheep.LikeCounter--;
+                await UpdateMessage(cheep);
                 await _context.SaveChangesAsync();
             }
             else
             {
                 var query = _context.PostOpinions.Add(postOpinion);
+                var cheep = await FindMessage(postId);
+                likes = cheep.LikeCounter++;
+                await UpdateMessage(cheep);
                 await _context.SaveChangesAsync();
             }
-            return true;
+            return likes;
         }
         catch
         {
-            return false;
+            return -1;
         }
     }
 
