@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 public class AccountsInitializer
@@ -26,6 +27,9 @@ public class AccountsInitializer
     {
         var user = new Author { Id = id, Name = name };
 
+        var storedUser = await _userManager.FindByIdAsync($"{id}");
+        if (storedUser != null) return null;
+
         await _userStore.SetUserNameAsync(user, email, CancellationToken.None);
         await _emailStore.SetEmailAsync(user, email, CancellationToken.None);
 
@@ -45,7 +49,7 @@ public class AccountsInitializer
                 return null;
             }
         }
-        catch (InvalidOperationException)
+        catch (InvalidOperationException) // If CreateAsync failed.
         {
             return null;
         }

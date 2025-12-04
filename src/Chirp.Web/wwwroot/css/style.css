@@ -140,6 +140,7 @@ div.page ul.cheeps li {
 
 div.page ul.cheeps p {
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
 div.page ul.cheeps li img {
@@ -302,4 +303,24 @@ ul.nav li a:hover {
 .pageInput::-webkit-outer-spin-button,
 .pageInput::-webkit-inner-spin-button {
     -webkit-appearance: none;
+}
+
+/* Personal data table */
+table#personal-data {
+    background-color: #F0FAF9;
+    border: 1px solid #DBF3F1;
+    border-radius: 5px;
+    border-spacing: 0px;
+    padding: 8px;
+}
+
+table#personal-data tr * {
+    text-align: left;
+    border-bottom: 2px solid #bcdcd8;
+    padding: 4px;
+}
+
+table#personal-data tr *:last-child {
+    text-align: right;
+    overflow-wrap: anywhere;
 }
