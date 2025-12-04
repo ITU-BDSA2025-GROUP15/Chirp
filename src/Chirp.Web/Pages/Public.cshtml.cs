@@ -126,7 +126,7 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
         return Cheeps;
     }
 
-    public async Task<IActionResult> OnPostToggleFollowAsync(string idol)
+    public async Task<IActionResult> OnPostToggleFollowAsync(string idol, string? sorting)
     {
         var author = await _userManager.GetUserAsync(User);
         if (author == null)
@@ -149,7 +149,8 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
             await _authorservice.FollowAuthor(authorDTO, idolDTO);
         }
 
-        return RedirectToPage();
+        if (sorting != null) return RedirectToPage("", new { sorting });
+        else return RedirectToPage();
     }
 
     public async Task<bool> IsFollowing(string author, string idol)
