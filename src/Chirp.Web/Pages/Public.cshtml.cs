@@ -24,7 +24,7 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
     {
         var authorObj = await _userManager.GetUserAsync(User);
         if (string.IsNullOrEmpty(Sorting))
-        Sorting = "Newest"; // default
+            Sorting = "Newest"; // default
 
         int _page = 1;
         if (page != null)
@@ -38,9 +38,17 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
         if (authorObj != null && author != null && author.Equals(authorObj.Name, StringComparison.OrdinalIgnoreCase))
         {
             Cheeps = await LoadCheepsMyTimeline(author, _page);
-        } else
+        }
+        else
         {
-            Cheeps = LoadCheeps(author!, _page, null);
+            Cheeps = LoadCheeps(author!, _page, Sorting);
+        }
+        if (authorObj != null)
+        {
+            foreach (var cheep in Cheeps)
+            {
+                cheep.UserHasLiked = await _cheepservice.HasUserLiked(authorObj.Id, cheep.CheepId);
+            }
         }
         if (Cheeps.Count == 0 && CurrentPage != 1) { return RedirectToPage(); }
         return Page();
@@ -66,18 +74,19 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
         // converting the Author to an AuthorDTO for some reason
         var authorDTO = await _authorservice.GetAuthorByName(author!.Name);
         AuthorDTO idol = await _authorservice.GetAuthorByName(RouteData.Values["author"]!.ToString()!);
-        
-        if (!await _authorservice.IsAuthorFollowingAuthor(authorDTO,idol))
+
+        if (!await _authorservice.IsAuthorFollowingAuthor(authorDTO, idol))
         {
-            await _authorservice.FollowAuthor(authorDTO,idol);
-        } else
+            await _authorservice.FollowAuthor(authorDTO, idol);
+        }
+        else
         {
-            await _authorservice.UnFollowAuthor(authorDTO,idol);
+            await _authorservice.UnFollowAuthor(authorDTO, idol);
         }
         string authorUrl = Uri.EscapeDataString(idol.Name);
         return Redirect("/" + authorUrl ?? "NameNotFound");
     }
-    
+
     public async Task<List<CheepDTO>> LoadCheepsMyTimeline(string author, int page)
     {
         CurrentPage = page == 0 ? 1 : page;
@@ -117,36 +126,36 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
     }
 
     public async Task<IActionResult> OnGetToggleFollowAsync(string idol)
-{
-    var author = await _userManager.GetUserAsync(User);
-    if (author == null)
-        return RedirectToPage("/Login");
-
-    var authorDTO = await _authorservice.GetAuthorByName(author.Name);
-    var idolDTO   = await _authorservice.GetAuthorByName(idol);
-
-    if (idolDTO == null)
-        return RedirectToPage(); // user not found
-        
-    var isFollowing = await IsFollowing(authorDTO.Name, idolDTO.Name);
-
-    if (isFollowing)
     {
-        await _authorservice.UnFollowAuthor(authorDTO, idolDTO);
-    }
-    else
-    {
-        await _authorservice.FollowAuthor(authorDTO, idolDTO);  
-    }
+        var author = await _userManager.GetUserAsync(User);
+        if (author == null)
+            return RedirectToPage("/Login");
 
-    return RedirectToPage();
-}
+        var authorDTO = await _authorservice.GetAuthorByName(author.Name);
+        var idolDTO = await _authorservice.GetAuthorByName(idol);
+
+        if (idolDTO == null)
+            return RedirectToPage(); // user not found
+
+        var isFollowing = await IsFollowing(authorDTO.Name, idolDTO.Name);
+
+        if (isFollowing)
+        {
+            await _authorservice.UnFollowAuthor(authorDTO, idolDTO);
+        }
+        else
+        {
+            await _authorservice.FollowAuthor(authorDTO, idolDTO);
+        }
+
+        return RedirectToPage();
+    }
 
     public async Task<bool> IsFollowing(string author, string idol)
-{
-    var authorDTO = await _authorservice.GetAuthorByName(author);
-    var idolDTO   = await _authorservice.GetAuthorByName(idol);
+    {
+        var authorDTO = await _authorservice.GetAuthorByName(author);
+        var idolDTO = await _authorservice.GetAuthorByName(idol);
 
-    return await _authorservice.IsAuthorFollowingAuthor(authorDTO, idolDTO);
-}
+        return await _authorservice.IsAuthorFollowingAuthor(authorDTO, idolDTO);
+    }
 }

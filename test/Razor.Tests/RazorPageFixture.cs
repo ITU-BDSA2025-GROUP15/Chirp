@@ -30,7 +30,7 @@ public class RazorPageFixture : IAsyncLifetime
         {
             IBrowser _browser = await _playwright[testBrowsers[i]].LaunchAsync(new BrowserTypeLaunchOptions
             {
-                Headless = false //Set this to false to see what the test are doing.(Will open browser windows)
+                Headless = true //Set this to false to see what the test are doing.(Will open browser windows)
             });
             IBrowserContext context = await _browser.NewContextAsync();
             Pages[i] = await context.NewPageAsync();

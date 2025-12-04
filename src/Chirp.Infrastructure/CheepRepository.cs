@@ -126,7 +126,6 @@ public class CheepRepository : ICheepRepository
             var cheep = await FindMessage(postId);
             likes = --cheep.LikeCounter;
             await UpdateMessage(cheep);
-            await _context.SaveChangesAsync();
         }
         else
         {
@@ -134,8 +133,8 @@ public class CheepRepository : ICheepRepository
             var cheep = await FindMessage(postId);
             likes = ++cheep.LikeCounter;
             await UpdateMessage(cheep);
-            await _context.SaveChangesAsync();
         }
+        await _context.SaveChangesAsync();
         return likes;
     }
 
