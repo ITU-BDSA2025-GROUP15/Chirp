@@ -38,6 +38,18 @@ public class CheepService : ICheepService
         return messages.GetAwaiter().GetResult();
     }
 
+    public List<CheepDTO> GetAllCheeps()
+    {
+        var messages = _repository.ReadMessages(null, null, -1);
+        return messages.GetAwaiter().GetResult();
+    }
+
+    public List<CheepDTO> GetAllCheepsFromAuthor(string author)
+    {
+        var messages = _repository.ReadMessages(author, null, -1);
+        return messages.GetAwaiter().GetResult();
+    }
+
     /// <include file="../../docs/CheepServiceDocs.xml" path="/doc/members/member[@name='M:CheepService.CheepListToCheepDTOList(System.Collections.Generic.List{Cheep})']/*" />
     public static List<CheepDTO> CheepListToCheepDTOList(List<Cheep> cheeps)
     {
