@@ -90,7 +90,7 @@
                     {
                         bool isFollowing = await Model.IsFollowing(author!.Name, cheep.Author);
                         var followStr = isFollowing ? "unfollow" : "follow";
-                        <form class="form-inline" asp-page-handler="ToggleFollow" asp-route-idol="@cheep.Author" method="post">
+                        <form class="form-inline" asp-page-handler="ToggleFollow" asp-route-idol="@cheep.Author" asp-route-sorting="@Model.Sorting" method="post">
                             <button class="cool-btn @(isFollowing ? "following" : "")" type="submit">@followStr</button>
                         </form>
                     }
