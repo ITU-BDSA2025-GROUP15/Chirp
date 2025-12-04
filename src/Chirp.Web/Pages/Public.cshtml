@@ -1,6 +1,7 @@
 ﻿@page "/"
 @model Chirp.Razor.Pages.PublicModel
 @using Chirp.Razor.Pages
+@using Chirp.Web.Migrations
 @using Microsoft.AspNetCore.Identity
 
 @inject SignInManager<Author> SignInManager
@@ -9,6 +10,7 @@
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_PaginationLayout";
     var routeName = ViewContext.HttpContext.GetRouteValue("author");
+    Author? author = await UserManager.GetUserAsync(User);
 }
 
 <div>
@@ -25,6 +27,11 @@
                         <strong>
                             <a href="/@Uri.EscapeDataString(cheep.Author)">@cheep.Author</a>
                         </strong>
+                        @if (SignInManager.IsSignedIn(User) && !cheep.Author.Equals(author!.Name))
+                        {
+                        var IsFollowing = await Model.IsFollowing(author!.Name, cheep.Author) ? "Unfollow" : "Follow";
+                        <a asp-page-handler="ToggleFollow" asp-route-idol="@cheep.Author">[@IsFollowing]</a>
+                        }
                         @cheep.Message
                         <small>&mdash; @cheep.Timestamp</small>
                     </p>

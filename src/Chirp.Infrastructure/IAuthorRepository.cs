@@ -12,4 +12,6 @@ public interface IAuthorRepository
 
     /// <include file="../../docs/IAuthorRepositoryDocs.xml" path="/doc/members/member[@name='M:IAuthorRepository.RemoveAuthor(Author)']/*" />
     public Task RemoveAuthor(Author author);
+    public Task AddFollow(Author author, Author toFollow);
+    public Task RemoveFollow(Author author, Author toUnfollow);
 }

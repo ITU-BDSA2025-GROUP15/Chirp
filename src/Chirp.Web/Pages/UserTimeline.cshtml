@@ -1,17 +1,21 @@
 ﻿@page "/{author}"
 @model Chirp.Razor.Pages.PublicModel
 @using Microsoft.AspNetCore.Identity
+@inject SignInManager<Author> SignInManager
+@inject UserManager<Author> UserManager
 
 @{
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_PaginationLayout";
     var routeName = ViewContext.HttpContext.GetRouteValue("author");
+    Author? user = await UserManager.GetUserAsync(User);
 }
+
 <div>
     <h2> @routeName's Timeline </h2>
     <partial name="_SubmitMessage"/>
     <p>@ViewData["Error"]</p>
-    @if (Model.Cheeps.Any())
+    @if (Model.Cheeps != null && Model.Cheeps.Any())
     {
         <ul id="messagelist" class="cheeps">
             @foreach (var cheep in Model.Cheeps)
@@ -21,6 +25,11 @@
                         <strong>
                             <a href="/@Uri.EscapeDataString(cheep.Author)">@cheep.Author</a>
                         </strong>
+                        @if (SignInManager.IsSignedIn(User) && !cheep.Author.Equals(user!.Name))
+                        {
+                        var IsFollowing = await Model.IsFollowing(user!.Name, cheep.Author) ? "Unfollow" : "Follow";
+                        <a asp-page-handler="ToggleFollow" asp-route-idol="@cheep.Author">[@IsFollowing]</a>
+                        }
                         @cheep.Message
                         <small>&mdash; @cheep.Timestamp</small>
                     </p>

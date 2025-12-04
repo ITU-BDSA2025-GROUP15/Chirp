@@ -11,7 +11,6 @@ public class CheepRepository : ICheepRepository
     private readonly int defaultLimit = 32;
     private readonly ChirpDBContext _context;
 
-
     /// <include file="../../docs/CheepRepositoryDocs.xml" path="/doc/members/member[@name='M:CheepRepository.#ctor(ChirpDBContext)']/*" />
     public CheepRepository(ChirpDBContext context)
     {
@@ -35,8 +34,12 @@ public class CheepRepository : ICheepRepository
     }
 
     /// <include file="../../docs/CheepRepositoryDocs.xml" path="/doc/members/member[@name='M:CheepRepository.ReadMessages(System.String,System.Nullable{System.Int32},System.Nullable{System.Int32})']/*" />
-    public async Task<List<CheepDTO>> ReadMessages(string? author, int? page, int? limit)
+    public async Task<List<CheepDTO>> ReadMessages(IEnumerable<string>? authors, int? page, int? limit)
     {
+        if (authors == null)
+        {
+            return await ReadMessages([], page, limit);
+        }
         var query = _context.Cheeps
             .Join(_context.Authors,
                 Cheeps => Cheeps.AuthorId,
@@ -47,9 +50,12 @@ public class CheepRepository : ICheepRepository
                     Message = Cheeps.Text,
                     Timestamp = Cheeps.TimeStamp
                 });
-        if (author != null)
+        if (authors != null)
         {
-            query = query.Where(Cheep => Cheep.Author == author);
+            if (authors.Count() > 0)
+            {
+                query = query.Where(Cheep => authors.Contains(Cheep.Author));
+            }
         }
 
         query = query.OrderByDescending(Cheep => Cheep.Timestamp);
