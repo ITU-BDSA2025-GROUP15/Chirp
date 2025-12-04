@@ -8,13 +8,15 @@
     ViewData["Title"] = "Chirp!";
     Layout = "Shared/_PaginationLayout";
     var routeName = ViewContext.HttpContext.GetRouteValue("author");
-    Author? user = await UserManager.GetUserAsync(User);
+    Author? author = await UserManager.GetUserAsync(User);
 }
 
 <div>
-    <h2> @routeName's Timeline </h2>
+    <div class="flex-heading">
+        <h2> @routeName's Timeline </h2>
+        <partial name="_sortingDropdown" />
+    </div>
     <partial name="_SubmitMessage" />
-    <partial name="_sortingDropdown" />
     <p>@ViewData["Error"]</p>
     @if (Model.Cheeps != null && Model.Cheeps.Any())
     {
@@ -22,30 +24,30 @@
             @foreach (var cheep in Model.Cheeps)
             {
                 <li>
+                    <strong>
+                        <a href="/@Uri.EscapeDataString(cheep.Author)">@cheep.Author</a>
+                    </strong>
                     <p>
-                        <strong>
-                            <a href="/@Uri.EscapeDataString(cheep.Author)">@cheep.Author</a>
-                        </strong>
-                        @if (SignInManager.IsSignedIn(User) && !cheep.Author.Equals(user!.Name))
-                        {
-                        var IsFollowing = await Model.IsFollowing(user!.Name, cheep.Author) ? "Unfollow" : "Follow";
-                        <a asp-page-handler="ToggleFollow" asp-route-idol="@cheep.Author">[@IsFollowing]</a>
-                        }
                         @cheep.Message
                         <small>&mdash; @cheep.Timestamp</small>
-                        @if (SignInManager.IsSignedIn(User))
-                        {
-                            <button id="likeBtn-@cheep.CheepId" type="button" class="like-btn @(cheep.UserHasLiked ? "liked" : "")"
-                                data-id="@cheep.CheepId" data-url="?handler=Like">
-                                @(cheep.UserHasLiked ? "Unlike" : "Like")
-                            </button>
-                        }
-                        <span id="likeCount-@cheep.CheepId">@cheep.LikeCounter</span>
-                        <span>Likes</span>
-                    <form method="post">
-                        @Html.AntiForgeryToken() <!--honestly not sure if i do this right-->
-                    </form>
                     </p>
+                    @if (SignInManager.IsSignedIn(User) && !cheep.Author.Equals(author!.Name))
+                    {
+                        bool isFollowing = await Model.IsFollowing(author!.Name, cheep.Author);
+                        var followStr = isFollowing ? "unfollow" : "follow";
+                        <form class="form-inline" asp-page-handler="ToggleFollow" asp-route-idol="@cheep.Author" method="post">
+                            <button class="cool-btn @(isFollowing ? "following" : "")" type="submit">@followStr</button>
+                        </form>
+                    }
+                    @{
+                        bool hasLiked = cheep.UserHasLiked;
+                        <form class="form-inline like-btn-form" asp-page-handler="Like" asp-route-id="@cheep.CheepId" method="post">
+                            <button class="cool-btn @(hasLiked ? "liked" : "")" type="submit" disabled=@(!SignInManager.IsSignedIn(User))>
+                                <span class="like-btn-text">@(hasLiked ? "liked!" : "like")</span> |
+                                <span class="like-btn-counter">@cheep.LikeCounter</span>
+                            </button>
+                        </form>
+                    }
                 </li>
             }
         </ul>

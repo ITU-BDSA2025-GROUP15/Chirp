@@ -95,7 +95,7 @@ div.page div.navigation form button {
 }
 
 div.page h2 {
-  margin: 0 0 15px;
+  margin: 0 0 5px;
   color: #571010;
   text-shadow: 0 1px 2px #ccc;
 }
@@ -452,4 +452,10 @@ form.form-inline {
   color: #54360a;
 
   box-shadow: 0 1px 4px #734607;
+}
+
+.flex-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
 }

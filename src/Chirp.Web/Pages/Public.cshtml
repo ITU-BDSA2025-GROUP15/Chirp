@@ -11,7 +11,7 @@
     var routeName = ViewContext.HttpContext.GetRouteValue("author");
     Author? author = await UserManager.GetUserAsync(User);
 
-    bool isLeaderboard = Model.Sorting == "MostLiked";
+    bool isLeaderboard = Model.Sorting == "MostLiked" && Model.CurrentPage == 1;
     
     IEnumerable<CheepDTO> cheepList = Model.Cheeps;
     IEnumerable<CheepDTO> cheepTop3 = Model.Cheeps.Take(3);
@@ -22,8 +22,10 @@
 }
 
 <div>
-    <h2> Public Timeline </h2>
-    <partial name="_sortingDropdown" />
+    <div class="flex-heading">
+        <h2> Public Timeline </h2>
+        <partial name="_sortingDropdown" />
+    </div>
     <partial name="_SubmitMessage" />
 
     <p>@ViewData["Error"]</p>
