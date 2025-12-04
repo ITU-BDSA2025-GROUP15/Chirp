@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Identity;
@@ -132,5 +132,4 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
 
     return await _authorservice.IsAuthorFollowingAuthor(authorDTO, idolDTO);
 }
-
 }
