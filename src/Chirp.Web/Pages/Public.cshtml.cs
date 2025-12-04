@@ -18,8 +18,7 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
     public required string Message { get; set; }
 
     [BindProperty(SupportsGet = true)]
-    public string Sorting { get; set; }
-
+    public string? Sorting { get; set; }
 
     public async Task<IActionResult> OnGet(string author, [FromQuery] string page)
     {
