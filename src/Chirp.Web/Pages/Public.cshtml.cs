@@ -62,10 +62,11 @@ public class PublicModel(ICheepService service, UserManager<Author> userManager)
     }
     public async Task<IActionResult> OnPostLike(int id)
     {
-        var author = await _userManager.GetUserAsync(User);
+        Author author = (await _userManager.GetUserAsync(User))!;
         var updatedCount = await _service.Likes(author.Id, id);
+        bool hasLiked = await _service.HasUserLiked(author.Id, id);
 
-        return new JsonResult(new { likeCount = updatedCount });
+        return new JsonResult(new { hasLiked = hasLiked, likeCount = updatedCount });
     }
 
     public List<CheepDTO> LoadCheeps(string author, int page, string sorting)

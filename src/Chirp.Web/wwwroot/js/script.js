@@ -16,9 +16,10 @@ document.addEventListener("DOMContentLoaded", function () {
             })
                 .then(response => response.json())
                 .then(data => {
+                    console.log(data);
                     document.getElementById("likeCount-" + id).textContent = data.likeCount;
                     document.getElementById("likeBtn-" + id).textContent =
-                        currentText.includes("Like") ? "Unlike" : "Like";
+                        data.hasLiked ? "Unlike" : "Like";
                 });
         });
     });
