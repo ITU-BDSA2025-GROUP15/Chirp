@@ -29,9 +29,6 @@ Chirp! also supports Google authentication via OAuth. To enable this feature, [r
 For registering the OAuth app (assuming you are hosting on `http://localhost:5000`), add the following authorized redirect URI:
 - `http://localhost:5000/signin-google`
 
-For HTTPS development:
-- `http://localhost:5001/signin-google`
-
 For production:
 - `https://yourdomain.com/signin-google`
 
