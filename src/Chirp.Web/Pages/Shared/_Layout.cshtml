@@ -1,12 +1,16 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @inject SignInManager<Author> SignInManager
 @inject UserManager<Author> UserManager
+@inject IConfiguration Configuration
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <title>@ViewData["Title"]</title>
     <link href="/css/style.css" rel="stylesheet" type="text/css" />
     <link rel="icon" type="image/png" href="/favicon/favicon.ico">
+    @* Google AdSense *@
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=@(Configuration["GoogleAdSense:ClientId"] ?? "ca-pub-XXXXXXXXXXXXXXXX")"
+            crossorigin="anonymous"></script>
 </head>
 <body>
 <div class=page>
@@ -15,6 +19,21 @@
     <div class=body>
             @RenderBody()
     </div>
+    @* Google AdSense Ad Unit *@
+    @if (!string.IsNullOrEmpty(Configuration["GoogleAdSense:ClientId"]))
+    {
+        <div class="ad-container">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="@Configuration["GoogleAdSense:ClientId"]"
+                 data-ad-slot="@(Configuration["GoogleAdSense:AdSlotId"] ?? "0000000000")"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    }
     <div class=footer>
         Chirp &mdash; An ASP.NET Application
     </div>
