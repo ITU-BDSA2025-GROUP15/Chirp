@@ -54,14 +54,19 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
     [Fact]
     public async Task Page1AndDefaultEqual()
     {
+        // Arrange
+        var tokenRegex = @"<input name=""__RequestVerificationToken"" type=""hidden"" value=""[a-zA-Z0-9\-_\=]*"" />";
+
         // Act
         // Default page
         var HTTPResponsePageDefault = await _fixture.Client.GetAsync("/");
         string responseBodyPageDefault = await HTTPResponsePageDefault.Content.ReadAsStringAsync();
+        responseBodyPageDefault = Regex.Replace(responseBodyPageDefault, tokenRegex, "");
 
         // Page 1
         var HTTPResponsePage1 = await _fixture.Client.GetAsync("/?page=1");
         string responseBodyPage1 = await HTTPResponsePage1.Content.ReadAsStringAsync();
+        responseBodyPage1 = Regex.Replace(responseBodyPage1, tokenRegex, "");
 
         // Assert
         // Page 1 and default page is the same
@@ -119,7 +124,7 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
         // Arrange
         var expectedDateTime = DateTime.Parse("2023-08-01 13:08:28");
         var expectedDateTimeStr = expectedDateTime.ToString("MM/dd/yy H:mm:ss");
-        var expectedFullStr = $"<strong><a href=\"/Adrian\">Adrian</a></strong>Hej, velkommen til kurset.<small>&mdash; {expectedDateTimeStr}";
+        var expectedFullStr = $"<strong><a href=\"/Adrian\">Adrian</a></strong><p>Hej, velkommen til kurset.<small>&mdash; {expectedDateTimeStr}</small></p>";
 
         // User page Adrian
         var HTTPResponseUser = await _fixture.Client.GetAsync("/Adrian");

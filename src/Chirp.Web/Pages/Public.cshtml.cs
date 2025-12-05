@@ -37,7 +37,7 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
 
         if (authorObj != null && author != null && author.Equals(authorObj.Name, StringComparison.OrdinalIgnoreCase))
         {
-            Cheeps = await LoadCheepsMyTimeline(author, _page);
+            Cheeps = await LoadCheepsMyTimeline(author, _page, Sorting);
         }
         else
         {
@@ -87,28 +87,29 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
         return Redirect("/" + authorUrl ?? "NameNotFound");
     }
 
-    public async Task<List<CheepDTO>> LoadCheepsMyTimeline(string author, int page)
+    public async Task<List<CheepDTO>> LoadCheepsMyTimeline(string author, int page, string sorting)
     {
         CurrentPage = page == 0 ? 1 : page;
         var authorAndFollowing = await _authorservice.GetFollowingByName(author);
         authorAndFollowing = [.. authorAndFollowing, author];
         if (author != null)
         {
-            Cheeps = _cheepservice.GetCheepsFromAuthors(authorAndFollowing, page);
+            Cheeps = _cheepservice.GetCheepsFromAuthors(authorAndFollowing, page, sorting);
         }
         else
         {
-            Cheeps = _cheepservice.GetCheeps(page, null);
+            Cheeps = _cheepservice.GetCheeps(page, sorting);
         }
         return Cheeps;
     }
-    public async Task<IActionResult> OnPostLike(int id)
+    public async Task<IActionResult> OnPostLike(int id, bool json)
     {
         Author author = (await _userManager.GetUserAsync(User))!;
         var updatedCount = await _cheepservice.Likes(author.Id, id);
         bool hasLiked = await _cheepservice.HasUserLiked(author.Id, id);
 
-        return new JsonResult(new { hasLiked = hasLiked, likeCount = updatedCount });
+        if (json) return new JsonResult(new { hasLiked = hasLiked, likeCount = updatedCount });
+        else return RedirectToPage();
     }
 
     public List<CheepDTO> LoadCheeps(string author, int page, string? sorting)
@@ -125,7 +126,7 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
         return Cheeps;
     }
 
-    public async Task<IActionResult> OnGetToggleFollowAsync(string idol)
+    public async Task<IActionResult> OnPostToggleFollowAsync(string idol, string? sorting)
     {
         var author = await _userManager.GetUserAsync(User);
         if (author == null)
@@ -148,7 +149,8 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
             await _authorservice.FollowAuthor(authorDTO, idolDTO);
         }
 
-        return RedirectToPage();
+        if (sorting != null) return RedirectToPage("", new { sorting });
+        else return RedirectToPage();
     }
 
     public async Task<bool> IsFollowing(string author, string idol)

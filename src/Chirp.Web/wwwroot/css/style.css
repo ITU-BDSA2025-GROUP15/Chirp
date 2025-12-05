@@ -95,7 +95,7 @@ div.page div.navigation form button {
 }
 
 div.page h2 {
-  margin: 0 0 15px;
+  margin: 0 0 5px;
   color: #571010;
   text-shadow: 0 1px 2px #ccc;
 }
@@ -323,4 +323,139 @@ table#personal-data tr * {
 table#personal-data tr *:last-child {
     text-align: right;
     overflow-wrap: anywhere;
+}
+
+/* Cool btns */
+form.form-inline {
+  display: inline;
+}
+
+.cool-btn {
+  padding: 2px 6px;
+  border-radius: 2px;
+  background: linear-gradient(#e4f8f7, #caebe9);
+  border: 1px solid #26776F;
+  color: #26776F;
+  font-family: sans-serif;
+}
+
+.cool-btn:hover {
+  background: linear-gradient(#d1f4f3, #96ede7);
+}
+
+.cool-btn.following {
+  background: linear-gradient(#d46060, #993e3e);
+  border: 1px solid #670909;
+  color: white;
+}
+
+.cool-btn.following:hover {
+  background: linear-gradient(#e96d6d, #bd3d3d);
+}
+
+.like-btn-form .cool-btn {
+  background: linear-gradient(#fafafa, #d0d0d0);
+  border: 1px solid #575757;
+  color: #575757;
+}
+
+.like-btn-form .cool-btn:hover {
+  background: linear-gradient(#def0e2, #9adca8);
+  border: 1px solid #223621;
+  color: #223621;
+}
+
+.like-btn-form .cool-btn.liked {
+  background: linear-gradient(#68be7c, #327741);
+  border: 1px solid #223621;
+  color: #ffffff;
+}
+
+.like-btn-form .cool-btn.liked:hover {
+  background: linear-gradient(#77b086, #3a6043);
+}
+
+/* Cheep OAT */
+#oat-container {
+  display: grid;
+  grid-template-areas: "gold gold" "silver bronze";
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+
+  justify-items: center;
+  align-items: start;
+  gap: 8px;
+}
+
+.cheep-oat {
+  display: flex;
+  align-items: flex-start;
+
+  border-radius: 8px;
+  border: 1px solid #bb8009;
+  background: #ffd589;
+  color: #6b4400;
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.cheep-oat img {
+  max-width: 20%;
+  object-fit: contain;
+}
+
+.cheep-oat .cheep-oat-body {
+  padding-inline: 8px;
+  overflow-wrap: anywhere;
+  height: 100%;
+}
+
+.cheep-oat .cheep-oat-body a {
+  color: inherit;
+}
+
+.cheep-oat .cheep-oat-body p {
+  margin-block: 4px;
+}
+
+.cheep-oat .cheep-oat-body p small {
+  opacity: 0.67;
+}
+
+/* Real OAT */
+
+.cheep-oat.gold {
+  width: 100%;
+  font-size: x-large;
+  padding: 12px;
+  grid-area: gold;
+  
+  box-shadow: 0 1px 4px #e2a500;
+}
+
+.cheep-oat.gold .cheep-oat-body {
+  padding-inline: 12px;
+}
+
+.cheep-oat.silver {
+  border: 1px solid #808080;
+  background: #e5edec;
+  color: #424242;
+
+  box-shadow: 0 1px 4px #b2c8cd;
+}
+
+.cheep-oat.bronze {
+  border: 1px solid #a8691a;
+  background: #eab072;
+  color: #54360a;
+
+  box-shadow: 0 1px 4px #734607;
+}
+
+.flex-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
 }
