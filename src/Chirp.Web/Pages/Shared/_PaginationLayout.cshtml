@@ -14,11 +14,12 @@
             }
             <form onsubmit="return this.checkValidity()" style="display:inline-block;">
                 <input 
-                    type="number" 
+                    type="text" 
                     class="pageInput"
                     name="page" 
                     value=@Model.CurrentPage
-                    min="1"
+                    inputmode="numeric"
+                    pattern="[0-9]*|wii"
                 ></input>
             </form>
             @if (Model.HasNextPage) 
@@ -31,3 +32,42 @@
             }
 </center>
 @RenderSection("Scripts", required: false)
+
+@section Scripts {
+<script>
+document.querySelector(".pageInput").addEventListener("input", function () {
+    if (this.value.toLowerCase() === "wii") {
+        const video = document.createElement("video");
+        video.src = "/videos/testvideo.mp4"; // need to get video first
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = true; 
+        video.playsInline = true;
+        video.id = "wiiBgVideo";
+        video.style.position = "fixed";
+        video.style.top = "0";
+        video.style.left = "0";
+        video.style.width = "100%";
+        video.style.height = "100%";
+        video.style.objectFit = "cover";
+        video.style.zIndex = "-1";            
+        video.style.opacity = "0.80";  // adjust videos if too bright
+        if (!document.getElementById("wiiBgVideo")) {
+            document.body.appendChild(video);
+        }
+     const existingAudio = document.getElementById("wiiBgMusic");
+        if (!existingAudio) {
+            const audio = document.createElement("audio");
+            audio.src = "/videos/wiimusic.mp3";   
+            audio.autoplay = true;
+            audio.loop = true;
+            audio.id = "wiiBgMusic";
+
+            document.body.appendChild(audio);
+        }
+    }
+
+});
+</script>
+}
+
