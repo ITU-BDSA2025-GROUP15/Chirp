@@ -30,7 +30,7 @@ string? googleClientSecret = builder.Configuration["authentication:google:client
 bool ghConfigured = false;
 bool googleConfigured = false;
 
-if (ghClientId != null && ghClientSecret != null || googleClientId != null && googleClientSecret != null)
+if ((ghClientId != null && ghClientSecret != null) || (googleClientId != null && googleClientSecret != null))
 {
     var authBuilder = builder.Services.AddAuthentication(options =>
     {
@@ -94,7 +94,6 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
 
 app.UseStaticFiles();
 
