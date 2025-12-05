@@ -253,23 +253,24 @@ public class End2EndTests : IClassFixture<RazorPageFixture>
 
         //Edit field agrees and we are on next page.
         await page.WaitForSelectorAsync("text=Luanna Muro But now, tell me", new() { Timeout = 5000 });
-        Assert.Equal("2", await page.GetByRole(AriaRole.Spinbutton).InputValueAsync());
+        var pageInput = page.Locator(".pageInput");
+        Assert.Equal("2", await pageInput.InputValueAsync());
         Assert.True(await page.GetByText("Luanna Muro But now, tell me").IsVisibleAsync());
 
         //Click previous button
         await page.GetByRole(AriaRole.Link, new() { Name = "Previous" }).ClickAsync();
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         //Page one agian
-        Assert.Equal("1", await page.GetByRole(AriaRole.Spinbutton).InputValueAsync());
+       Assert.Equal("1", await pageInput.InputValueAsync());
 
         //Use field edit to go to page 3
-        await page.GetByRole(AriaRole.Spinbutton).ClickAsync();
-        await page.GetByRole(AriaRole.Spinbutton).FillAsync("3");
-        await page.GetByRole(AriaRole.Spinbutton).PressAsync("Enter");
+        await pageInput.ClickAsync();
+        await pageInput.FillAsync("3");
+        await pageInput.PressAsync("Enter");
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         //Field edit says 3 and you can click on Previous button 2 times. (page 1)
-        Assert.Equal("3", await page.GetByRole(AriaRole.Spinbutton).InputValueAsync());
+        Assert.Equal("3", await pageInput.InputValueAsync());
         await page.GetByRole(AriaRole.Link, new() { Name = "Previous" }).ClickAsync();
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await page.GetByRole(AriaRole.Link, new() { Name = "Previous" }).ClickAsync();
