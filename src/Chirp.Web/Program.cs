@@ -1,6 +1,7 @@
 using Chirp.Razor;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,29 +25,53 @@ builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 
 string? ghClientId = builder.Configuration["authentication:github:clientId"];
 string? ghClientSecret = builder.Configuration["authentication:github:clientSecret"];
+string? googleClientId = builder.Configuration["authentication:google:clientId"];
+string? googleClientSecret = builder.Configuration["authentication:google:clientSecret"];
 bool ghConfigured = false;
+bool googleConfigured = false;
 
-if (ghClientId != null && ghClientSecret != null)
+if (ghClientId != null && ghClientSecret != null || googleClientId != null && googleClientSecret != null)
 {
-    builder.Services.AddAuthentication(options =>
+    var authBuilder = builder.Services.AddAuthentication(options =>
+    {
+        if (ghClientId != null && ghClientSecret != null)
         {
             options.DefaultChallengeScheme = "GitHub";
-        })
-        .AddCookie()
-        .AddGitHub(o =>
+        }
+        else if (googleClientId != null && googleClientSecret != null)
+        {
+            options.DefaultChallengeScheme = "Google";
+        }
+    })
+    .AddCookie();
+
+    if (ghClientId != null && ghClientSecret != null)
+    {
+        authBuilder.AddGitHub(o =>
         {
             o.ClientId = ghClientId;
             o.ClientSecret = ghClientSecret;
             o.CallbackPath = "/signin-github";
             o.Scope.Add("user:email");
         });
+        ghConfigured = true;
+    }
 
-    ghConfigured = true;
+    if (googleClientId != null && googleClientSecret != null)
+    {
+        authBuilder.AddGoogle(o =>
+        {
+            o.ClientId = googleClientId;
+            o.ClientSecret = googleClientSecret;
+            o.CallbackPath = "/signin-google";
+        });
+        googleConfigured = true;
+    }
 }
 
 var app = builder.Build();
 
-if (!ghConfigured) app.Logger.LogWarning("GitHub Authentication not configured. Client ID or client secret missing!");
+if (!ghConfigured && !googleConfigured) app.Logger.LogWarning("Authentication providers not configured. GitHub or Google client id or secret missing!");
 
 // Seed the database with example data and initial accounts
 using (var scope = app.Services.CreateScope())

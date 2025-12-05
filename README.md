@@ -23,6 +23,30 @@ dotnet user-secrets set "authentication:github:clientSecret" <Your Client Secret
 ```
 Your Chirp! instance will now use your GitHub OAuth application to allow GitHub logins on the site.
 
+### Setting up Google authentication
+Chirp! also supports Google authentication via OAuth. To enable this feature, [register an OAuth application on Google Cloud Console](https://console.cloud.google.com/).
+
+For registering the OAuth app (assuming you are hosting on `http://localhost:5000`), add the following authorized redirect URI:
+- `http://localhost:5000/signin-google`
+
+For HTTPS development:
+- `http://localhost:5001/signin-google`
+
+For production:
+- `https://yourdomain.com/signin-google`
+
+Then you can get a client ID + client secret, which you must register in the following environment variables:
+```
+authentication:google:clientId=<Your Client ID>
+authentication:google:clientSecret=<Your Client Secret>
+```
+Alternatively, if you have downloaded the Chirp! source code, you can use `dotnet user-secrets` to register them instead:
+```
+dotnet user-secrets set "authentication:google:clientId" <Your Client ID>
+dotnet user-secrets set "authentication:google:clientSecret" <Your Client Secret>
+```
+Your Chirp! instance will now use your Google OAuth application to allow Google logins on the site.
+
 ### Setting a custom database location
 By default, Chirp! will store the database in your temporary directory as `chirp.db`. 
 
