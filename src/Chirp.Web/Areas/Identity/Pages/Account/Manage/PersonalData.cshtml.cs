@@ -11,19 +11,23 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
 {
     public class PersonalDataModel : PageModel
     {
-        private readonly ICheepService _service;
+        private readonly IAuthorService _authorService;
+        private readonly ICheepService _cheepService;
         private readonly UserManager<Author> _userManager;
         private readonly ILogger<PersonalDataModel> _logger;
 
         public required List<CheepDTO> Cheeps { get; set; }
+        public required string[] Follows { get; set; }
         public required Dictionary<string, string> PersonalData { get; set; } = new Dictionary<string, string>();
 
         public PersonalDataModel(
-            ICheepService service,
+            IAuthorService authorService,
+            ICheepService cheepService,
             UserManager<Author> userManager,
             ILogger<PersonalDataModel> logger)
         {
-            _service = service;
+            _authorService = authorService;
+            _cheepService = cheepService;
             _userManager = userManager;
             _logger = logger;
         }
@@ -44,7 +48,9 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
                 PersonalData.Add(p.Name, p.GetValue(user)?.ToString() ?? "null");
             }
 
-            Cheeps = _service.GetAllCheepsFromAuthor(user.Name);
+            Cheeps = _cheepService.GetAllCheepsFromAuthor(user.Name);
+
+            Follows = await _authorService.GetFollowingByName(user.Name);
 
             return Page();
         }

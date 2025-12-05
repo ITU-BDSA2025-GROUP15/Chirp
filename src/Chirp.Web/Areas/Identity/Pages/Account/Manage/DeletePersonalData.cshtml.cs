@@ -14,15 +14,18 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
 {
     public class DeletePersonalDataModel : PageModel
     {
+        private readonly IAuthorService _authorService;
         private readonly UserManager<Author> _userManager;
         private readonly SignInManager<Author> _signInManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
 
         public DeletePersonalDataModel(
+            IAuthorService authorService,
             UserManager<Author> userManager,
             SignInManager<Author> signInManager,
             ILogger<DeletePersonalDataModel> logger)
         {
+            _authorService = authorService;
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
@@ -84,6 +87,13 @@ namespace Chirp.Web.Areas.Identity.Pages.Account.Manage
                     ModelState.AddModelError(string.Empty, "Incorrect password.");
                     return Page();
                 }
+            }
+
+            // Remove any followers before deleting account
+            var following = await _authorService.GetFollowingByName(user.Name);
+            foreach (var f in following)
+            {
+                await _authorService.UnFollowAuthor(new AuthorDTO{Name = user.Name}, new AuthorDTO{Name = f});
             }
 
             var result = await _userManager.DeleteAsync(user);

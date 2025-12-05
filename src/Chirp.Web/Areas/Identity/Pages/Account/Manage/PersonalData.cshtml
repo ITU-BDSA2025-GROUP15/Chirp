@@ -44,6 +44,21 @@
         {
             <em>Could not retrieve personal information.</em>
         }
+        <h3>Your follows</h3>
+        @if (Model.Follows.Any()) {
+            <ul>
+                @foreach (string f in Model.Follows)
+                {
+                    <li>
+                        <strong>
+                            <a href="/@Uri.EscapeDataString(f)">@f</a>
+                        </strong>
+                    </li>
+                }
+            </ul>
+        } else {
+            <em>You are not following anyone.</em>
+        }
         <h3>Your cheeps</h3>
         @if (Model.Cheeps.Any())
         {
