@@ -28,7 +28,7 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
         
         if (page?.ToLower() == "wii")
     {
-        return Page(); // JS handles the video
+        page = null;
     }
         int _page = 1;
         if (page != null)
