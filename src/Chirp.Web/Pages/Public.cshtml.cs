@@ -25,7 +25,11 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
         var authorObj = await _userManager.GetUserAsync(User);
         if (string.IsNullOrEmpty(Sorting))
             Sorting = "Newest"; // default
-
+        
+        if (page?.ToLower() == "wii")
+    {
+        page = null;
+    }
         int _page = 1;
         if (page != null)
         {
