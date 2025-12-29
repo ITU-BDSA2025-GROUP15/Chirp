@@ -2,8 +2,8 @@
 title: _Chirp!_ Project Report
 subtitle: ITU BDSA 2025 Group `<15>`
 author:
-- "Frederik"
-- "Hjalte"
+- "Frederik Haraszuk Stein <frhs@itu.dk>"
+- "Hjalte Krohn Frandsen <hjfr@itu.dk>"
 - "Kenny Izaak Egelund <keeg@itu.dk>"
 - "Lucas Tambour Fabricius <lufa@itu.dk>"
 - "Omar Osama Al Hassan <omal@itu.dk>"
@@ -15,26 +15,26 @@ numbersections: true
 
 ## Domain model
 
+![domain](./images/domain.svg)
 
-![domain](https://hackmd.io/_uploads/HJeQlfe4bx.svg)
-
-Here is the domain model for our Chirp! project. 
+Here is the domain model for our Chirp! project.
 
 ## Architecture — In the small
 
-![Illustration of the _Chirp!_ architecture ](docs/images/architecture.png)
+![Illustration of the _Chirp!_ onion architecture](./images/architecture.png)
 
 ## Architecture of deployed application
-
+![Illustration of the _Chirp!_ deployment architecture](./images/deployment.svg)
 
 ## User activities
+![Illustration of User activities](./images/UserJurney.svg)
 
-## Sequence of functionality/calls trough _Chirp!_
+## Sequence of functionality/calls through _Chirp!_
 
 # Process
 
 ## Build, test, release, and deployment
-![github_workflow](https://hackmd.io/_uploads/SkdKhWx4Wx.svg)
+![Activity diagram showing deployments via GitHub Actions workflows.](./images/github_workflow.svg)
 
 
 Chirp! is built, tested, released, and deployed using automated GitHub Actions workflows. We have three workflows relevant for the deployment of the Chirp! application:
@@ -43,14 +43,14 @@ Chirp! is built, tested, released, and deployed using automated GitHub Actions w
 - Push to tag v\*.\*.\*: Creates a ZIP and adds it to release with the pushed tag. Note: this workflow runs as a matrix, creating ZIPs for Windows, macOS and Linux.
 
 ## Team work
-![The final GitHub project board for our Chirp! project.](https://hackmd.io/_uploads/B1DarfgE-x.png)
+![The final GitHub project board for our Chirp! project.](./images/project_board.png)
 
 
 All required features for the Chirp! project should be in place, with most features having been covered by either a unit test, integration test or end-to-end test. However, there are still some bug fixes, edge cases and other improvements to be made.
 
 One thing that we didn't implement is checking for duplicate names when someone signs up through GitHub integration. Imagine that a user has the username "Bob". If another user signs up through the GitHub integration with a GitHub username that is also "Bob", the backend does not check if this username is already taken. This could result in a crash.
 
-Here are some other bugs/features we didn't end up fixing/implemeting:
+Here are some other bugs/features we didn't end up fixing/implementing:
 
 - Have to click email confirmation otherwise it breaks the user. 
 - More tests more like a pyramid. 
@@ -148,7 +148,7 @@ You can now access the Chirp! service in your browser on the following link: htt
 
 ## How to run test suite locally
 Install playwright into the Razor.Tests project folder. 
-Make sure powershell is installed. [Powershell installation guide](https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershell?view=powershell-7.5).
+Make sure PowerShell is installed. [PowerShell installation guide](https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershell?view=powershell-7.5).
 Navigate to the test project in your terminal and run the following:
 ```
 pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps
@@ -162,10 +162,10 @@ Now the tests can be run with the command `dotnet test`.
 ## License
 For the applications license we chose the MIT license because of its simplicity and non-restrictive nature leading to more collaboration. The MIT license is also compatible with most other licenses. To see the full [license](https://github.com/ITU-BDSA2025-GROUP15/Chirp/blob/main/LICENSE). 
 
-## LLMs, ChatGPT, CoPilot, and others
-During the group's work on the application LLMs were used to a limited degree. This can be seen in the contributors tab under insights where both CoPilot and CodeFactor has been attributed to a total of 25 commits. ChatGPT also has some attributions to commits, but they do not show up in GitHub insights because ChatGPT does not have a GitHub account.
+## LLMs, ChatGPT, Copilot, and others
+During the group's work on the application LLMs were used to a limited degree. This can be seen in the contributors tab under insights where both Copilot and CodeFactor has been attributed to a total of 25 commits. ChatGPT also has some attributions to commits, but they do not show up in GitHub insights because ChatGPT does not have a GitHub account.
 
-CodeFactor, unlike ChatGPT and CoPilot, is not an LLM, but a bot that does static analysis based on rules and therefore consumes much less power than an LLM. Although the exact numbers on how much energy and water an LLM uses is hard to figure out, due to the companies not releasing official numbers, the amount is likely high and is the reason the group only used the LLMs to a limited degree. 
+CodeFactor, unlike ChatGPT and Copilot, is not an LLM, but a bot that does static analysis based on rules and therefore consumes much less power than an LLM. Although the exact numbers on how much energy and water an LLM uses is hard to figure out, due to the companies not releasing official numbers, the amount is likely high and is the reason the group only used the LLMs to a limited degree. 
 CodeFactor caught many common mistakes like too many newlines or other redundancies and did improve overall code quality.
 
-Whether the LLMs sped up or slowed down our process depended on the response gotten from the LLMs. Issue [#123](https://github.com/ITU-BDSA2025-GROUP15/Chirp/pull/123) where Copilot reduced the size of our release files without us having to research how one might do so, was an example of LLMs speeding up our process. There were also instances where the LLMs slowed down our process by leading us astray or coming up with incorrect solutions. 
+Whether the LLMs sped up or slowed down our process depended on the response gotten from the LLMs. Issue [#123](https://github.com/ITU-BDSA2025-GROUP15/Chirp/pull/123) where Copilot reduced the size of our release files without us having to research how one might do so, was an example of LLMs speeding up our process. There were also instances where the LLMs slowed down our process by leading us astray or coming up with incorrect solutions.
