@@ -17,6 +17,8 @@ Here comes a description of our domain model.
 
 ## Architecture — In the small
 
+![Illustration of the _Chirp!_ architecture ](docs/images/architecture.png)
+
 ## Architecture of deployed application
 
 ## User activities
