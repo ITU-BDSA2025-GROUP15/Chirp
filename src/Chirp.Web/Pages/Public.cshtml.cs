@@ -117,11 +117,11 @@ public class PublicModel(ICheepService cheepService, IAuthorService authorServic
         CurrentPage = page == 0 ? 1 : page;
         if (author != null)
         {
-            Cheeps = _cheepservice.GetCheepsFromAuthor(author, page, sorting);
+            Cheeps = _cheepservice.GetCheepsFromAuthor(author, page, sorting!);
         }
         else
         {
-            Cheeps = _cheepservice.GetCheeps(page, sorting);
+            Cheeps = _cheepservice.GetCheeps(page, sorting!);
         }
         return Cheeps;
     }

@@ -9,7 +9,9 @@ author:
 - "Omar Osama Al Hassan <omal@itu.dk>"
 - "Tobias Mondrup Holm <tmho@itu.dk>"
 numbersections: true
+toc: true
 ---
+\newpage
 
 # Design and Architecture of _Chirp!_
 
@@ -17,19 +19,45 @@ numbersections: true
 
 ![domain](./images/domain.svg)
 
-Here is the domain model for our Chirp! project.
+Here is the domain model for our Chirp! project. The model extends the IdentityUser class for the Author, which allows us to use ASP.NET Identity for handling user authentication. We have also added Follows to track who an author is following, and LikeCounter to track likes on a cheep.
 
 ## Architecture — In the small
 
 ![Illustration of the _Chirp!_ onion architecture](./images/architecture.png)
 
+Our Chirp! application follows the onion architecture. In the onion architecture, we ensure that outer layers depend only on the next inner layer, which ensures loose coupling. Loose coupling leads to better maintainability and testability.
+
+The inner core layer contains our Data Transfer Objects (DTOs), which are simplified versions of our actual domain model objects.
+
+We then have our infrastructure class containing the repository and service layer. The repository layer handles communication with the database, while the service layer prepares data for the UI layer.
+
+The outer layer is the UI/Web layer. It contains all the components for our Razor pages, which are used for running our web service.
+
+Finally, we have our test suite that covers all layers of the onion.
 ## Architecture of deployed application
 ![Illustration of the _Chirp!_ deployment architecture](./images/deployment.svg)
 
+This is the architecture of the deployed Chirp! application. The server is deployed to Azure App Service, where the Chirp! software stack (structured after the onion architecture) is running. 
+
+Clients connect to the Chirp.Web service via HTTPS through their browser. The Chirp.Web service then serves a rendered page via Razor Pages.
+
+To support external logins in Chirp!, we also maintain OAuth connections to the login providers. For our project, we have added both GitHub and Google as OAuth login providers.
+
 ## User activities
-![Illustration of User activities](./images/UserJurney.svg)
+![Illustration of User activities](./images/User_exp.svg)
+Here is an activity diagram. This diagram shows the difference in what an authorized and unauthorized user can in the application.  
 
 ## Sequence of functionality/calls through _Chirp!_
+
+![Illustration of call sequence when new user accesses the Chirp! web page.](./images/sequence.svg)
+
+Here is the call sequence for when a non-authenticated user accesses the front page of Chirp!. 
+
+The web layer processes the request in the OnGet() method, which first checks whether the user is logged in. This is used to display the correct header.
+
+Then we call LoadCheeps(), a helper method which queries the service layer and retrieves a list of CheepDTOs. The service calls the repository, which in turn calls the SQLite database using EFCore. 
+
+Finally, the page is rendered in Razor Pages and sent to the user.
 
 # Process
 
@@ -42,6 +70,8 @@ Chirp! is built, tested, released, and deployed using automated GitHub Actions w
 - Push/PR merge to main: Creates a Chirp! ZIP with release configuration, which is then deployed on the Azure web app.
 - Push to tag v\*.\*.\*: Creates a ZIP and adds it to release with the pushed tag. Note: this workflow runs as a matrix, creating ZIPs for Windows, macOS and Linux.
 
+The GitHub repository also has a discord notification workflow that pings a discord channel every time a new pull request was made. This is because discord was our main platform of communication and the easiest way of getting a hold of us.  
+
 ## Team work
 ![The final GitHub project board for our Chirp! project.](./images/project_board.png)
 
@@ -52,13 +82,15 @@ One thing that we didn't implement is checking for duplicate names when someone 
 
 Here are some other bugs/features we didn't end up fixing/implementing:
 
-- Have to click email confirmation otherwise it breaks the user. 
-- More tests more like a pyramid. 
+- Not clicking email confirmation breaks the user. 
+- More unit test to make sure our distribution of test are like a pyramid.
 - Mock services for tests. 
+- More expansive fuzz testing.
 
-### From issue to merge
+#### From issue to merge
 
-
+![Flowchart of issues from creation to merge](<images/from issue to merge2.svg>)
+This flowchart shows the process from the creation of an issue to when the related branch is merged into the main branch. When a new issue is created, our GitHub workflow automatically sets its status to "To-do" in our project board. 
 
 ## How to make _Chirp!_ work locally
 
@@ -66,7 +98,8 @@ Here are some other bugs/features we didn't end up fixing/implementing:
 The Chirp! application supports environment variables to customize your setup. Be sure to register any needed environment variables before you run the server.
 
 #### Setting up GitHub authentication
-Chirp! supports GitHub integration via OAuth. To enable this feature, you must first [register an OAuth application on GitHub](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app). 
+Chirp! supports GitHub integration via OAuth. Without this setup the feature to login with github does not work when running Chirp! locally. 
+To enable this feature, you must first [register an OAuth application on GitHub](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app). 
 
 For registering the OAuth app (assuming you are hosting on `http://localhost:5000`), use the following values:
 - Homepage URL: `http://localhost:5000`
@@ -90,8 +123,6 @@ Chirp! also supports Google authentication via OAuth. To enable this feature, [r
 For registering the OAuth app (assuming you are hosting on `http://localhost:5000`), add the following authorized redirect URI:
 - `http://localhost:5000/signin-google`
 
-For production:
-- `https://yourdomain.com/signin-google`
 
 Then you can get a client ID + client secret, which you must register in the following environment variables:
 ```
@@ -135,6 +166,17 @@ You can now access the Chirp! service in your browser on the following link: htt
 #### Clone source code
 1. Make sure git is installed. [Installation guide](https://git-scm.com/install/).
 2. To clone the source code go to your terminal and type: `git clone https://github.com/ITU-BDSA2025-GROUP15/Chirp.git`
+3. You should see output similar to this:
+```
+Cloning into 'Chirp'...
+remote: Enumerating objects: 2750, done.
+remote: Counting objects: 100% (490/490), done.
+remote: Compressing objects: 100% (313/313), done.
+remote: Total 2750 (delta 293), reused 196 (delta 175), pack-reused 2260 (from 3)
+Receiving objects: 100% (2750/2750), 110.96 MiB | 21.22 MiB/s, done.
+Resolving deltas: 100% (1651/1651), done.
+```
+4. The folder should now be cloned into a new folder called `Chirp`.
 #### How to build Chirp!
 1. Make sure you have installed .NET version 8.0. You can get it [here.](https://dotnet.microsoft.com/download/dotnet/8.0)
 2. Open your terminal and navigate to the root folder of the project.
@@ -147,16 +189,25 @@ You can now access the Chirp! service in your browser on the following link: htt
 4. You have now opened Chirp!
 
 ## How to run test suite locally
-Install playwright into the Razor.Tests project folder. 
-Make sure PowerShell is installed. [PowerShell installation guide](https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershell?view=powershell-7.5).
-Navigate to the test project in your terminal and run the following:
-```
-pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps
-```
+1. First make sure the project is build by navigating to the root folder of Chirp and run
+      ```
+      dotnet build
+      ```
+2. Make sure PowerShell is installed. [PowerShell installation guide](https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershell?view=powershell-7.5).
+3. Install playwright into the Razor.Tests project folder. 
+-  Navigate to the test project in your terminal and run the following:
+      ```
+      pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps
+      ```
 
-For further issues with Playwright, consult [Playwright.](https://playwright.dev/dotnet/docs/intro)
+- For further issues with Playwright, consult [Playwright.](https://playwright.dev/dotnet/docs/intro)
 
-Now the tests can be run with the command `dotnet test`. 
+4. Now the tests can be run with the command `dotnet test` (This may take a moment). 
+
+There are three different kinds of test: unit test, integration tests and end-to-end tests. 
+The unit tests are testing the individual methods to see if they work. The integration tests makes sure methods work together correctly.
+The end-to-end tests the entire program running and therefore also handles tests that test security like SQL injection, XSS, and CSRF to ensure there are no security vulnerabilities. 
+
 # Ethics
 
 ## License
