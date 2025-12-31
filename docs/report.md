@@ -21,6 +21,7 @@ toc: true
 
 Here is the domain model for our Chirp! project. The model extends the class IdentityUser for the Author, which allows us to use ASP.NET Identity for handling user authentication. We have also added Follows to track who an author is following, and LikeCounter to track likes on a cheep.
 
+\newpage
 ## Architecture — In the small
 
 ![Illustration of the _Chirp!_ onion architecture](./images/Onion-crop.svg)
@@ -47,6 +48,7 @@ Clients connect to the Chirp.Web service via HTTPS through their browser. The Ch
 
 To support external logins in Chirp!, we also maintain OAuth connections to the login providers. For our project, we have added both GitHub and Google as OAuth login providers.
 
+\newpage
 ## User activities
 
 ![Illustration of User activities](./images/UserPro.svg)
@@ -66,6 +68,7 @@ Then we call LoadCheeps(), a helper method which queries the service layer and r
 
 Finally, the page is rendered in Razor Pages and sent to the user.
 
+\newpage
 # Process
 
 ## Build, test, release, and deployment
@@ -80,6 +83,7 @@ Chirp! is built, tested, released, and deployed using automated GitHub Actions w
 
 The GitHub repository also has a Discord notification workflow that pings a Discord channel every time a new pull request was made. This is because Discord was our main platform of communication and the easiest way to get a hold of us. 
 
+\newpage
 ## Team work
 ![The final GitHub project board for our Chirp! project.](./images/project_board.png)
 
@@ -102,6 +106,7 @@ Here are some other bugs/features we didn't end up fixing/implementing:
 
 This flowchart shows the process from the creation of an issue to when the related branch is merged into the main branch. When a new issue is created, our GitHub workflow automatically sets its status to "To-do" in our project board. Then when that branch is merged into main, the workflow then sets the status of the related issue to "Done".
 
+\newpage
 ## How to make _Chirp!_ work locally
 
 ### Before you run Chirp!
