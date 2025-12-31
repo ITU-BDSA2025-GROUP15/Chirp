@@ -23,7 +23,16 @@ Here is the domain model for our Chirp! project. The model extends the IdentityU
 
 ## Architecture — In the small
 
-![Illustration of the _Chirp!_ onion architecture](./images/architecture.png)
+The Figure below shows an illustration of how we implemented the Onion Architecture to our web application Chirp. This was done with the intention of keeping easy maintainability and testability throughout the project, such that the Dependency Inversion Principle is kept. High-level modules like our Chirp.Core, doesn't depend on Low-level modules like Chirp.Web, which as a developer ensures changes within the application can be easily adjusted, so modules doesn't interfere with the logic and functionality across the whole program.
+As such our application has been split up in different layers of dependency.
+
+The Domain layer: The center, Chirp.Core, that consist of our domain model and DTO's which are fully independent.
+
+A second and third layer, that is made of the Infrastructure.Chirp. Chirp Repository in the second layer, which access and manages the data. And Chirp Services in the third layer, that serve as a flow of data between the repositories and the outer layer.
+
+And finally the most outer layer, Chirp.Web, that handles, User interface, User interactions, page rendering and testing, which is fully dependent across all the inner layers.
+
+![Illustration of the _Chirp!_ onion architecture](./images/onion.jpg)
 
 Our Chirp! application follows the onion architecture. In the onion architecture, we ensure that outer layers depend only on the next inner layer, which ensures loose coupling. Loose coupling leads to better maintainability and testability.
 
