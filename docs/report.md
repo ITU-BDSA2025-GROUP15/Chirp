@@ -32,7 +32,7 @@ A second and third layer, that is made of the Infrastructure.Chirp. Chirp Reposi
 
 And finally the most outer layer, Chirp.Web, that handles, User interface, User interactions, page rendering and testing, which is fully dependent across all the inner layers.
 
-![Illustration of the _Chirp!_ onion architecture](./images/onion.jpg)
+![Illustration of the _Chirp!_ onion architecture](./images/Onion.png)
 
 Our Chirp! application follows the onion architecture. In the onion architecture, we ensure that outer layers depend only on the next inner layer, which ensures loose coupling. Loose coupling leads to better maintainability and testability.
 
