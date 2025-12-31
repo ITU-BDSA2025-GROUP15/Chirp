@@ -32,7 +32,7 @@ A second and third layer, that is made of the Infrastructure.Chirp. Chirp Reposi
 
 And finally the most outer layer, Chirp.Web, that handles, User interface, User interactions, page rendering and testing, which is fully dependent across all the inner layers.
 
-![Illustration of the _Chirp!_ onion architecture](./images/onion.jpg)
+![Illustration of the _Chirp!_ onion architecture](./images/Onion.png)
 
 Our Chirp! application follows the onion architecture. In the onion architecture, we ensure that outer layers depend only on the next inner layer, which ensures loose coupling. Loose coupling leads to better maintainability and testability.
 
@@ -43,7 +43,9 @@ We then have our infrastructure class containing the repository and service laye
 The outer layer is the UI/Web layer. It contains all the components for our Razor pages, which are used for running our web service.
 
 Finally, we have our test suite that covers all layers of the onion.
+
 ## Architecture of deployed application
+
 ![Illustration of the _Chirp!_ deployment architecture](./images/deployment.svg)
 
 This is the architecture of the deployed Chirp! application. The server is deployed to Azure App Service, where the Chirp! software stack (structured after the onion architecture) is running. 
@@ -53,7 +55,7 @@ Clients connect to the Chirp.Web service via HTTPS through their browser. The Ch
 To support external logins in Chirp!, we also maintain OAuth connections to the login providers. For our project, we have added both GitHub and Google as OAuth login providers.
 
 ## User activities
-![Illustration of User activities](./images/User_exp.svg)
+![Illustration of User activities](./images/User_act.svg)
 Here is an activity diagram. This diagram shows the difference in what an authorized and unauthorized user can in the application.  
 
 ## Sequence of functionality/calls through _Chirp!_
