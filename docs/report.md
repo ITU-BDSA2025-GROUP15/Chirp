@@ -36,6 +36,7 @@ A second and third layer, that is made of the Infrastructure.Chirp. Chirp Reposi
 
 And finally the most outer layer, Chirp.Web, that handles User interface, User interactions, page rendering, and testing, which is fully dependent across all the inner layers.
 
+\newpage
 ## Architecture of deployed application
 
 ![Illustration of the _Chirp!_ deployment architecture](./images/deployment.svg)
@@ -52,6 +53,7 @@ To support external logins in Chirp!, we also maintain OAuth connections to the 
 
 Here is an activity diagram. This diagram shows the difference in what an authorized and unauthorized user can in the application.  
 
+\newpage
 ## Sequence of functionality/calls through _Chirp!_
 
 ![Illustration of call sequence when new user accesses the Chirp! web page.](./images/sequence.svg)
