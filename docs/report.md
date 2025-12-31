@@ -1,6 +1,6 @@
 ---
 title: _Chirp!_ Project Report
-subtitle: ITU BDSA 2025 Group `<15>`
+subtitle: ITU BDSA 2025 Group `15`
 author:
 - "Frederik Haraszuk Stein <frhs@itu.dk>"
 - "Hjalte Krohn Frandsen <hjfr@itu.dk>"
@@ -23,7 +23,7 @@ Here is the domain model for our Chirp! project. The model extends the class Ide
 
 ## Architecture — In the small
 
-![Illustration of the _Chirp!_ onion architecture](./images/Onion.png)
+![Illustration of the _Chirp!_ onion architecture](./images/Onion-crop.svg)
 
 The figure above shows an illustration of how we implemented the Onion Architecture to our web application Chirp!. This was done with the intention of keeping easy maintainability and testability throughout the project.
 
@@ -47,7 +47,9 @@ Clients connect to the Chirp.Web service via HTTPS through their browser. The Ch
 To support external logins in Chirp!, we also maintain OAuth connections to the login providers. For our project, we have added both GitHub and Google as OAuth login providers.
 
 ## User activities
+
 ![Illustration of User activities](./images/UserPro.svg)
+
 Here is an activity diagram. This diagram shows the difference in what an authorized and unauthorized user can in the application.  
 
 ## Sequence of functionality/calls through _Chirp!_
@@ -65,8 +67,8 @@ Finally, the page is rendered in Razor Pages and sent to the user.
 # Process
 
 ## Build, test, release, and deployment
-![Activity diagram showing deployments via GitHub Actions workflows.](./images/github_workflow.svg)
 
+![Activity diagram showing deployments via GitHub Actions workflows.](./images/github_workflow.svg)
 
 Chirp! is built, tested, released, and deployed using automated GitHub Actions workflows. We have three workflows relevant for the deployment of the Chirp! application:
 
